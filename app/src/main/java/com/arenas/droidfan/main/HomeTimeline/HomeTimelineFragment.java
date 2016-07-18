@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.Api.Paging;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.DateTimeUtils;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -176,6 +177,7 @@ public class HomeTimelineFragment extends Fragment implements HomeTimelineContra
             holder.mStatusText.setText(Utils.handleSimpleText(getContext() , mStatusList.get(position).getSimpleText() ));
             String avatarUrl = mStatusList.get(position).getUserProfileImageUrl();
             Picasso.with(getContext()).load(avatarUrl).into(holder.mAvatar);
+            holder.mTime.setText(DateTimeUtils.getInterval(mStatusList.get(position).getTime()));
             String photoThumbUrl = mStatusList.get(position).getPhotoThumbUrl();
             if (photoThumbUrl != null){
                 showPhotoThumb(photoThumbUrl , holder.mPhotoThumb);
@@ -225,12 +227,14 @@ public class HomeTimelineFragment extends Fragment implements HomeTimelineContra
             TextView mUsername;
             TextView mStatusText;
             ImageView mPhotoThumb;
+            TextView mTime;
             public StatusViewHolder(View itemView) {
                 super(itemView);
                 mAvatar = (RoundedImageView)itemView.findViewById(R.id.iv_avatar);
                 mUsername = (TextView)itemView.findViewById(R.id.tv_username);
                 mStatusText = (TextView)itemView.findViewById(R.id.tv_status_text);
                 mPhotoThumb = (ImageView)itemView.findViewById(R.id.iv_photo_thumbnail);
+                mTime = (TextView)itemView.findViewById(R.id.time);
             }
         }
     }

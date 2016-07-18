@@ -1,6 +1,9 @@
 package com.arenas.droidfan.detail;
 
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.data.db.DataSource;
 import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment implements DetailContract.View , View.OnClickListener{
@@ -64,6 +68,13 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         mUsername = (TextView)view.findViewById(R.id.tv_username);
         mUserId = (TextView)view.findViewById(R.id.user_id);
         mStatusDetail = (TextView)view.findViewById(R.id.status_detail);
+        mStatusDetail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                copyToClipBoard(getContext() , mStatusDetail.getText().toString());
+                return true;
+            }
+        });
         mDate = (TextView)view.findViewById(R.id.date);
         mSource = (TextView)view.findViewById(R.id.source);
         mAvatar = (ImageView)view.findViewById(R.id.iv_avatar);
@@ -110,6 +121,12 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 mPresenter.favorite(getContext());
                 break;
         }
+    }
+    private void copyToClipBoard(Context context, String content) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("text", content);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(context , "已复制到剪切板" , Toast.LENGTH_SHORT).show();
     }
 
     @Override

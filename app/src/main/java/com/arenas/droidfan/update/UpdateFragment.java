@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -83,6 +84,8 @@ public class UpdateFragment extends Fragment implements UpdateContract.View , Vi
 
         mTakePhoto = (ImageView)view.findViewById(R.id.take_photo);
         mTakePhoto.setOnClickListener(this);
+
+        setHasOptionsMenu(true);
     }
 
 
@@ -94,6 +97,16 @@ public class UpdateFragment extends Fragment implements UpdateContract.View , Vi
     @Override
     public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                getActivity().finish();
+                break;
+        }
+        return true;
     }
 
     @Override
