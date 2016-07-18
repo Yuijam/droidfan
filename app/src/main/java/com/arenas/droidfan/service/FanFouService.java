@@ -3,6 +3,7 @@ package com.arenas.droidfan.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -37,13 +38,12 @@ public class FanFouService extends IntentService {
     public static final int RETWEET = 5;
     public static final int FAVORITE = 6;
     public static final int UNFAVORITE = 7;
+    public static final int MENTIONS = 8;
+
 
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
-
-    private String mStatusText;
-    private String mId;
 
     public FanFouService(){
         super("FanFouService");
@@ -86,16 +86,25 @@ public class FanFouService extends IntentService {
         context.startService(intent);
     }
 
+    public static void getMentions(Context context , Paging paging){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , MENTIONS);
+        intent.putExtra(EXTRA_PAGING , paging);
+        context.startService(intent);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         int request = intent.getIntExtra(EXTRA_REQUEST , 0);
-
+        String mStatusText;
+        String mId;
+        Paging p;
         mFanFouDB = FanFouDB.getInstance(this);
         try {
             switch (request){
                 case HOME_TIMELINE:
-                    Paging p = intent.getParcelableExtra(EXTRA_PAGING);
-                    saveStatus(mApi.getHomeTimeline(p));
+                    p = intent.getParcelableExtra(EXTRA_PAGING);
+                    saveHomeTLStatus(mApi.getHomeTimeline(p));
                     break;
                 case UPDATE_STATUS:
                     mStatusText = intent.getStringExtra(EXTRA_STATUS_TEXT);
@@ -127,6 +136,12 @@ public class FanFouService extends IntentService {
                     mId = intent.getStringExtra(EXTRA_MSG_ID);
                     mApi.unfavorite(mId);
                     break;
+                case MENTIONS:
+                    p = intent.getParcelableExtra(EXTRA_PAGING);
+                    saveMetions(mApi.getMentions(p));
+                    Log.d(TAG , "getMetions--------->");
+                    break;
+
             }
         }catch (ApiException e){
             e.toString();
@@ -134,7 +149,13 @@ public class FanFouService extends IntentService {
 
     }
 
-    private void saveStatus(List<StatusModel> statusModels){
+    private void saveMetions(List<StatusModel> statusModels){
+        for (StatusModel s : statusModels){
+            mFanFouDB.saveNoticeStatus(s);
+        }
+    }
+
+    private void saveHomeTLStatus(List<StatusModel> statusModels){
         for (StatusModel s : statusModels){
             mFanFouDB.saveHomeTLStatus(s);
         }

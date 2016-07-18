@@ -20,10 +20,13 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     private static final String TAG = HomeTimelinePresenter.class.getSimpleName();
 
-    private final HomeTimelineContract.View mView;
-    private final FanFouDB mFanFouDB;
-    private final Api mApi;
+    protected  HomeTimelineContract.View mView;
+    protected  FanFouDB mFanFouDB;
+    protected  Api mApi;
 
+    public HomeTimelinePresenter(){
+
+    }
 
     public HomeTimelinePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
         mView = view;

@@ -20,6 +20,8 @@ import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.main.Notice.NoticeFragment;
+import com.arenas.droidfan.main.Notice.NoticePresenter;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         initNavHeader(navigationView.getHeaderView(0));
 
         new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
+        new NoticePresenter(FanFouDB.getInstance(this) , (NoticeFragment)fragmentAdapter.getItem(1));
     }
 
     private void initNavHeader(View view){

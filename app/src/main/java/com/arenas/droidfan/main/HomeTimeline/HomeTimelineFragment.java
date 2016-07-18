@@ -42,7 +42,8 @@ import java.util.List;
 /**
  * Created by Arenas on 2016/6/23.
  */
-public class HomeTimelineFragment extends Fragment implements HomeTimelineContract.View , View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
+public class HomeTimelineFragment extends Fragment implements HomeTimelineContract.View ,
+        View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = HomeTimelineFragment.class.getSimpleName();
     public static final String FILTER_ACTION = "com.arenas.droidfan.HOMETIMELINE";
@@ -97,7 +98,7 @@ public class HomeTimelineFragment extends Fragment implements HomeTimelineContra
         return view;
     }
 
-    private void init(View view){
+    public void init(View view){
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
