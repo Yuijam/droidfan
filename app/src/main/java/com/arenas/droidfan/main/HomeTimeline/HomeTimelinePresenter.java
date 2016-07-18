@@ -58,9 +58,8 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         Paging p = new Paging();
         if (AppContext.isFirstLoad()){
             mView.startService(p);
-            AppContext.setFirstLoad(false);
         }else {
-            p.sinceId = mFanFouDB.getSinceId();
+            p.sinceId = mFanFouDB.getHomeTLSinceId();
             mView.startService(p);
         }
     }

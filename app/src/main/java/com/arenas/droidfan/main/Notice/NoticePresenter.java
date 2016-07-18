@@ -29,12 +29,12 @@ public class NoticePresenter extends HomeTimelinePresenter {
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-//        if (AppContext.isFirstLoad()){
+        if (AppContext.isFirstLoad()){
             mView.startService(p);
-//            AppContext.setFirstLoad(false);
-//        }else {
-//            p.sinceId = mFanFouDB.getSinceId();
-//            mView.startService(p);
-//        }
+            AppContext.setFirstLoad(false);
+        }else {
+            p.sinceId = mFanFouDB.getNoticeSinceId();
+            mView.startService(p);
+        }
     }
 }

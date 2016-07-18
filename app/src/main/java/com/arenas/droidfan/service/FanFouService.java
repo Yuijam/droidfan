@@ -87,8 +87,16 @@ public class FanFouService extends IntentService {
     }
 
     public static void getMentions(Context context , Paging paging){
+        start(context , MENTIONS , paging);
+    }
+
+    public static void getHomeTimeline(Context context , Paging paging){
+        start(context , HOME_TIMELINE , paging);
+    }
+
+    private static void start(Context context , int requestCode , Paging paging){
         Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , MENTIONS);
+        intent.putExtra(EXTRA_REQUEST , requestCode);
         intent.putExtra(EXTRA_PAGING , paging);
         context.startService(intent);
     }

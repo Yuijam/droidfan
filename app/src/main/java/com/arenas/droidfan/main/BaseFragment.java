@@ -1,14 +1,9 @@
 package com.arenas.droidfan.main;
 
-/**
- * Created by Arenas on 2016/7/18.
- */
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -23,30 +18,30 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.arenas.droidfan.Api.Paging;
-import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
-import com.arenas.droidfan.service.FanFouService;
 import com.arenas.droidfan.update.UpdateActivity;
 
-import java.util.ArrayList;
 import java.util.List;
-/**
- * Created by Arenas on 2016/6/23.
- */
-public abstract class BaseFragment extends Fragment implements View.OnClickListener
-        , SwipeRefreshLayout.OnRefreshListener , StatusContract.View{
 
+/**
+ * Created by Arenas on 2016/7/18.
+ */
+public abstract class BaseFragment extends Fragment implements HomeTimelineContract.View ,
+        View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
+
+    private static final String TAG = BaseFragment.class.getSimpleName();
     public static final String FILTER_ACTION = "com.arenas.droidfan.HOMETIMELINE";
+
+    private HomeTimelineContract.Presenter mPresenter;
 
     //broadcast
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
     private LocalReceiver mLocalReceiver;
 
-    private StatusAdapter mAdapter;
+    protected StatusAdapter mAdapter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -55,22 +50,15 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public abstract void setPresenter(Object presenter);
+    public void setPresenter(Object presenter) {
+        mPresenter = (HomeTimelineContract.Presenter)presenter;
+    }
 
-    StatusAdapter.OnItemClickListener mListener = new StatusAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            int _id = mAdapter.getStatus(position).get_id();
-            Intent intent = new Intent(getContext(), DetailActivity.class);
-            intent.putExtra(DetailActivity.EXTRA_STATUS_ID, _id);
-            startActivity(intent);
-        }
-
-        @Override
-        public void onItemLongClick(int id, int position) {
-
-        }
-    };
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,7 +69,17 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
-        mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>() , mListener );
+        initAdapter();
+    }
+
+    public abstract void initAdapter();
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home , container , false);
+        init(view);
+        return view;
     }
 
     public void init(View view){
@@ -99,10 +97,12 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        onClickView(view);
+        switch (view.getId()){
+            case R.id.fab:
+                mPresenter.newStatus();
+                break;
+        }
     }
-
-    public abstract void onClickView(View view);
 
     @Override
     public void showUpdateStatusUi() {
@@ -111,12 +111,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void startService(Paging p) {
-        Intent intent = new Intent(getContext() , FanFouService.class);
-        intent.putExtra(FanFouService.EXTRA_PAGING , p);
-        intent.putExtra(FanFouService.EXTRA_REQUEST , FanFouService.HOME_TIMELINE);
-        getContext().startService(intent);
-    }
+    public abstract void startService(Paging p);
 
     @Override
     public void showStatus(List<StatusModel> status) {
@@ -126,11 +121,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     class LocalReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            onReceive(context , intent);
+            mPresenter.onReceive(context , intent);
         }
     }
-
-    public abstract void onReceive(Context context , Intent intent);
 
     @Override
     public void showError() {
@@ -144,7 +137,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public abstract void onRefresh();
+    public void onRefresh() {
+        mPresenter.refresh();
+    }
 
     @Override
     public void hideRefreshBar() {
@@ -159,4 +154,3 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
     }
 }
-

@@ -27,7 +27,9 @@ public interface DataSource {
 
     void getNoticeStatusList(LoadStatusCallback callback);
 
-    String getSinceId();
+    String getHomeTLSinceId();
+
+    String getNoticeSinceId();
 
     String getMaxId();
 

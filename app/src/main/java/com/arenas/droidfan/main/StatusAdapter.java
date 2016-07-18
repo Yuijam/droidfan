@@ -1,6 +1,7 @@
 package com.arenas.droidfan.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
@@ -27,9 +29,9 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     private OnItemClickListener mListener;
     private Context mContext;
 
-    public StatusAdapter(Context context , List<StatusModel> mStatusList, OnItemClickListener mListener) {
+    public StatusAdapter(Context context , List<StatusModel> mStatusList , OnItemClickListener Listener) {
         this.mStatusList = mStatusList;
-        this.mListener = mListener;
+        this.mListener = Listener;
         mContext = context;
     }
 

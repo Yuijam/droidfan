@@ -89,9 +89,18 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public String getSinceId() {
+    public String getNoticeSinceId() {
+        return getSinceId(NoticeColumns.TABLE_NAME);
+    }
+
+    @Override
+    public String getHomeTLSinceId() {
+        return getSinceId(StatusColumns.TABLE_NAME);
+    }
+
+    private String getSinceId(String tableName){
         String sinceId = null;
-        Cursor c = db.query(StatusColumns.TABLE_NAME , null ,null ,null , null , null ,null);
+        Cursor c = db.query(tableName , null ,null ,null , null , null ,null);
         if (c != null){
             c.moveToFirst();
             sinceId = DBUtil.parseString(c , StatusColumns.ID);

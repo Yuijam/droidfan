@@ -1,23 +1,25 @@
 package com.arenas.droidfan.main.Notice;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.arenas.droidfan.Api.Paging;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
+import com.arenas.droidfan.main.StatusAdapter;
 import com.arenas.droidfan.service.FanFouService;
+
+import java.util.ArrayList;
 
 /**
  * Created by Arenas on 2016/6/23.
  */
-public class NoticeFragment extends HomeTimelineFragment implements
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
+public class NoticeFragment extends HomeTimelineFragment {
 
     @Nullable
     @Override
@@ -25,6 +27,24 @@ public class NoticeFragment extends HomeTimelineFragment implements
         View view = inflater.inflate(R.layout.fragment_notice , container , false);
         init(view);
         return view;
+    }
+
+    StatusAdapter.OnItemClickListener Listener = new StatusAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view , int position) {
+            int _id = mAdapter.getStatus(position).get_id();
+            DetailActivity.start(getContext() , DetailActivity.TYPE_MENTIONS , _id);
+        }
+
+        @Override
+        public void onItemLongClick(int id, int position) {
+
+        }
+    };
+
+    @Override
+    public void initAdapter() {
+        mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener);
     }
 
     @Override

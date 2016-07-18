@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.profile) {
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_public_timeline) {
 
         } else if (id == R.id.nav_slideshow) {
 

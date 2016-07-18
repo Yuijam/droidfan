@@ -1,6 +1,7 @@
 package com.arenas.droidfan.detail;
 
 import android.content.Context;
+import android.support.design.widget.AppBarLayout;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
@@ -23,18 +24,28 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     private StatusModel mStatusModel;
     private int m_id;
     private boolean mIsFavorite;
+    private int mType;
 
-    public DetailPresenter(int _id ,  FanFouDB mFanFouDB , DetailContract.View mView) {
+    public DetailPresenter(int _id , int type ,  FanFouDB mFanFouDB , DetailContract.View mView) {
         this.mFanFouDB = mFanFouDB;
         this.mView = mView;
         m_id = _id;
+        mType = type;
 
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        mFanFouDB.getHomeTLStatus(m_id , this);
+        switch (mType){
+            case DetailActivity.TYPE_HOME:
+                mFanFouDB.getHomeTLStatus(m_id , this);
+                break;
+            case DetailActivity.TYPE_MENTIONS:
+                mFanFouDB.getNoticeStatus(m_id , this);
+                break;
+        }
+
     }
 
     @Override

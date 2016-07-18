@@ -1,5 +1,7 @@
 package com.arenas.droidfan.detail;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,16 @@ import com.arenas.droidfan.data.db.FanFouDB;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_STATUS_ID = "extra_status_id";
+    public static final String EXTRA_STATUS_TYPE = "extra_status_type";
+    public static final int TYPE_HOME = 1;
+    public static final int TYPE_MENTIONS = 2;
+
+    public static void start(Context context , int type , int _id){
+        Intent intent = new Intent(context , DetailActivity.class);
+        intent.putExtra(DetailActivity.EXTRA_STATUS_ID , _id);
+        intent.putExtra(DetailActivity.EXTRA_STATUS_TYPE , type);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +43,8 @@ public class DetailActivity extends AppCompatActivity {
         }
         Utils.addFragmentToActivity(getSupportFragmentManager() , detailFragment , R.id.content_frame);
 
-        new DetailPresenter(getIntent().getIntExtra(EXTRA_STATUS_ID , -1) , FanFouDB.getInstance(this) , detailFragment);
+        int _id = getIntent().getIntExtra(EXTRA_STATUS_ID , -1);
+        int type = getIntent().getIntExtra(EXTRA_STATUS_TYPE , -1);
+        new DetailPresenter(_id , type , FanFouDB.getInstance(this) , detailFragment);
     }
 }
