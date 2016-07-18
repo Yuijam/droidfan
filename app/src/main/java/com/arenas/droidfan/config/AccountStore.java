@@ -20,14 +20,14 @@ import org.oauthsimple.model.OAuthToken;
 public class AccountStore {
     private static final String TAG = AccountStore.class.getSimpleName();
     private static final boolean DEBUG = AppContext.DEBUG;
-    private static final String STORE_NAME = "account_store";
-    private static final String KEY_ACCOUNT = "account";
-    private static final String KEY_SCREEN_NAME = "screen_name";
-    private static final String KEY_PROFILE_IMAGE = "profile_image";
-    private static final String KEY_ACCESS_TOKEN = "access_token";
-    private static final String KEY_ACCESS_TOKEN_SECRET = "access_token_secret";
-    private static final String KEY_LOGIN_NAME = "login_name";
-    private static final String KEY_LOGIN_PASSWORD = "login_password";
+    public static final String STORE_NAME = "account_store";
+    public static final String KEY_ACCOUNT = "account";
+    public static final String KEY_SCREEN_NAME = "screen_name";
+    public static final String KEY_PROFILE_IMAGE = "profile_image";
+    public static final String KEY_ACCESS_TOKEN = "access_token";
+    public static final String KEY_ACCESS_TOKEN_SECRET = "access_token_secret";
+    public static final String KEY_LOGIN_NAME = "login_name";
+    public static final String KEY_LOGIN_PASSWORD = "login_password";
     private Context mContext;
     private SharedPreferences mPreferences;
 

@@ -1,5 +1,6 @@
 package com.arenas.droidfan.main;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -11,11 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +60,25 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
+        initNavHeader(navigationView.getHeaderView(0));
+
         new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
+    }
+
+    private void initNavHeader(View view){
+        SharedPreferences sp = getSharedPreferences(AccountStore.STORE_NAME , MODE_PRIVATE);
+        String screenName = sp.getString(AccountStore.KEY_SCREEN_NAME , null);
+        String userId = sp.getString(AccountStore.KEY_ACCOUNT , null);
+        String url = sp.getString(AccountStore.KEY_PROFILE_IMAGE , null);
+
+        RoundedImageView avatar = (RoundedImageView)view.findViewById(R.id.header_avatar);
+        TextView screenNameView = (TextView)view.findViewById(R.id.screen_name);
+        TextView userIdView = (TextView)view.findViewById(R.id.user_id);
+
+        Picasso.with(this).load(url).into(avatar);
+        screenNameView.setText(screenName);
+        userIdView.setText("@" + userId);
+
     }
 
     @Override
