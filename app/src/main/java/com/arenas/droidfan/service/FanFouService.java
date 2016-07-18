@@ -3,8 +3,6 @@ package com.arenas.droidfan.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -18,7 +16,6 @@ import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Arenas on 2016/7/10.
@@ -139,7 +136,7 @@ public class FanFouService extends IntentService {
 
     private void saveStatus(List<StatusModel> statusModels){
         for (StatusModel s : statusModels){
-            mFanFouDB.saveStatus(s);
+            mFanFouDB.saveHomeTLStatus(s);
         }
     }
 

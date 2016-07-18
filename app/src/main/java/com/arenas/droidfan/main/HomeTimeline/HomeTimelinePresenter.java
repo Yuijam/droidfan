@@ -11,7 +11,6 @@ import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void loadStatus() {
-        mFanFouDB.getStatusList(this);
+        mFanFouDB.getHomeTLStatusList(this);
     }
 
 

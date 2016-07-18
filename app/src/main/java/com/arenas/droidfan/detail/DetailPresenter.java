@@ -1,12 +1,9 @@
 package com.arenas.droidfan.detail;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
-import com.arenas.droidfan.Util.Utils;
-import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -37,7 +34,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void start() {
-        mFanFouDB.getStatus(m_id , this);
+        mFanFouDB.getHomeTLStatus(m_id , this);
     }
 
     @Override

@@ -3,16 +3,11 @@ package com.arenas.droidfan.update;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.TypedArrayUtils;
-import android.support.v7.view.menu.MenuView;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.arenas.droidfan.Util.CompatUtils;
 import com.arenas.droidfan.Util.ImageUtils;
@@ -21,16 +16,10 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.StatusUpdateInfo;
-import com.arenas.droidfan.detail.DetailContract;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.BrokenBarrierException;
 
 /**
  * Created by Arenas on 2016/7/11.
@@ -98,7 +87,7 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
     }
 
     private void populateStatusText(){
-        mFanFouDB.getStatus(m_Id , this);
+        mFanFouDB.getHomeTLStatus(m_Id , this);
         StringBuilder sb = new StringBuilder();
         switch (mType){
             case UpdateActivity.TYPE_REPLY:

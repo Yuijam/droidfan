@@ -19,15 +19,21 @@ public interface DataSource {
         void onDataNotAvailable();
     }
 
-    void saveStatus(StatusModel status);
+    void saveHomeTLStatus(StatusModel status);
 
-    void getStatusList(LoadStatusCallback callback);
+    void saveNoticeStatus(StatusModel status);
+
+    void getHomeTLStatusList(LoadStatusCallback callback);
+
+    void getNoticeStatusList(LoadStatusCallback callback);
 
     String getSinceId();
 
     String getMaxId();
 
-    void getStatus(int _id , GetStatusCallback callback);
+    void getHomeTLStatus(int _id , GetStatusCallback callback);
+
+    void getNoticeStatus(int _id , GetStatusCallback callback);
 
     void updateFavorite(int id , int favorite);
 }
