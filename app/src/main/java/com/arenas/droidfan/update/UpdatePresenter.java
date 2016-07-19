@@ -16,6 +16,7 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.io.File;
@@ -35,14 +36,16 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
     private String mPhotoPath;
     private int m_Id = -1;
     private StatusModel mStatusModel;
-    private int mType;
+    private int mActionType;
+    private int mStatusType;
 
-    public UpdatePresenter(int _id ,int type ,  FanFouDB mFanFouDB, UpdateContract.View mView) {
+    public UpdatePresenter(int _id ,int type , int statusType ,  FanFouDB mFanFouDB, UpdateContract.View mView) {
         this.mFanFouDB = mFanFouDB;
         this.mView = mView;
 
         m_Id = _id;
-        mType = type;
+        mActionType = type;
+        mStatusType = statusType;
 
         mView.setPresenter(this);
     }
@@ -58,7 +61,7 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
 
     private void startService(Context context , String text , File photo) {
         if (photo == null){
-            switch (mType){
+            switch (mActionType){
                 case UpdateActivity.TYPE_REPLY:
                     FanFouService.reply(context , mStatusModel.getId() , text);
                     break;
@@ -87,9 +90,24 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
     }
 
     private void populateStatusText(){
-        mFanFouDB.getHomeTLStatus(m_Id , this);
+        switch (mStatusType){
+            case DetailActivity.TYPE_HOME:
+                mFanFouDB.getHomeTLStatus(m_Id , this);
+                break;
+            case DetailActivity.TYPE_MENTIONS:
+                mFanFouDB.getNoticeStatus(m_Id , this);
+                break;
+            case DetailActivity.TYPE_PUBLIC:
+                mFanFouDB.getPublicStatus(m_Id , this);
+                break;
+        }
+    }
+
+    @Override
+    public void onStatusLoaded(StatusModel statusModel) {
+        mStatusModel = statusModel;
         StringBuilder sb = new StringBuilder();
-        switch (mType){
+        switch (mActionType){
             case UpdateActivity.TYPE_REPLY:
                 ArrayList<String> names = StatusUtils.getMentions(mStatusModel);
                 for (String name : names) {
@@ -104,11 +122,6 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
                 mView.setStatusText(sb.toString());
                 break;
         }
-    }
-
-    @Override
-    public void onStatusLoaded(StatusModel statusModel) {
-        mStatusModel = statusModel;
     }
 
     @Override

@@ -14,15 +14,17 @@ import com.arenas.droidfan.data.db.FanFouDB;
 public class UpdateActivity extends AppCompatActivity {
 
     public static final String EXTRA_ID = "extra_id";
-    public static final String EXTRA_TYPE = "extra_type";
+    public static final String EXTRA_ACTION_TYPE = "extra_action_type";
+    public static final String EXTRA_STATUS_TYPE = "extra_status_type";
 
     public static final int TYPE_REPLY = 1;
     public static final int TYPE_RETWEET = 2;
 
-    public static void start(Context context , int _id , int type){
+    public static void start(Context context , int _id , int actionType , int statusType){
         Intent intent = new Intent(context , UpdateActivity.class);
         intent.putExtra(EXTRA_ID , _id);
-        intent.putExtra(EXTRA_TYPE , type);
+        intent.putExtra(EXTRA_ACTION_TYPE, actionType);
+        intent.putExtra(EXTRA_STATUS_TYPE , statusType);
         context.startActivity(intent);
     }
 
@@ -45,7 +47,8 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         int _id = getIntent().getIntExtra(EXTRA_ID , -1);
-        int type = getIntent().getIntExtra(EXTRA_TYPE , -1);
-        new UpdatePresenter( _id , type , FanFouDB.getInstance(this) , updateFragment);
+        int actionType = getIntent().getIntExtra(EXTRA_ACTION_TYPE, -1);
+        int statusType = getIntent().getIntExtra(EXTRA_STATUS_TYPE, -1);
+        new UpdatePresenter( _id , actionType , statusType , FanFouDB.getInstance(this) , updateFragment);
     }
 }

@@ -1,7 +1,6 @@
 package com.arenas.droidfan.detail;
 
 import android.content.Context;
-import android.support.design.widget.AppBarLayout;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
@@ -24,20 +23,20 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     private StatusModel mStatusModel;
     private int m_id;
     private boolean mIsFavorite;
-    private int mType;
+    private int mActionType;
 
     public DetailPresenter(int _id , int type ,  FanFouDB mFanFouDB , DetailContract.View mView) {
         this.mFanFouDB = mFanFouDB;
         this.mView = mView;
         m_id = _id;
-        mType = type;
+        mActionType = type;
 
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        switch (mType){
+        switch (mActionType){
             case DetailActivity.TYPE_HOME:
                 mFanFouDB.getHomeTLStatus(m_id , this);
                 break;
@@ -80,12 +79,12 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void reply(Context context) {
-        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_REPLY);
+        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_REPLY , mActionType);
     }
 
     @Override
     public void retweet(Context context) {
-        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_RETWEET);
+        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_RETWEET , mActionType);
     }
 
     @Override
