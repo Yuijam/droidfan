@@ -22,6 +22,7 @@ import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
 import com.arenas.droidfan.main.Notice.NoticeFragment;
 import com.arenas.droidfan.main.Notice.NoticePresenter;
+import com.arenas.droidfan.main.Public.PublicActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.profile) {
         } else if (id == R.id.nav_public_timeline) {
-
+            PublicActivity.start(this);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

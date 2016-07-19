@@ -45,8 +45,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity android:name=".detail.DetailActivity"
+        <activity
+            android:name=".detail.DetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".main.Public.PublicActivity"
             android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/public_timeline"
             />
     </application>
 

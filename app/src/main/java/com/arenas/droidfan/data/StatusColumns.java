@@ -1,6 +1,9 @@
 package com.arenas.droidfan.data;
 
-public final class StatusColumns {
+/**
+ * Created by Arenas on 2016/7/18.
+ */
+public class StatusColumns {
     public static String TEXT = "text";
     public static String SIMPLE_TEXT = "simple_text";
     public static String SOURCE = "source";
@@ -40,53 +43,5 @@ public final class StatusColumns {
     public static final String THREAD = "thread";
     public static final String PHOTO = "photo";
     public static final String SPECIAL = "special";
-    public static final String TABLE_NAME = "status";
 
-    public static final String CREATE_TABLE = "create table "
-            + TABLE_NAME + " ( "
-            + _ID + " integer primary key autoincrement, "
-
-            + ID + " text not null, "
-            + ACCOUNT + " text not null, "
-            + OWNER + " text, "
-
-            + RAWID + " integer not null, "
-            + TIME + " integer not null, "
-
-            + TEXT + " text not null, "
-            + SIMPLE_TEXT + " text not null, "
-            + SOURCE + " text not null, "
-            + GEO + " text, "
-            + PHOTO + " text, "
-
-            + USER_RAWID + " integer not null, "
-            + USER_ID + " text not null, "
-            + USER_SCREEN_NAME + " text not null, "
-            + USER_PROFILE_IMAGE_URL + " text not null, "
-
-            + IN_REPLY_TO_STATUS_ID + " text, "
-            + IN_REPLY_TO_USER_ID + " text, "
-            + IN_REPLY_TO_SCREEN_NAME + " text, "
-
-            + RT_STATUS_ID + " text, "
-            + RT_USER_ID + " text, "
-            + RT_USER_SCREEN_NAME + " text, "
-
-            + PHOTO_IMAGE_URL + " text, "
-            + PHOTO_THUMB_URL + " text, "
-            + PHOTO_LARGE_URL + " text, "
-
-            + TRUNCATED + " integer not null, "
-            + FAVORITED + " integer not null, "
-            + RETWEETED + " integer not null, "
-            + SELF + " integer not null, "
-
-            + READ + " integer not null, "
-            + THREAD + " integer not null, "
-            + SPECIAL + " integer not null, "
-
-            + "unique ( "
-            + ACCOUNT + ","
-            + ID
-            + " ) on conflict ignore );";
 }

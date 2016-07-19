@@ -39,11 +39,13 @@ public class FanFouService extends IntentService {
     public static final int FAVORITE = 6;
     public static final int UNFAVORITE = 7;
     public static final int MENTIONS = 8;
+    public static final int PUBLIC = 9;
 
 
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
+    private String mFilterAction;
 
     public FanFouService(){
         super("FanFouService");
@@ -94,6 +96,12 @@ public class FanFouService extends IntentService {
         start(context , HOME_TIMELINE , paging);
     }
 
+    public static void getPublicTimeline(Context context ){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , PUBLIC);
+        context.startService(intent);
+    }
+
     private static void start(Context context , int requestCode , Paging paging){
         Intent intent = new Intent(context , FanFouService.class);
         intent.putExtra(EXTRA_REQUEST , requestCode);
@@ -113,6 +121,7 @@ public class FanFouService extends IntentService {
                 case HOME_TIMELINE:
                     p = intent.getParcelableExtra(EXTRA_PAGING);
                     saveHomeTLStatus(mApi.getHomeTimeline(p));
+                    mFilterAction = HomeTimelineFragment.FILTER_HOMETIMELINE;
                     break;
                 case UPDATE_STATUS:
                     mStatusText = intent.getStringExtra(EXTRA_STATUS_TEXT);
@@ -147,7 +156,13 @@ public class FanFouService extends IntentService {
                 case MENTIONS:
                     p = intent.getParcelableExtra(EXTRA_PAGING);
                     saveMetions(mApi.getMentions(p));
+                    mFilterAction = HomeTimelineFragment.FILTER_HOMETIMELINE;
                     Log.d(TAG , "getMetions--------->");
+                    break;
+                case PUBLIC:
+                    savePublicStatus(mApi.getPublicTimeline());
+                    mFilterAction = HomeTimelineFragment.FILTER_PUBLICTIMELINE;
+                    Log.d(TAG , "getPublicStatus------->");
                     break;
 
             }
@@ -155,6 +170,12 @@ public class FanFouService extends IntentService {
             e.toString();
         }
 
+    }
+
+    private void savePublicStatus(List<StatusModel> statusModels){
+        for (StatusModel s : statusModels){
+            mFanFouDB.savePublicStatus(s);
+        }
     }
 
     private void saveMetions(List<StatusModel> statusModels){
@@ -169,14 +190,14 @@ public class FanFouService extends IntentService {
         }
     }
 
-    private void sendLocalBroadcast(){
-        Intent intent = new Intent(HomeTimelineFragment.FILTER_ACTION);
+    private void sendLocalBroadcast(String filterAction){
+        Intent intent = new Intent(filterAction);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        sendLocalBroadcast();
+        sendLocalBroadcast(mFilterAction);
     }
 }

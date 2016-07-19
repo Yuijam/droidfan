@@ -5,7 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.arenas.droidfan.data.NoticeColumns;
-import com.arenas.droidfan.data.StatusColumns;
+import com.arenas.droidfan.data.HomeStatusColumns;
+import com.arenas.droidfan.data.PublicStatusColumns;
 import com.arenas.droidfan.data.model.UserColumns;
 
 public class FanFouDBHelper extends SQLiteOpenHelper {
@@ -20,9 +21,10 @@ public class FanFouDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(StatusColumns.CREATE_TABLE);
+        db.execSQL(HomeStatusColumns.CREATE_TABLE);
         db.execSQL(UserColumns.CREATE_TABLE);
         db.execSQL(NoticeColumns.CREATE_TABLE);
+        db.execSQL(PublicStatusColumns.CREATE_TABLE);
 //        db.execSQL(DirectMessageColumns.CREATE_TABLE);
 //        db.execSQL(StatusUpdateInfoColumns.CREATE_TABLE);
     }

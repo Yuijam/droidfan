@@ -18,6 +18,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_STATUS_TYPE = "extra_status_type";
     public static final int TYPE_HOME = 1;
     public static final int TYPE_MENTIONS = 2;
+    public static final int TYPE_PUBLIC = 3;
 
     public static void start(Context context , int type , int _id){
         Intent intent = new Intent(context , DetailActivity.class);

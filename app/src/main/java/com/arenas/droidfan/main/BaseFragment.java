@@ -31,13 +31,13 @@ import java.util.List;
 public abstract class BaseFragment extends Fragment implements HomeTimelineContract.View ,
         View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
 
-    private static final String TAG = BaseFragment.class.getSimpleName();
-    public static final String FILTER_ACTION = "com.arenas.droidfan.HOMETIMELINE";
+    public static final String FILTER_HOMETIMELINE = "com.arenas.droidfan.HOMETIMELINE";
+    public static final String FILTER_PUBLICTIMELINE = "com.arenas.droidfan.PUBLICTIMELINE";
 
     private HomeTimelineContract.Presenter mPresenter;
 
     //broadcast
-    private IntentFilter mIntentFilter;
+    protected IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
     private LocalReceiver mLocalReceiver;
 
@@ -64,12 +64,16 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FILTER_ACTION);
+        addAction();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
         initAdapter();
+    }
+
+    public void addAction(){
+        mIntentFilter.addAction(FILTER_HOMETIMELINE);
     }
 
     public abstract void initAdapter();

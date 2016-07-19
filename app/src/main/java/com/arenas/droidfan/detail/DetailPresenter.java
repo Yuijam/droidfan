@@ -44,6 +44,9 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
             case DetailActivity.TYPE_MENTIONS:
                 mFanFouDB.getNoticeStatus(m_id , this);
                 break;
+            case DetailActivity.TYPE_PUBLIC:
+                mFanFouDB.getPublicStatus(m_id , this);
+                break;
         }
 
     }

@@ -3,9 +3,9 @@ package com.arenas.droidfan.data;
 /**
  * Created by Arenas on 2016/7/18.
  */
-public class NoticeColumns extends StatusColumns{
+public class PublicStatusColumns extends StatusColumns {
 
-    public static final String TABLE_NAME = "notice";
+    public static final String TABLE_NAME = "public";
 
     public static final String CREATE_TABLE = "create table "
             + TABLE_NAME + " ( "

@@ -1,11 +1,8 @@
 package com.arenas.droidfan.data;
 
-/**
- * Created by Arenas on 2016/7/18.
- */
-public class NoticeColumns extends StatusColumns{
+public final class HomeStatusColumns extends StatusColumns{
 
-    public static final String TABLE_NAME = "notice";
+    public static final String TABLE_NAME = "home";
 
     public static final String CREATE_TABLE = "create table "
             + TABLE_NAME + " ( "

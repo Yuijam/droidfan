@@ -19,6 +19,12 @@ public interface DataSource {
         void onDataNotAvailable();
     }
 
+    void savePublicStatus(StatusModel status);
+
+    void getPublicStatusList(LoadStatusCallback callback);
+
+    void getPublicStatus(int _id , GetStatusCallback callback);
+
     void saveHomeTLStatus(StatusModel status);
 
     void saveNoticeStatus(StatusModel status);
