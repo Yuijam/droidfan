@@ -45,7 +45,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         holder.mUsername.setText(mStatusList.get(position).getUserScreenName());
         holder.mStatusText.setText(Utils.handleSimpleText(mContext , mStatusList.get(position).getSimpleText() ));
         String avatarUrl = mStatusList.get(position).getUserProfileImageUrl();
-        Picasso.with(mContext).load(avatarUrl).into(holder.mAvatar);
+        Picasso.with(mContext).load(avatarUrl).placeholder(R.drawable.ic_placeholder).into(holder.mAvatar);
         holder.mTime.setText(DateTimeUtils.getInterval(mStatusList.get(position).getTime()));
         String photoThumbUrl = mStatusList.get(position).getPhotoThumbUrl();
         if (photoThumbUrl != null){

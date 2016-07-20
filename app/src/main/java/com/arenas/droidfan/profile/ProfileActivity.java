@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.TabFragmentAdapter;
@@ -32,8 +33,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(AppContext.getScreenName());
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         ViewPager viewPager = (ViewPager)findViewById(R.id.view_pager);
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);

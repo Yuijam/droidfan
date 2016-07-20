@@ -1,6 +1,5 @@
 package com.arenas.droidfan.main;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.db.FanFouDB;
@@ -79,17 +79,15 @@ public class MainActivity extends AppCompatActivity
 
     private void initNavHeader(View view){
         SharedPreferences sp = getSharedPreferences(AccountStore.STORE_NAME , MODE_PRIVATE);
-        String screenName = sp.getString(AccountStore.KEY_SCREEN_NAME , null);
-        String userId = sp.getString(AccountStore.KEY_ACCOUNT , null);
         String url = sp.getString(AccountStore.KEY_PROFILE_IMAGE , null);
 
         RoundedImageView avatar = (RoundedImageView)view.findViewById(R.id.header_avatar);
         TextView screenNameView = (TextView)view.findViewById(R.id.screen_name);
         TextView userIdView = (TextView)view.findViewById(R.id.user_id);
 
-        Picasso.with(this).load(url).into(avatar);
-        screenNameView.setText(screenName);
-        userIdView.setText("@" + userId);
+        Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder).into(avatar);
+        screenNameView.setText(AppContext.getScreenName());
+        userIdView.setText("@" + AppContext.getAccount());
 
     }
 
