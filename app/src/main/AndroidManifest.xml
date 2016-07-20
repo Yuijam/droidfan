@@ -54,15 +54,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".profile.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:parentActivityName=".main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.arenas.droidfan.main.MainActivity" />
-        </activity>
-        <activity
-            android:name=".profile.ScrollingActivity"
             android:label="@string/title_activity_scrolling"
             android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

@@ -1,6 +1,7 @@
 package com.arenas.droidfan.detail;
 
 import android.content.Context;
+import android.database.CharArrayBuffer;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
@@ -45,6 +46,9 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
                 break;
             case DetailActivity.TYPE_PUBLIC:
                 mFanFouDB.getPublicStatus(m_id , this);
+                break;
+            case DetailActivity.TYPE_PROFILE:
+                mFanFouDB.getProfileStatus(m_id , this);
                 break;
         }
 

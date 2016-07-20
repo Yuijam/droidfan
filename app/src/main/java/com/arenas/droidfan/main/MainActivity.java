@@ -27,7 +27,6 @@ import com.arenas.droidfan.main.Notice.NoticeFragment;
 import com.arenas.droidfan.main.Notice.NoticePresenter;
 import com.arenas.droidfan.main.Public.PublicActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
-import com.arenas.droidfan.profile.ScrollingActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -131,8 +130,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_public_timeline) {
             PublicActivity.start(this);
         } else if (id == R.id.nav_slideshow) {
-            Intent intent = new Intent(this , ScrollingActivity.class);
-            startActivity(intent);
+
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
+import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
 import com.arenas.droidfan.data.model.StatusModel;
 
@@ -35,6 +36,35 @@ public class FanFouDB implements DataSource{
         return INSTANCE;
     }
 
+    @Override
+    public String getProfileSinceId() {
+        return getSinceId(ProfileColumns.TABLE_NAME);
+    }
+
+    @Override
+    public void saveProfileStatus(StatusModel status) {
+        saveStatus(ProfileColumns.TABLE_NAME , status);
+    }
+
+    @Override
+    public void getProfileStatusList(LoadStatusCallback callback) {
+        List<StatusModel> statusList = getStatusList(ProfileColumns.TABLE_NAME);
+        if (statusList.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onStatusLoaded(statusList);
+        }
+    }
+
+    @Override
+    public void getProfileStatus(int _id , GetStatusCallback callback) {
+        StatusModel status = getStatus(_id , ProfileColumns.TABLE_NAME);
+        if (status != null){
+            callback.onStatusLoaded(status);
+        }else {
+            callback.onDataNotAvailable();
+        }
+    }
 
     @Override
     public void savePublicStatus(StatusModel status) {
@@ -130,6 +160,9 @@ public class FanFouDB implements DataSource{
         if (c != null){
             c.moveToFirst();
             sinceId = DBUtil.parseString(c , HomeStatusColumns.ID);
+        }
+        if (c != null){
+            c.close();
         }
         return sinceId;
     }

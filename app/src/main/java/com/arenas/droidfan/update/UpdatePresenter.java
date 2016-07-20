@@ -100,6 +100,9 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
             case DetailActivity.TYPE_PUBLIC:
                 mFanFouDB.getPublicStatus(m_Id , this);
                 break;
+            case DetailActivity.TYPE_PROFILE:
+                mFanFouDB.getProfileStatus(m_Id , this);
+                break;
         }
     }
 

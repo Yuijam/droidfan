@@ -33,6 +33,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
 
     public static final String FILTER_HOMETIMELINE = "com.arenas.droidfan.HOMETIMELINE";
     public static final String FILTER_PUBLICTIMELINE = "com.arenas.droidfan.PUBLICTIMELINE";
+    public static final String FILTER_PROFILETIMELINE = "com.arenas.droidfan.PROFILETIMELINE";
 
     private HomeTimelineContract.Presenter mPresenter;
 

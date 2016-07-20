@@ -44,4 +44,12 @@ public interface DataSource {
     void getNoticeStatus(int _id , GetStatusCallback callback);
 
     void updateFavorite(int id , int favorite);
+
+    void getProfileStatusList(LoadStatusCallback callback);
+
+    void getProfileStatus(int  _id , GetStatusCallback callback);
+
+    void saveProfileStatus(StatusModel status);
+
+    String getProfileSinceId();
 }

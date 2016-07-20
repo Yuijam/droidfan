@@ -30,6 +30,7 @@ public class FanFouService extends IntentService {
     public static final String EXTRA_STATUS_TEXT = "extra_status_text";
     public static final String EXTRA_PHOTO = "extra_photo";
     public static final String EXTRA_MSG_ID = "extra_msg_id";
+    public static final String EXTRA_USER_ID = "extra_user_id";
 
     public static final int HOME_TIMELINE = 1;
     public static final int UPDATE_STATUS = 2;
@@ -40,6 +41,7 @@ public class FanFouService extends IntentService {
     public static final int UNFAVORITE = 7;
     public static final int MENTIONS = 8;
     public static final int PUBLIC = 9;
+    public static final int PROFILE_TIMELINE = 10;
 
 
 
@@ -49,6 +51,14 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void getProfileTimeline(Context context , Paging paging , String userId){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , PROFILE_TIMELINE);
+        intent.putExtra(EXTRA_PAGING , paging);
+        intent.putExtra(EXTRA_USER_ID , userId);
+        context.startService(intent);
     }
 
     public static void reply(Context context , String id , String statusText){
@@ -115,6 +125,7 @@ public class FanFouService extends IntentService {
         String mStatusText;
         String mId;
         Paging p;
+        String userId;
         mFanFouDB = FanFouDB.getInstance(this);
         try {
             switch (request){
@@ -164,12 +175,23 @@ public class FanFouService extends IntentService {
                     mFilterAction = HomeTimelineFragment.FILTER_PUBLICTIMELINE;
                     Log.d(TAG , "getPublicStatus------->");
                     break;
-
+                case PROFILE_TIMELINE:
+                    userId = intent.getStringExtra(EXTRA_USER_ID);
+                    p = intent.getParcelableExtra(EXTRA_PAGING);
+                    mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
+                    saveProfileStatus(mApi.getUserTimeline(userId , p));
+                    break;
             }
         }catch (ApiException e){
             e.toString();
         }
 
+    }
+
+    private void saveProfileStatus(List<StatusModel> statusModels){
+        for (StatusModel s : statusModels){
+            mFanFouDB.saveProfileStatus(s);
+        }
     }
 
     private void savePublicStatus(List<StatusModel> statusModels){
