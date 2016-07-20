@@ -1,14 +1,9 @@
 package com.arenas.droidfan.main;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
-import com.arenas.droidfan.R;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.Message.MessageFragment;
 import com.arenas.droidfan.main.Notice.NoticeFragment;
@@ -24,13 +19,10 @@ public class TabFragmentAdapter extends FragmentPagerAdapter {
     private List<String> tabTitles;
     private List<Fragment> fragments;
 
-    public TabFragmentAdapter(FragmentManager fm, List<String> tabTitles) {
+    public TabFragmentAdapter(FragmentManager fm , List<String> tabTitles , List<Fragment> fragmentList) {
         super(fm);
         this.tabTitles = tabTitles;
-        fragments = new ArrayList<>();
-        fragments.add(new HomeTimelineFragment());
-        fragments.add(new NoticeFragment());
-        fragments.add(new MessageFragment());
+        fragments = fragmentList;
     }
 
     @Override

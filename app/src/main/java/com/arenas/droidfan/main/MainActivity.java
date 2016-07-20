@@ -1,9 +1,11 @@
 package com.arenas.droidfan.main;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,9 +22,12 @@ import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.main.Message.MessageFragment;
 import com.arenas.droidfan.main.Notice.NoticeFragment;
 import com.arenas.droidfan.main.Notice.NoticePresenter;
 import com.arenas.droidfan.main.Public.PublicActivity;
+import com.arenas.droidfan.profile.ProfileActivity;
+import com.arenas.droidfan.profile.ScrollingActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -54,11 +59,15 @@ public class MainActivity extends AppCompatActivity
         tabList.add(getString(R.string.home_page));
         tabList.add(getString(R.string.notice));
         tabList.add(getString(R.string.message));
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(new HomeTimelineFragment());
+        fragments.add(new NoticeFragment());
+        fragments.add(new MessageFragment());
 
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(0)));//添加tab
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(1)));
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(2)));
-        TabFragmentAdapter fragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), tabList);
+        TabFragmentAdapter fragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), tabList , fragments);
         viewPager.setAdapter(fragmentAdapter);//给ViewPager设置适配器
         tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -118,10 +127,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.profile) {
+            ProfileActivity.start(this);
         } else if (id == R.id.nav_public_timeline) {
             PublicActivity.start(this);
         } else if (id == R.id.nav_slideshow) {
-
+            Intent intent = new Intent(this , ScrollingActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
