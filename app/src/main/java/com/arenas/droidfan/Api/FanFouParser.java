@@ -1,13 +1,11 @@
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.model.BaseModel;
 import com.arenas.droidfan.data.model.DirectMessageModel;
-import com.arenas.droidfan.data.model.Photo;
 import com.arenas.droidfan.data.model.Search;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
@@ -197,12 +195,9 @@ final class FanFouParser implements ApiParser {
     @Override
     public UserModel user(String response, int type, String owner)
             throws ApiException {
-        Log.d(TAG , "Parser User first--->");
         try {
-            Log.d(TAG , "Parser User--->");
             return user(new JSONObject(response), type, owner);
         } catch (JSONException e) {
-            Log.d(TAG , "FanFouParser user() catch--->");
             throw new ApiException(ApiException.DATA_ERROR, e.getMessage(), e);
         }
     }
@@ -414,10 +409,10 @@ final class FanFouParser implements ApiParser {
         model.setOwner(owner);
         // model.setNote();
 
-        model.setRawid(0);
+//        model.setRawid(0);
         model.setTime(FanFouParser.date(o.getString("created_at")).getTime());
 
-        model.setName(o.getString("name"));
+//        model.setName(o.getString("name"));
         model.setScreenName(o.getString("screen_name"));
         model.setLocation(o.getString("location"));
         model.setGender(o.getString("gender"));
@@ -434,7 +429,7 @@ final class FanFouParser implements ApiParser {
         }
 
         model.setFollowersCount(o.getInt("followers_count"));
-//        model.setFriendsCount(o.getInt("fri ends_count"));
+        model.setFriendsCount(o.getInt("friends_count"));
         model.setFavouritesCount(o.getInt("favourites_count"));
         model.setStatusesCount(o.getInt("statuses_count"));
 

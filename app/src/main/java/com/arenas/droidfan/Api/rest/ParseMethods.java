@@ -1,10 +1,10 @@
 /**
  *
  */
-package com.arenas.droidfan.Api.rest;
+package com.arenas.droidfan.api.rest;
 
 
-import com.arenas.droidfan.Api.ApiParser;
+import com.arenas.droidfan.api.ApiParser;
 
 /**
  * @author mcxiaoke

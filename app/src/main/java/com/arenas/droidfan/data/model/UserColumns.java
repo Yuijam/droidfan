@@ -5,15 +5,16 @@ package com.arenas.droidfan.data.model;
  * @version 1.0 2012.02.16
  */
 public interface  UserColumns {
-    String RAWID = "rawid";// rawid in number format
     String ACCOUNT = "account"; // related account id/userid
     String OWNER = "owner"; // owner id of the item
     String _ID = "_id"; // id in string format
     String ID = "id"; //
 
+    String TYPE = "type";
     String TIME = "time"; // created at of the item
-    String NAME = "name";
+    String STATUS = "status";
     String SCREEN_NAME = "screen_name";
+
     String LOCATION = "location";
     String GENDER = "gender";
     String BIRTHDAY = "birthday";
@@ -22,7 +23,7 @@ public interface  UserColumns {
     String PROFILE_IMAGE_URL = "profile_image_url";
     String PROFILE_IMAGE_URL_LARGE = "profile_image_url_large";
     String URL = "url";
-    String STATUS = "status";
+
 
     String FOLLOWERS_COUNT = "followers_count";
     String FRIENDS_COUNT = "friends_count";
@@ -44,11 +45,9 @@ public interface  UserColumns {
             + ID + " text not null, "
             + ACCOUNT + " text not null, "
             + OWNER + " text, "
-
-            + RAWID + " integer not null, "
+            + TYPE + " integer, "
             + TIME + " integer not null, "
 
-            + NAME + " text not null, "
             + SCREEN_NAME + " text not null, "
             + LOCATION + " text, "
             + GENDER + " text, "

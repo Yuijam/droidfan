@@ -1,4 +1,4 @@
-package com.arenas.droidfan.Api.rest;
+package com.arenas.droidfan.api.rest;
 
 
 /**

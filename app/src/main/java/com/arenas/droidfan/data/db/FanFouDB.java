@@ -4,12 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.hardware.usb.UsbRequest;
+import android.media.MediaRouter;
+import android.util.Log;
 
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
+import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.data.model.UserColumns;
+import com.arenas.droidfan.data.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +26,7 @@ import java.util.List;
 public class FanFouDB implements DataSource{
 
     private static final String TAG = FanFouDB.class.getSimpleName();
+
     private static FanFouDB INSTANCE;
     private FanFouDBHelper mDbHelper;
     private SQLiteDatabase db;
@@ -34,6 +41,81 @@ public class FanFouDB implements DataSource{
             INSTANCE = new FanFouDB(context);
         }
         return INSTANCE;
+    }
+
+    @Override
+    public void getUser(String id, GetUserCallback callback) {
+        UserModel user = null;
+        Cursor c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{id});
+        if (c != null){
+            c.moveToFirst();
+            user = new UserModel();
+            user.setId(DBUtil.parseString(c , UserColumns.ID));
+            user.setAccount(DBUtil.parseString(c , UserColumns.ACCOUNT));
+            user.setOwner(DBUtil.parseString(c , UserColumns.OWNER));
+            user.setType(DBUtil.parseInt(c , UserColumns.TYPE));
+            user.setTime(DBUtil.parseLong(c , UserColumns.TIME));
+            user.setScreenName(DBUtil.parseString(c , UserColumns.SCREEN_NAME));
+            user.setLocation(DBUtil.parseString(c , UserColumns.LOCATION));
+            user.setGender(DBUtil.parseString(c , UserColumns.GENDER));
+
+            user.setBirthday(DBUtil.parseString(c , UserColumns.BIRTHDAY));
+            user.setDescription(DBUtil.parseString(c , UserColumns.DESCRIPTION));
+            user.setProfileImageUrl(DBUtil.parseString(c , UserColumns.PROFILE_IMAGE_URL));
+            user.setProfileImageUrlLarge(DBUtil.parseString(c , UserColumns.PROFILE_IMAGE_URL_LARGE));
+            user.setUrl(DBUtil.parseString(c , UserColumns.URL));
+            user.setStatus(DBUtil.parseString(c , UserColumns.STATUS));
+            user.setFollowersCount(DBUtil.parseInt(c , UserColumns.FOLLOWERS_COUNT));
+            user.setFriendsCount(DBUtil.parseInt(c , UserColumns.FRIENDS_COUNT));
+            user.setFavouritesCount(DBUtil.parseInt(c , UserColumns.FAVORITES_COUNT));
+            user.setStatusesCount(DBUtil.parseInt(c , UserColumns.STATUSES_COUNT));
+            user.setFollowing(DBUtil.parseInt(c , UserColumns.FOLLOWING));
+            user.setProtect(DBUtil.parseInt(c , UserColumns.PROTECTED));
+            user.setNotifications(DBUtil.parseInt(c , UserColumns.NOTIFICATIONS));
+            user.setVerified(DBUtil.parseInt(c , UserColumns.VERIFIED));
+            user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
+
+        }
+        if (c != null){
+            c.close();
+        }
+        if (user != null){
+            callback.onUserLoaded(user);
+        }else {
+            callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
+    public void saveUser(UserModel user, int type) {
+        ContentValues cv = new ContentValues();
+
+        cv.put(UserColumns.ID , user.getId());
+        cv.put(UserColumns.ACCOUNT , user.getAccount());
+        cv.put(UserColumns.TYPE , user.getType());
+        cv.put(UserColumns.OWNER , user.getOwner());
+        cv.put(UserColumns.TIME , user.getTime());
+        cv.put(UserColumns.STATUS, user.getStatus());
+        cv.put(UserColumns.SCREEN_NAME, user.getScreenName());
+        cv.put(UserColumns.LOCATION, user.getLocation());
+        cv.put(UserColumns.GENDER, user.getGender());
+        cv.put(UserColumns.BIRTHDAY , user.getBirthday());
+        cv.put(UserColumns.DESCRIPTION , user.getDescription());
+        cv.put(UserColumns.PROFILE_IMAGE_URL , user.getProfileImageUrl());
+        cv.put(UserColumns.PROFILE_IMAGE_URL_LARGE , user.getProfileImageUrlLarge());
+        cv.put(UserColumns.URL , user.getUrl());
+        cv.put(UserColumns.FOLLOWERS_COUNT , user.getFollowersCount());
+        cv.put(UserColumns.FRIENDS_COUNT , user.getFriendsCount());
+        cv.put(UserColumns.FAVORITES_COUNT , user.getFavouritesCount());
+        cv.put(UserColumns.STATUSES_COUNT , user.getStatusesCount());
+        cv.put(UserColumns.FOLLOWING , user.getFollowing());
+        cv.put(UserColumns.PROTECTED , user.getProtect());
+        cv.put(UserColumns.NOTIFICATIONS , user.getNotifications());
+        cv.put(UserColumns.VERIFIED , user.getVerified());
+        cv.put(UserColumns.FOLLOW_ME , user.getFollowMe());
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.insert(UserColumns.TABLE_NAME , null , cv);
     }
 
     @Override
@@ -196,7 +278,6 @@ public class FanFouDB implements DataSource{
         cv.put(HomeStatusColumns.GEO, status.getGeo());
         cv.put(HomeStatusColumns.PHOTO, status.getPhoto());
 
-        cv.put(HomeStatusColumns.USER_RAWID, status.getUserRawid());
         cv.put(HomeStatusColumns.USER_ID, status.getUserId());
         cv.put(HomeStatusColumns.USER_SCREEN_NAME, status.getUserScreenName());
         cv.put(HomeStatusColumns.USER_PROFILE_IMAGE_URL, status.getUserProfileImageUrl());
@@ -244,7 +325,6 @@ public class FanFouDB implements DataSource{
 
             status.setGeo(DBUtil.parseString(c , HomeStatusColumns.GEO));
             status.setPhoto(DBUtil.parseString(c , HomeStatusColumns.PHOTO));
-            status.setUserRawid(DBUtil.parseLong(c , HomeStatusColumns.USER_RAWID));
             status.setUserId(DBUtil.parseString(c , HomeStatusColumns.USER_ID));
             status.setUserScreenName(DBUtil.parseString(c , HomeStatusColumns.USER_SCREEN_NAME));
             status.setUserProfileImageUrl(DBUtil.parseString(c , HomeStatusColumns.USER_PROFILE_IMAGE_URL));
@@ -291,7 +371,6 @@ public class FanFouDB implements DataSource{
 
                 status.setGeo(DBUtil.parseString(c , HomeStatusColumns.GEO));
                 status.setPhoto(DBUtil.parseString(c , HomeStatusColumns.PHOTO));
-                status.setUserRawid(DBUtil.parseLong(c , HomeStatusColumns.USER_RAWID));
                 status.setUserId(DBUtil.parseString(c , HomeStatusColumns.USER_ID));
                 status.setUserScreenName(DBUtil.parseString(c , HomeStatusColumns.USER_SCREEN_NAME));
                 status.setUserProfileImageUrl(DBUtil.parseString(c , HomeStatusColumns.USER_PROFILE_IMAGE_URL));

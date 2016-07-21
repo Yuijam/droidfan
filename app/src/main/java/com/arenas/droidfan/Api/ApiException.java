@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 /**
  * @author mcxiaoke

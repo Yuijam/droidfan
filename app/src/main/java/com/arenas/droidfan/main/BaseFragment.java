@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
@@ -34,6 +34,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     public static final String FILTER_HOMETIMELINE = "com.arenas.droidfan.HOMETIMELINE";
     public static final String FILTER_PUBLICTIMELINE = "com.arenas.droidfan.PUBLICTIMELINE";
     public static final String FILTER_PROFILETIMELINE = "com.arenas.droidfan.PROFILETIMELINE";
+    public static final String FILTER_USER = "com.arenas.droidfan.USER";
 
     private HomeTimelineContract.Presenter mPresenter;
 

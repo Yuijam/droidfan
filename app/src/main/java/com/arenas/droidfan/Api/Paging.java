@@ -1,4 +1,4 @@
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 import android.os.Parcel;
 import android.os.Parcelable;

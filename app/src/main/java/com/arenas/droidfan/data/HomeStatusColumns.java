@@ -21,7 +21,6 @@ public final class HomeStatusColumns extends StatusColumns{
             + GEO + " text, "
             + PHOTO + " text, "
 
-            + USER_RAWID + " integer not null, "
             + USER_ID + " text not null, "
             + USER_SCREEN_NAME + " text not null, "
             + USER_PROFILE_IMAGE_URL + " text not null, "

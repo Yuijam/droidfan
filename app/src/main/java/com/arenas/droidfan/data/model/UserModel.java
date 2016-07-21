@@ -8,13 +8,13 @@ public final class UserModel {
     public static final int TYPE_SPECIAL = 205;
 
     public static final String TAG = UserModel.class.getSimpleName();
+    private int _id;
     private String id;// id in string format
     private String account; // related account id/userid
     private String owner; // owner id of the item
 
-    private long rawid; // raw id in number format
     private long time; // created at of the item
-    private String name;
+    private int type;
     private String screenName;
     private String location;
     private String gender;
@@ -33,6 +33,14 @@ public final class UserModel {
     private int notifications;
     private int verified;
     private int followMe;
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
 
     public String getId() {
         return id;
@@ -58,14 +66,6 @@ public final class UserModel {
         this.owner = owner;
     }
 
-    public long getRawid() {
-        return rawid;
-    }
-
-    public void setRawid(long rawid) {
-        this.rawid = rawid;
-    }
-
     public long getTime() {
         return time;
     }
@@ -74,12 +74,12 @@ public final class UserModel {
         this.time = time;
     }
 
-    public String getName() {
-        return name;
+    public int getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getScreenName() {
@@ -194,20 +194,20 @@ public final class UserModel {
         this.following = following;
     }
 
-    public int getProtect() {
-        return protect;
-    }
-
-    public void setProtect(int protect) {
-        this.protect = protect;
-    }
-
     public int getNotifications() {
         return notifications;
     }
 
     public void setNotifications(int notifications) {
         this.notifications = notifications;
+    }
+
+    public int getProtect() {
+        return protect;
+    }
+
+    public void setProtect(int protect) {
+        this.protect = protect;
     }
 
     public int getVerified() {
@@ -228,7 +228,7 @@ public final class UserModel {
 
     @Override
     public String toString() {
-        return "UserModel [name=" + name + ", screenName=" + screenName
+        return "UserModel [ " + ", screenName=" + screenName
                 + ", location=" + location + ", gender=" + gender
                 + ", birthday=" + birthday + ", description=" + description
                 + ", profileImageUrl=" + profileImageUrl

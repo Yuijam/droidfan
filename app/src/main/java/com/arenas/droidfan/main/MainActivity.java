@@ -78,17 +78,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initNavHeader(View view){
-        SharedPreferences sp = getSharedPreferences(AccountStore.STORE_NAME , MODE_PRIVATE);
-        String url = sp.getString(AccountStore.KEY_PROFILE_IMAGE , null);
-
         RoundedImageView avatar = (RoundedImageView)view.findViewById(R.id.header_avatar);
         TextView screenNameView = (TextView)view.findViewById(R.id.screen_name);
         TextView userIdView = (TextView)view.findViewById(R.id.user_id);
 
-        Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder).into(avatar);
+        Picasso.with(this).load(AppContext.getAvatarUrl()).placeholder(R.drawable.ic_placeholder).into(avatar);
         screenNameView.setText(AppContext.getScreenName());
         userIdView.setText("@" + AppContext.getAccount());
-
     }
 
     @Override
@@ -124,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.profile) {
-            ProfileActivity.start(this);
+            ProfileActivity.start(this , AppContext.getAccount());
         } else if (id == R.id.nav_public_timeline) {
             PublicActivity.start(this);
         } else if (id == R.id.nav_slideshow) {

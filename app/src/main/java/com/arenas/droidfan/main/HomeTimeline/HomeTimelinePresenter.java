@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.arenas.droidfan.Api.Api;
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -106,11 +106,8 @@ final class FanFouApi implements Api {
 
     private UserModel fetchUser(String url, int type, Verb verb)
             throws ApiException {
-        Log.d(TAG , "fetchUser--->");
         RequestBuilder builder = RequestBuilder.newBuilder();
-        Log.d(TAG , "new requestBuilder---->");
         builder.url(makeUrl(url)).verb(verb).mode("lite");
-        Log.d(TAG , "builder.url---->");
         return mParser.user(fetch(builder), type, account);
     }
 
@@ -482,7 +479,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.friends
      */
-//    @Override
+    @Override
     public List<UserModel> getFriends(String id, Paging paging)
             throws ApiException {
         return fetchUsers("/users/friends", id, paging, UserModel.TYPE_FRIENDS);
@@ -493,7 +490,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.followers
      */
-//    @Override
+    @Override
     public List<UserModel> getFollowers(String id, Paging paging)
             throws ApiException {
         return fetchUsers("/users/followers", id, paging,
@@ -885,7 +882,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.recommendation
      */
-//    @Override
+    @Override
     public List<UserModel> getUserRecommendation(Paging paging)
             throws ApiException {
         return fetchUsers("/users/recommendation", paging, BaseModel.TYPE_NONE);
@@ -897,7 +894,7 @@ final class FanFouApi implements Api {
      * @see
      * https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.cancel-recommendation
      */
-//    @Override
+    @Override
     public UserModel ignoreUserRecommendation(String id) throws ApiException {
         checkNotEmpty(id);
         return fetchUser("/users/cancel_recommendation", id,
@@ -909,7 +906,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.tagged
      */
-//    @Override
+    @Override
     public List<UserModel> getUsersByTag(String tag, Paging paging)
             throws ApiException {
         checkNotEmpty(tag);
@@ -927,7 +924,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.tag-list
      */
-//    @Override
+    @Override
     public List<String> getUserTags(String id) throws ApiException {
         checkNotEmpty(id);
         RequestBuilder builder = RequestBuilder.newBuilder();
@@ -941,7 +938,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.show
      */
-//    @Override
+    @Override
     public UserModel showUser(String id) throws ApiException {
         checkNotEmpty(id);
         String url = String.format("/users/show/%s", utf8Encode(id));

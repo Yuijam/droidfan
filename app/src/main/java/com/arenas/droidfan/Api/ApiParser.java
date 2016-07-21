@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.Search;

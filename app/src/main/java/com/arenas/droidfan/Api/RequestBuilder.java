@@ -1,4 +1,4 @@
-package com.arenas.droidfan.Api;
+package com.arenas.droidfan.api;
 
 import android.text.TextUtils;
 import android.util.Log;

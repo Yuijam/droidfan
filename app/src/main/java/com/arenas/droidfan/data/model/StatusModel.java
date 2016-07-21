@@ -26,7 +26,6 @@ public class StatusModel {
     private String source; // source
     private String geo; // geo location info
     private String photo;// photo url or video url
-    private long userRawid; // user id
     private String userId; //
     private String userScreenName;
     private String userProfileImageUrl;
@@ -140,14 +139,6 @@ public class StatusModel {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public long getUserRawid() {
-        return userRawid;
-    }
-
-    public void setUserRawid(long userRawid) {
-        this.userRawid = userRawid;
     }
 
     public String getUserId() {
@@ -335,7 +326,6 @@ public class StatusModel {
         if (user != null) {
             this.userId = user.getId();
             this.userScreenName = user.getScreenName();
-            this.userRawid = user.getRawid();
             this.userProfileImageUrl = user.getProfileImageUrlLarge();
         }
     }
@@ -348,7 +338,6 @@ public class StatusModel {
                 ", source='" + source + '\'' +
                 ", geo='" + geo + '\'' +
                 ", photo='" + photo + '\'' +
-                ", userRawid=" + userRawid +
                 ", userId='" + userId + '\'' +
                 ", userScreenName='" + userScreenName + '\'' +
                 ", userProfileImageUrl='" + userProfileImageUrl + '\'' +

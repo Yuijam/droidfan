@@ -1,7 +1,7 @@
-package com.arenas.droidfan.Api.rest;
+package com.arenas.droidfan.api.rest;
 
 
-import com.arenas.droidfan.Api.ApiException;
+import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.data.model.StatusModel;
 
 public interface StatusMethods {

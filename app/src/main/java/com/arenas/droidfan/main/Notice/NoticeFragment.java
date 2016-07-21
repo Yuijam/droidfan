@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;

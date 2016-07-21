@@ -1,6 +1,8 @@
 package com.arenas.droidfan.data.db;
 
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.data.model.UserColumns;
+import com.arenas.droidfan.data.model.UserModel;
 
 import java.util.List;
 
@@ -16,6 +18,16 @@ public interface DataSource {
 
     interface GetStatusCallback{
         void onStatusLoaded(StatusModel statusModel);
+        void onDataNotAvailable();
+    }
+
+    interface GetUserCallback{
+        void onUserLoaded(UserModel userModel);
+        void onDataNotAvailable();
+    }
+
+    interface LoadUserCallback{
+        void onUsersLoaded(List<UserModel> userModelList);
         void onDataNotAvailable();
     }
 
@@ -52,4 +64,9 @@ public interface DataSource {
     void saveProfileStatus(StatusModel status);
 
     String getProfileSinceId();
+
+    void saveUser(UserModel user , int type );
+
+    void getUser(String id , GetUserCallback callback);
+
 }

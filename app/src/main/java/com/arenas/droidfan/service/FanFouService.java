@@ -3,16 +3,17 @@ package com.arenas.droidfan.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.AppBarLayout;
+import android.hardware.usb.UsbRequest;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.arenas.droidfan.Api.Api;
-import com.arenas.droidfan.Api.ApiException;
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.ApiException;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class FanFouService extends IntentService {
     public static final int MENTIONS = 8;
     public static final int PUBLIC = 9;
     public static final int PROFILE_TIMELINE = 10;
-
+    public static final int USER = 11;
 
 
     private FanFouDB mFanFouDB;
@@ -51,6 +52,13 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void getUser(Context context , String id ){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , USER);
+        intent.putExtra(EXTRA_USER_ID , id);
+        context.startService(intent);
     }
 
     public static void getProfileTimeline(Context context , Paging paging , String userId){
@@ -181,11 +189,23 @@ public class FanFouService extends IntentService {
                     mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
                     saveProfileStatus(mApi.getUserTimeline(userId , p));
                     break;
+                case USER:
+                    Log.d(TAG , "getUser------->");
+                    userId = intent.getStringExtra(EXTRA_USER_ID);
+                    mFilterAction = HomeTimelineFragment.FILTER_USER;
+                    Log.d(TAG , "getUser------->filteraction = " + mFilterAction);
+                    saveUser(mApi.showUser(userId));
+                    break;
+
             }
         }catch (ApiException e){
             e.toString();
         }
 
+    }
+
+    private void saveUser(UserModel user){
+        mFanFouDB.saveUser(user , 0);
     }
 
     private void saveProfileStatus(List<StatusModel> statusModels){
@@ -214,6 +234,7 @@ public class FanFouService extends IntentService {
 
     private void sendLocalBroadcast(String filterAction){
         Intent intent = new Intent(filterAction);
+        Log.d(TAG , "fileterAction = " + filterAction);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

@@ -24,8 +24,8 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
-import com.arenas.droidfan.Api.Api;
-import com.arenas.droidfan.Api.ApiException;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.UserModel;

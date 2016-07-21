@@ -3,7 +3,7 @@ package com.arenas.droidfan.main.HomeTimeline;
 import android.content.Context;
 import android.content.Intent;
 
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
 import com.arenas.droidfan.data.model.StatusModel;

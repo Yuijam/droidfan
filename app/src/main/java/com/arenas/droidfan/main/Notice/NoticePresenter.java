@@ -1,6 +1,6 @@
 package com.arenas.droidfan.main.Notice;
 
-import com.arenas.droidfan.Api.Paging;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;

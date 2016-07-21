@@ -1,7 +1,4 @@
-package com.arenas.droidfan.Api.rest;
-
-
-import java.util.List;
+package com.arenas.droidfan.api.rest;
 
 
 /**

@@ -17,7 +17,6 @@ public class StatusColumns {
     public static String TIME = "time"; // created at of the item
     public static final String GEO = "geo";
 
-    public static final String USER_RAWID = "user_rawid";
     public static final String USER_ID = "user_id";
     public static final String USER_SCREEN_NAME = "user_screen_name";
     public static final String USER_PROFILE_IMAGE_URL = "user_profile_image_url";

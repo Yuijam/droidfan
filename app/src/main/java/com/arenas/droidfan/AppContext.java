@@ -8,8 +8,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
-import com.arenas.droidfan.Api.Api;
-import com.arenas.droidfan.Api.ApiFactory;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.ApiFactory;
 import com.arenas.droidfan.config.AccountInfo;
 import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.model.UserModel;
@@ -126,6 +126,10 @@ public class AppContext extends Application {
 
     public static String getScreenName() {
         return accountInfo.getScreenName();
+    }
+
+    public static String getAvatarUrl(){
+        return accountInfo.getProfileImage();
     }
 
     public static Api getApi() {
