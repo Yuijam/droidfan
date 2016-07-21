@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 
 import com.arenas.droidfan.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class FavoriteFragment extends Fragment {
 
 

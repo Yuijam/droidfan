@@ -89,7 +89,6 @@ public class FanFouDB implements DataSource{
     @Override
     public void saveUser(UserModel user, int type) {
         ContentValues cv = new ContentValues();
-
         cv.put(UserColumns.ID , user.getId());
         cv.put(UserColumns.ACCOUNT , user.getAccount());
         cv.put(UserColumns.TYPE , user.getType());
@@ -115,7 +114,7 @@ public class FanFouDB implements DataSource{
         cv.put(UserColumns.FOLLOW_ME , user.getFollowMe());
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.insert(UserColumns.TABLE_NAME , null , cv);
+        db.replace(UserColumns.TABLE_NAME , null , cv);
     }
 
     @Override
@@ -304,7 +303,7 @@ public class FanFouDB implements DataSource{
         cv.put(HomeStatusColumns.SPECIAL, status.getSpecial());
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.insert(tableName , null , cv);
+        db.replaceOrThrow(tableName , null , cv);
     }
 
     private StatusModel getStatus(int _id , String tableName){
