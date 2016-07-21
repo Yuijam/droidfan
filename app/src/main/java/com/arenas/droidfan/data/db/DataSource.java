@@ -69,4 +69,12 @@ public interface DataSource {
 
     void getUser(String id , GetUserCallback callback);
 
+    void saveFavorites(StatusModel statusModel);
+
+    void getFavorite(int _id , GetStatusCallback callback);
+
+    void getFavoritesList(LoadStatusCallback callback);
+
+    String getFavoritesSinceId();
+
 }

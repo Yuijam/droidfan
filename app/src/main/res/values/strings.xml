@@ -27,6 +27,7 @@
     <string name="tab_home">主页</string>
     <string name="tab_notice">通知</string>
     <string name="tab_message">私信</string>
+    <string name="tab_status">消息</string>
     <string name="public_timeline">随便看看</string>
 
     <string name="title_activity_profile">ProfileActivity</string>

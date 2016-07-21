@@ -8,6 +8,7 @@ import android.hardware.usb.UsbRequest;
 import android.media.MediaRouter;
 import android.util.Log;
 
+import com.arenas.droidfan.data.FavoritesColumns;
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
@@ -41,6 +42,36 @@ public class FanFouDB implements DataSource{
             INSTANCE = new FanFouDB(context);
         }
         return INSTANCE;
+    }
+
+    @Override
+    public String getFavoritesSinceId() {
+        return getSinceId(FavoritesColumns.TABLE_NAME);
+    }
+
+    @Override
+    public void saveFavorites(StatusModel statusModel) {
+        saveStatus(FavoritesColumns.TABLE_NAME , statusModel);
+    }
+
+    @Override
+    public void getFavorite(int _id, GetStatusCallback callback) {
+        StatusModel statusModel = getStatus(_id , FavoritesColumns.TABLE_NAME);
+        if (statusModel != null){
+            callback.onStatusLoaded(statusModel);
+        }else {
+            callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
+    public void getFavoritesList(LoadStatusCallback callback) {
+        List<StatusModel> statusModelList = getStatusList(FavoritesColumns.TABLE_NAME);
+        if (statusModelList.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onStatusLoaded(statusModelList);
+        }
     }
 
     @Override

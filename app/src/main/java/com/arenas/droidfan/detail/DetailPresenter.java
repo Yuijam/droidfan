@@ -50,6 +50,9 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
             case DetailActivity.TYPE_PROFILE:
                 mFanFouDB.getProfileStatus(m_id , this);
                 break;
+            case DetailActivity.TYPE_FAVORITES:
+                mFanFouDB.getFavorite(m_id , this);
+                break;
         }
 
     }

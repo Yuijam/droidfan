@@ -7,7 +7,6 @@ import android.util.Log;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
-import com.arenas.droidfan.profile.ProfileStatus.ProfileContract;
 import com.arenas.droidfan.service.FanFouService;
 
 /**

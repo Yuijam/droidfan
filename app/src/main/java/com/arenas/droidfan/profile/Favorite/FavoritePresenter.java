@@ -1,17 +1,17 @@
-package com.arenas.droidfan.profile.ProfileStatus;
+package com.arenas.droidfan.profile.Favorite;
 
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
 
 /**
- * Created by Arenas on 2016/7/20.
+ * Created by Arenas on 2016/7/21.
  */
-public class ProfileStatusPresenter extends HomeTimelinePresenter {
+public class FavoritePresenter extends HomeTimelinePresenter {
 
-    public ProfileStatusPresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
+    public FavoritePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
         mView = view;
         mFanFouDB = fanFouDB;
         mApi = AppContext.getApi();
@@ -21,7 +21,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     public void loadStatus() {
-        mFanFouDB.getProfileStatusList(this);
+        mFanFouDB.getFavoritesList(this);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
             mView.startService(p);
 //            AppContext.setFirstLoad(false);
         }else {
-            p.sinceId = mFanFouDB.getProfileSinceId();
+            p.sinceId = mFanFouDB.getFavoritesSinceId();
             mView.startService(p);
         }
     }

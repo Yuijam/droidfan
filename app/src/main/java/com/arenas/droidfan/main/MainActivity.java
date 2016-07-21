@@ -1,6 +1,5 @@
 package com.arenas.droidfan.main;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -11,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
@@ -35,6 +34,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         initNavHeader(navigationView.getHeaderView(0));
-
+        Log.d(TAG , "onCreate------->");
         new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
         new NoticePresenter(FanFouDB.getInstance(this) , (NoticeFragment)fragmentAdapter.getItem(1));
     }
@@ -136,5 +137,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG , "onResume--------->");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG , "onDestroy()----------->");
     }
 }

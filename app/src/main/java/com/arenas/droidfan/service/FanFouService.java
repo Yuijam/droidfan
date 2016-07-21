@@ -3,7 +3,6 @@ package com.arenas.droidfan.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbRequest;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -44,6 +43,7 @@ public class FanFouService extends IntentService {
     public static final int PUBLIC = 9;
     public static final int PROFILE_TIMELINE = 10;
     public static final int USER = 11;
+    public static final int FAVORITES_LIST = 12;
 
 
     private FanFouDB mFanFouDB;
@@ -54,76 +54,91 @@ public class FanFouService extends IntentService {
         super("FanFouService");
     }
 
-    public static void getUser(Context context , String id ){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , USER);
-        intent.putExtra(EXTRA_USER_ID , id);
-        context.startService(intent);
+    public static void getFavoritesList(Context context , String userId , Paging paging){
+        start(context , FAVORITES_LIST , paging , null , userId , null);
+    }
+
+    public static void getUser(Context context , String userId ){
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , USER);
+//        intent.putExtra(EXTRA_USER_ID , id);
+//        context.startService(intent);
+
+        start(context , USER , null , null , userId , null);
     }
 
     public static void getProfileTimeline(Context context , Paging paging , String userId){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , PROFILE_TIMELINE);
-        intent.putExtra(EXTRA_PAGING , paging);
-        intent.putExtra(EXTRA_USER_ID , userId);
-        context.startService(intent);
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , PROFILE_TIMELINE);
+//        intent.putExtra(EXTRA_PAGING , paging);
+//        intent.putExtra(EXTRA_USER_ID , userId);
+//        context.startService(intent);
+
+        start(context , PROFILE_TIMELINE , paging , null , userId , null);
     }
 
-    public static void reply(Context context , String id , String statusText){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , REPLY);
-        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
-        intent.putExtra(EXTRA_MSG_ID , id);
-        context.startService(intent);
+    public static void reply(Context context , String msgId , String statusText){
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , REPLY);
+//        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
+//        intent.putExtra(EXTRA_MSG_ID , id);
+//        context.startService(intent);
+//
+        start(context , REPLY , null , msgId , null , statusText);
     }
 
-    public static void retweet(Context context , String id , String statusText){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , RETWEET);
-        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
-        intent.putExtra(EXTRA_MSG_ID , id);
-        context.startService(intent);
+    public static void retweet(Context context , String msgId , String statusText){
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , RETWEET);
+//        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
+//        intent.putExtra(EXTRA_MSG_ID , id);
+//        context.startService(intent);
+        start(context , RETWEET , null , msgId , null , statusText);
     }
 
     public static void newStatus(Context context , String statusText){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , UPDATE_STATUS);
-        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
-        context.startService(intent);
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , UPDATE_STATUS);
+//        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
+//        context.startService(intent);
+        start(context , UPDATE_STATUS , null , null , null , statusText);
     }
 
     public static void favorite(Context context , String msgId){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , FAVORITE);
-        intent.putExtra(EXTRA_MSG_ID , msgId);
-        context.startService(intent);
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , FAVORITE);
+//        intent.putExtra(EXTRA_MSG_ID , msgId);
+//        context.startService(intent);
+        start(context , FAVORITE , null , msgId , null , null);
     }
 
     public static void unfavorite(Context context , String msgId){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , UNFAVORITE);
-        intent.putExtra(EXTRA_MSG_ID , msgId);
-        context.startService(intent);
+//        Intent intent = new Intent(context , FanFouService.class);
+//        intent.putExtra(EXTRA_REQUEST , UNFAVORITE);
+//        intent.putExtra(EXTRA_MSG_ID , msgId);
+//        context.startService(intent);
+        start(context , UNFAVORITE , null , msgId , null , null);
     }
 
     public static void getMentions(Context context , Paging paging){
-        start(context , MENTIONS , paging);
+        start(context , MENTIONS , paging , null , null , null);
     }
 
     public static void getHomeTimeline(Context context , Paging paging){
-        start(context , HOME_TIMELINE , paging);
+        start(context , HOME_TIMELINE , paging , null , null , null);
     }
 
     public static void getPublicTimeline(Context context ){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , PUBLIC);
-        context.startService(intent);
+        start(context , PUBLIC , null , null , null , null);
     }
 
-    private static void start(Context context , int requestCode , Paging paging){
+    private static void start(Context context , int requestCode , Paging paging , String msgId , String userId ,String statusText){
         Intent intent = new Intent(context , FanFouService.class);
         intent.putExtra(EXTRA_REQUEST , requestCode);
         intent.putExtra(EXTRA_PAGING , paging);
+        intent.putExtra(EXTRA_MSG_ID , msgId);
+        intent.putExtra(EXTRA_USER_ID , userId);
+        intent.putExtra(EXTRA_STATUS_TEXT , statusText);
         context.startService(intent);
     }
 
@@ -174,7 +189,7 @@ public class FanFouService extends IntentService {
                     break;
                 case MENTIONS:
                     p = intent.getParcelableExtra(EXTRA_PAGING);
-                    saveMetions(mApi.getMentions(p));
+                    saveMentions(mApi.getMentions(p));
                     mFilterAction = HomeTimelineFragment.FILTER_HOMETIMELINE;
                     Log.d(TAG , "getMetions--------->");
                     break;
@@ -193,15 +208,26 @@ public class FanFouService extends IntentService {
                     Log.d(TAG , "getUser------->");
                     userId = intent.getStringExtra(EXTRA_USER_ID);
                     mFilterAction = HomeTimelineFragment.FILTER_USER;
-                    Log.d(TAG , "getUser------->filteraction = " + mFilterAction);
                     saveUser(mApi.showUser(userId));
                     break;
-
+                case FAVORITES_LIST:
+                    Log.d(TAG , "get favorites list-------->");
+                    userId = intent.getStringExtra(EXTRA_USER_ID);
+                    p = intent.getParcelableExtra(EXTRA_PAGING);
+                    mFilterAction = HomeTimelineFragment.FILTER_FAVORITES;
+                    saveFavoritesList(mApi.getFavorites(userId , p));
+                    break;
             }
         }catch (ApiException e){
             e.toString();
         }
 
+    }
+
+    private void saveFavoritesList(List<StatusModel> statusModels){
+        for (StatusModel s : statusModels){
+            mFanFouDB.saveFavorites(s);
+        }
     }
 
     private void saveUser(UserModel user){
@@ -220,7 +246,7 @@ public class FanFouService extends IntentService {
         }
     }
 
-    private void saveMetions(List<StatusModel> statusModels){
+    private void saveMentions(List<StatusModel> statusModels){
         for (StatusModel s : statusModels){
             mFanFouDB.saveNoticeStatus(s);
         }
@@ -234,7 +260,7 @@ public class FanFouService extends IntentService {
 
     private void sendLocalBroadcast(String filterAction){
         Intent intent = new Intent(filterAction);
-        Log.d(TAG , "fileterAction = " + filterAction);
+        Log.d(TAG , "filterAction = " + filterAction);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

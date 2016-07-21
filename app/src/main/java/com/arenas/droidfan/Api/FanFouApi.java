@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.6 2012.03.02
  */
 final class FanFouApi implements Api {
-    private static final String TAG = "API";
+    private static final String TAG = FanFouApi.class.getSimpleName();
     private static final String API_HOST = "http://api.fanfou.com";
     private static final String API_KEY = "07c986145614862c0c830074f6f22fc1";
     private static final String API_SECRET = "316b4269000b6b2cd4fd44cb184fc5b9";

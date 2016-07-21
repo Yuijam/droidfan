@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
 import com.arenas.droidfan.update.UpdateActivity;
 
+import java.util.IllegalFormatFlagsException;
 import java.util.List;
 
 /**
@@ -31,9 +34,12 @@ import java.util.List;
 public abstract class BaseFragment extends Fragment implements HomeTimelineContract.View ,
         View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
 
+    public static final String TAG = BaseFragment.class.getSimpleName();
+
     public static final String FILTER_HOMETIMELINE = "com.arenas.droidfan.HOMETIMELINE";
     public static final String FILTER_PUBLICTIMELINE = "com.arenas.droidfan.PUBLICTIMELINE";
     public static final String FILTER_PROFILETIMELINE = "com.arenas.droidfan.PROFILETIMELINE";
+    public static final String FILTER_FAVORITES = "com.arenas.droidfan.FAVORITES";
     public static final String FILTER_USER = "com.arenas.droidfan.USER";
 
     private HomeTimelineContract.Presenter mPresenter;
@@ -46,10 +52,6 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     protected StatusAdapter mAdapter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    public BaseFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void setPresenter(Object presenter) {
@@ -70,7 +72,6 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
-
         initAdapter();
     }
 
@@ -158,5 +159,17 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         if (!mSwipeRefreshLayout.isRefreshing()){
             mSwipeRefreshLayout.setRefreshing(true);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG , "onDestroyView-------->");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG , "onDetach---------->");
     }
 }
