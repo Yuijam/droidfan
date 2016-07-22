@@ -30,7 +30,7 @@ public class StatusUtils {
     private static final int COLOR_HIGHLIGHT = 0xFFFF6666;
     private static final Pattern PATTERN_HIGHLIGHT = Pattern.compile("<b>(\\w+?)</b>");
     private static final Pattern PATTERN_USER = Pattern.compile("(@.+?)\\s+", Pattern.MULTILINE);
-    private static final String SCHEME_USER = "fanfouapp://profile/";
+    private static final String SCHEME_USER = "droidfan://profile/";
     private static final Pattern PATTERN_SEARCH = Pattern.compile("#\\w+#");
     private static final Linkify.TransformFilter TRANSFORM_SEARCH = new Linkify.TransformFilter() {
         @Override
@@ -38,7 +38,7 @@ public class StatusUtils {
             return url.substring(1, url.length() - 1);
         }
     };
-    private static final String SCHEME_SEARCH = "fanfouapp://search/";
+    private static final String SCHEME_SEARCH = "droidfan://search/";
     private static final int LINK_COLOR = 0xff28a5c0;
     /**
      * 从消息中获取全部提到的人，将它们按先后顺序放入一个列表

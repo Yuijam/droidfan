@@ -29,6 +29,7 @@
     <string name="tab_message">私信</string>
     <string name="tab_status">消息</string>
     <string name="public_timeline">随便看看</string>
+    <string name="scheme_profile">droidfan</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

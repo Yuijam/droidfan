@@ -97,7 +97,6 @@ public class AppContext extends Application {
     }
 
     public static void updateAccessToken(Context context, OAuthToken token) {
-        Log.d(TAG , "updateAccessToken----------->");
         accountInfo.setAccessToken(token);
         api.setAccessToken(token);
         AccountStore store = new AccountStore(context);
@@ -185,7 +184,6 @@ public class AppContext extends Application {
 //    }
 
     private void initAccountInfo() {
-        Log.d(TAG , "initAccountInfo----->");
         AccountStore store = new AccountStore(this);
         accountInfo = store.read();
 

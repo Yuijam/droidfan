@@ -43,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     }
 
     private RoundedImageView mAvatar;
-    private TextView mUserId;
+    private TextView mUserIdView;
     private TextView mStatusCount;
     private TextView mFollowingCount;
     private TextView mFollowerCount;
@@ -55,13 +55,16 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     private ProfileContract.Presenter mPresenter;
 
+    private String mUserId;
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(AppContext.getScreenName());
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(AppContext.getScreenName());
+        setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -90,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mFollowerCount = (TextView)findViewById(R.id.follower);
         mFavoritesCount = (TextView)findViewById(R.id.favorites);
         mStatusCount = (TextView)findViewById(R.id.status_count);
-        mUserId = (TextView)findViewById(R.id.user_id);
+        mUserIdView = (TextView)findViewById(R.id.user_id);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(HomeTimelineFragment.FILTER_PROFILETIMELINE);
@@ -98,16 +101,25 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
-        mPresenter = new ProfilePresenter(FanFouDB.getInstance(this) , this , getIntent().getStringExtra(EXTRA_USER_ID) , this);
+        if (getIntent().hasExtra(EXTRA_USER_ID)){
+            mUserId = getIntent().getStringExtra(EXTRA_USER_ID);
+        }else {
+            mUserId = getIntent().getData().getPathSegments().get(0);
+        }
+        mPresenter = new ProfilePresenter(FanFouDB.getInstance(this) , this , mUserId , this);
 
-        new ProfileStatusPresenter(FanFouDB.getInstance(this) , (ProfileStatusFragment)fragmentAdapter.getItem(0));
-        new FavoritePresenter(FanFouDB.getInstance(this) , (FavoriteFragment)fragmentAdapter.getItem(2));
+        new ProfileStatusPresenter(FanFouDB.getInstance(this) , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
+        new FavoritePresenter(FanFouDB.getInstance(this) , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    public String getUserId(){
+        return mUserId;
     }
 
     class LocalReceiver extends BroadcastReceiver {
@@ -129,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showUserId(String userId) {
-        mUserId.setText(userId);
+        mUserIdView.setText(userId);
     }
 
     @Override
@@ -150,5 +162,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     @Override
     public void showStatusCount(int count) {
         mStatusCount.setText("消息数：" + count);
+    }
+
+    @Override
+    public void showTitle(String username) {
+        mToolbar.setTitle(username);
     }
 }

@@ -6,9 +6,9 @@ import android.content.Intent;
 import com.arenas.droidfan.BasePresenter;
 
 /**
- * Created by Arenas on 2016/7/21.
+ * Created by Arenas on 2016/7/22.
  */
-public interface ProfileContract {
+public class ProfileContract {
 
     interface View {
         void showAvatar(String url);
@@ -17,10 +17,11 @@ public interface ProfileContract {
         void showFollowerCount(int count);
         void showFavoriteCount(int count);
         void showStatusCount(int count);
+        void showTitle(String username);
         void showError();
     }
 
-    interface Presenter extends BasePresenter{
+    interface Presenter extends BasePresenter {
         void onReceive(Context context , Intent intent);
     }
 }

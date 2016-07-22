@@ -57,13 +57,13 @@ public interface DataSource {
 
     void updateFavorite(int id , int favorite);
 
-    void getProfileStatusList(LoadStatusCallback callback);
+    void getProfileStatusList(String owner , LoadStatusCallback callback);
 
     void getProfileStatus(int  _id , GetStatusCallback callback);
 
     void saveProfileStatus(StatusModel status);
 
-    String getProfileSinceId();
+    String getProfileSinceId(String owner);
 
     void saveUser(UserModel user , int type );
 
@@ -73,9 +73,9 @@ public interface DataSource {
 
     void getFavorite(int _id , GetStatusCallback callback);
 
-    void getFavoritesList(LoadStatusCallback callback);
+    void getFavoritesList(String owner , LoadStatusCallback callback);
 
-    String getFavoritesSinceId();
+    String getFavoritesSinceId(String owner);
 
     void deleteItem(String tableName , String msgId);
 }

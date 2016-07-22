@@ -60,12 +60,18 @@
             android:name=".profile.ProfileActivity"
             android:label="@string/title_activity_scrolling"
             android:parentActivityName=".main.MainActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arenas.droidfan.main.MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="@string/scheme_profile" />
+            </intent-filter>
         </activity>
     </application>
 

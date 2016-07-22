@@ -1,7 +1,5 @@
 package com.arenas.droidfan.profile.favorite;
 
-import android.util.Log;
-
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.FanFouDB;
@@ -15,29 +13,28 @@ public class FavoritePresenter extends HomeTimelinePresenter {
 
     private static final String TAG = FavoritePresenter.class.getSimpleName();
 
-    public FavoritePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
+    private String mUserId;
+
+    public FavoritePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view , String userId){
         mView = view;
         mFanFouDB = fanFouDB;
         mApi = AppContext.getApi();
+        mUserId = userId;
 
         mView.setPresenter(this);
     }
 
     @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
     public void loadStatus() {
-        mFanFouDB.getFavoritesList(this);
+        mFanFouDB.getFavoritesList(mUserId , this);
     }
 
     @Override
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-        p.sinceId = mFanFouDB.getFavoritesSinceId();
+        p.sinceId = mFanFouDB.getFavoritesSinceId(mUserId);
+        p.count = 20;
         mView.startService(p);
     }
 }

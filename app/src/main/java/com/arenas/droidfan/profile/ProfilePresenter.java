@@ -2,7 +2,6 @@ package com.arenas.droidfan.profile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
@@ -10,7 +9,7 @@ import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
 /**
- * Created by Arenas on 2016/7/21.
+ * Created by Arenas on 2016/7/22.
  */
 public class ProfilePresenter implements ProfileContract.Presenter , DataSource.GetUserCallback{
 
@@ -56,6 +55,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         mView.showFollowerCount(user.getFollowersCount());
         mView.showFollowingCount(user.getFriendsCount());
         mView.showStatusCount(user.getStatusesCount());
+        mView.showTitle(user.getScreenName());
     }
 
     @Override

@@ -50,8 +50,8 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public String getFavoritesSinceId() {
-        return getSinceId(FavoritesColumns.TABLE_NAME);
+    public String getFavoritesSinceId(String owner) {
+        return getSinceId(FavoritesColumns.TABLE_NAME , owner);
     }
 
     @Override
@@ -70,8 +70,8 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void getFavoritesList(LoadStatusCallback callback) {
-        List<StatusModel> statusModelList = getStatusList(FavoritesColumns.TABLE_NAME);
+    public void getFavoritesList(String owner , LoadStatusCallback callback) {
+        List<StatusModel> statusModelList = getStatusList(FavoritesColumns.TABLE_NAME , owner);
         if (statusModelList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -109,7 +109,6 @@ public class FanFouDB implements DataSource{
             user.setNotifications(DBUtil.parseInt(c , UserColumns.NOTIFICATIONS));
             user.setVerified(DBUtil.parseInt(c , UserColumns.VERIFIED));
             user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
-
         }
         c.close();
         if (user != null){
@@ -151,8 +150,8 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public String getProfileSinceId() {
-        return getSinceId(ProfileColumns.TABLE_NAME);
+    public String getProfileSinceId(String owner) {
+        return getSinceId(ProfileColumns.TABLE_NAME , owner);
     }
 
     @Override
@@ -161,8 +160,8 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void getProfileStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(ProfileColumns.TABLE_NAME);
+    public void getProfileStatusList(String owner , LoadStatusCallback callback) {
+        List<StatusModel> statusList = getStatusList(ProfileColumns.TABLE_NAME , owner);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -187,7 +186,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getPublicStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(PublicStatusColumns.TABLE_NAME);
+        List<StatusModel> statusList = getStatusList(PublicStatusColumns.TABLE_NAME , null);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -212,7 +211,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getNoticeStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(NoticeColumns.TABLE_NAME);
+        List<StatusModel> statusList = getStatusList(NoticeColumns.TABLE_NAME , null);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -260,21 +259,27 @@ public class FanFouDB implements DataSource{
 
     @Override
     public String getNoticeSinceId() {
-        return getSinceId(NoticeColumns.TABLE_NAME);
+        return getSinceId(NoticeColumns.TABLE_NAME , null);
     }
 
     @Override
     public String getHomeTLSinceId() {
-        return getSinceId(HomeStatusColumns.TABLE_NAME);
+        return getSinceId(HomeStatusColumns.TABLE_NAME , null);
     }
 
-    private String getSinceId(String tableName){
+    private String getSinceId(String tableName , String owner){
         String sinceId = null;
-        Cursor c = db.query(tableName , null ,null ,null , null , null ,null);
+        Cursor c;
+        if (owner == null){
+             c = db.query(tableName , null ,null ,null , null , null , null);
+        }else {
+            c = db.rawQuery("select * from " + tableName + " where owner = ?" , new String[]{owner});
+        }
         if (c.moveToFirst()){
             Log.d(TAG , "c.moveToFirst != 0 -----");
             sinceId = DBUtil.parseString(c , HomeStatusColumns.ID);
         }
+        Log.d(TAG , "sinceId = " + sinceId);
         c.close();
         return sinceId;
     }
@@ -286,7 +291,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getHomeTLStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(HomeStatusColumns.TABLE_NAME);
+        List<StatusModel> statusList = getStatusList(HomeStatusColumns.TABLE_NAME , null);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -381,11 +386,14 @@ public class FanFouDB implements DataSource{
         return status;
     }
 
-    private List<StatusModel> getStatusList(String tableName){
+    private List<StatusModel> getStatusList(String tableName , String owner){
         List<StatusModel> statusList = new ArrayList<>();
-
-        Cursor c = db.query(tableName , null , null , null , null , null , HomeStatusColumns.RAWID + " desc");
-
+        Cursor c ;
+        if (owner == null){
+            c = db.query(tableName , null , null , null , null , null , HomeStatusColumns.RAWID + " desc");
+        }else {
+            c = db.rawQuery("select * from " + tableName + " where owner = ? order by rawid desc" , new String[]{owner});
+        }
         if (c.moveToFirst()){
             do {
                 StatusModel status = new StatusModel();

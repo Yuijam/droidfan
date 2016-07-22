@@ -10,6 +10,7 @@ import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
 
@@ -72,8 +73,13 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        boolean hasNewData = intent.getBooleanExtra(FanFouService.EXTRA_HAS_NEW , false);
+        if (hasNewData){
+            loadStatus();
+        }else {
+            mView.showError();
+        }
         mView.hideRefreshBar();
-        loadStatus();
     }
 
 }

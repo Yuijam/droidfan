@@ -52,7 +52,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
 
     @Override
     public void startService(Paging p) {
-        FanFouService.getFavoritesList(getContext() , getActivity().getIntent().getStringExtra(ProfileActivity.EXTRA_USER_ID) , p);
+        FanFouService.getFavoritesList(getContext() , ((ProfileActivity)getActivity()).getUserId() , p);
     }
 
 }

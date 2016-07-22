@@ -160,7 +160,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     @Override
     public void showStatusText(String status) {
-        StatusUtils.setItemStatus(mStatusDetail , status);
+        StatusUtils.setStatus(mStatusDetail , status);
     }
 
     @Override

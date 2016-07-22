@@ -158,16 +158,4 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
             mSwipeRefreshLayout.setRefreshing(true);
         }
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG , "onDestroyView-------->");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(TAG , "onDetach---------->");
-    }
 }

@@ -11,24 +11,28 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
  */
 public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
-    public ProfileStatusPresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
+    private String mUserId;
+
+    public ProfileStatusPresenter(FanFouDB fanFouDB , HomeTimelineContract.View view , String userId){
         mView = view;
         mFanFouDB = fanFouDB;
         mApi = AppContext.getApi();
 
+        mUserId = userId;
         mView.setPresenter(this);
     }
 
     @Override
     public void loadStatus() {
-        mFanFouDB.getProfileStatusList(this);
+        mFanFouDB.getProfileStatusList(mUserId , this);
     }
 
     @Override
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-        p.sinceId = mFanFouDB.getProfileSinceId();
+        p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
+        p.count = 20;
         mView.startService(p);
     }
 }
