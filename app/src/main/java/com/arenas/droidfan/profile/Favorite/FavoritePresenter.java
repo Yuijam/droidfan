@@ -1,15 +1,19 @@
-package com.arenas.droidfan.profile.Favorite;
+package com.arenas.droidfan.profile.favorite;
+
+import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.FanFouDB;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
+import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 
 /**
  * Created by Arenas on 2016/7/21.
  */
 public class FavoritePresenter extends HomeTimelinePresenter {
+
+    private static final String TAG = FavoritePresenter.class.getSimpleName();
 
     public FavoritePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
         mView = view;
@@ -17,6 +21,11 @@ public class FavoritePresenter extends HomeTimelinePresenter {
         mApi = AppContext.getApi();
 
         mView.setPresenter(this);
+    }
+
+    @Override
+    public void start() {
+        super.start();
     }
 
     @Override
@@ -28,12 +37,7 @@ public class FavoritePresenter extends HomeTimelinePresenter {
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-        if (AppContext.isFirstLoad()){
-            mView.startService(p);
-//            AppContext.setFirstLoad(false);
-        }else {
-            p.sinceId = mFanFouDB.getFavoritesSinceId();
-            mView.startService(p);
-        }
+        p.sinceId = mFanFouDB.getFavoritesSinceId();
+        mView.startService(p);
     }
 }

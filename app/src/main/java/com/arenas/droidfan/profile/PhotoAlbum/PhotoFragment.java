@@ -1,4 +1,4 @@
-package com.arenas.droidfan.profile.PhotoAlbum;
+package com.arenas.droidfan.profile.photoalbum;
 
 
 import android.os.Bundle;

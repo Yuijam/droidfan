@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,10 +21,9 @@ import android.widget.Toast;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.update.UpdateActivity;
 
-import java.util.IllegalFormatFlagsException;
 import java.util.List;
 
 /**

@@ -2,9 +2,13 @@ package com.arenas.droidfan.detail;
 
 import android.content.Context;
 import android.database.CharArrayBuffer;
+import android.widget.Toast;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
+import com.arenas.droidfan.data.FavoritesColumns;
+import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -82,6 +86,9 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_black);
         }
+        if (mStatusModel.getUserId().equals(AppContext.getAccount())){
+            mView.showDelete();
+        }
     }
 
     @Override
@@ -95,11 +102,17 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     }
 
     @Override
+    public void delete(Context context) {
+        FanFouService.delete(context , mStatusModel.getId());
+    }
+
+    @Override
     public void favorite(Context context) {
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_grey);
             mFanFouDB.updateFavorite(m_id , 0 );
             FanFouService.unfavorite(context , mStatusModel.getId());
+            mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
             mIsFavorite = false;
         }else {
             mView.showFavorite(R.drawable.ic_favorite_black);

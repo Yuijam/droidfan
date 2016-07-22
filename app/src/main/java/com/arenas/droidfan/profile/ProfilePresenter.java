@@ -30,14 +30,12 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     private void fetchUser() {
-        Log.d(TAG , "fetchUser()---------->");
         FanFouService.getUser(mContext , mUserId);
     }
 
     @Override
     public void start() {
-        Log.d(TAG , "start()------");
-        fetchUser();
+        mFanFouDB.getUser(mUserId , this);
     }
 
     @Override
@@ -48,7 +46,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void onDataNotAvailable() {
-        mView.showError();
+        fetchUser();
     }
 
     private void initView(UserModel user){

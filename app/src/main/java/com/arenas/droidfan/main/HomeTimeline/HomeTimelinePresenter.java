@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.HomeTimeline;
+package com.arenas.droidfan.main.hometimeline;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +37,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void start() {
-        refresh();
+        loadStatus();
     }
 
     @Override
@@ -56,12 +56,8 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-        if (AppContext.isFirstLoad()){
-            mView.startService(p);
-        }else {
-            p.sinceId = mFanFouDB.getHomeTLSinceId();
-            mView.startService(p);
-        }
+        p.sinceId = mFanFouDB.getHomeTLSinceId();
+        mView.startService(p);
     }
 
     @Override
@@ -71,7 +67,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void onDataNotAvailable() {
-        mView.showError();
+        refresh();
     }
 
     @Override

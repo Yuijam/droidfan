@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.Public;
+package com.arenas.droidfan.main.publicstatus;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.StatusAdapter;
 import com.arenas.droidfan.service.FanFouService;
 

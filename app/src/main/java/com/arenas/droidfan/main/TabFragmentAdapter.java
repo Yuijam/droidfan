@@ -4,11 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
-import com.arenas.droidfan.main.Message.MessageFragment;
-import com.arenas.droidfan.main.Notice.NoticeFragment;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**

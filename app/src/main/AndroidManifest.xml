@@ -36,6 +36,7 @@
             android:name=".main.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".service.FanFouService" />
@@ -47,15 +48,20 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".detail.DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            />
         <activity
-            android:name=".main.Public.PublicActivity"
+            android:name=".main.publicstatus.PublicActivity"
             android:label="@string/public_timeline"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".profile.ProfileActivity"
             android:label="@string/title_activity_scrolling"
             android:parentActivityName=".main.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

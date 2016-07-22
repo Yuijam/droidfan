@@ -1,18 +1,16 @@
-package com.arenas.droidfan.profile.Favorite;
+package com.arenas.droidfan.profile.favorite;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.StatusAdapter;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;

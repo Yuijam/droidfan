@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.HomeTimeline;
+package com.arenas.droidfan.main.hometimeline;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

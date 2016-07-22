@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.Public;
+package com.arenas.droidfan.main.publicstatus;
 
 import android.content.Context;
 import android.content.Intent;

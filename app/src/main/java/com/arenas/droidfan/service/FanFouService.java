@@ -5,15 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.MonthDisplayHelper;
 
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.data.HomeStatusColumns;
+import com.arenas.droidfan.data.ProfileColumns;
+import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 
 import java.io.File;
 import java.util.List;
@@ -44,6 +48,7 @@ public class FanFouService extends IntentService {
     public static final int PROFILE_TIMELINE = 10;
     public static final int USER = 11;
     public static final int FAVORITES_LIST = 12;
+    public static final int DELETE = 13;
 
 
     private FanFouDB mFanFouDB;
@@ -52,6 +57,10 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void delete(Context context , String msgId){
+        start(context , DELETE , null , msgId , null , null);
     }
 
     public static void getFavoritesList(Context context , String userId , Paging paging){
@@ -216,6 +225,12 @@ public class FanFouService extends IntentService {
                     p = intent.getParcelableExtra(EXTRA_PAGING);
                     mFilterAction = HomeTimelineFragment.FILTER_FAVORITES;
                     saveFavoritesList(mApi.getFavorites(userId , p));
+                    break;
+                case DELETE:
+                    mId = intent.getStringExtra(EXTRA_MSG_ID);
+                    mFanFouDB.deleteItem(HomeStatusColumns.TABLE_NAME , mId);
+                    mFanFouDB.deleteItem(ProfileColumns.TABLE_NAME , mId);
+                    mApi.deleteStatus(mId);
                     break;
             }
         }catch (ApiException e){

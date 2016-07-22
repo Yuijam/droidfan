@@ -36,6 +36,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     private TextView mSource;
 
     private ImageView mFavorite;
+    private ImageView mDelete;
+    private ImageView mReply;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -80,8 +82,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         mAvatar = (ImageView)view.findViewById(R.id.iv_avatar);
         mPhoto = (ImageView)view.findViewById(R.id.photo);
 
-        ImageView reply = (ImageView)view.findViewById(R.id.reply);
-        reply.setOnClickListener(this);
+        mReply = (ImageView)view.findViewById(R.id.reply);
+        mReply.setOnClickListener(this);
         ImageView retweet = (ImageView) view.findViewById(R.id.retweet);
         retweet.setOnClickListener(this);
         mFavorite = (ImageView)view.findViewById(R.id.favorite);
@@ -90,6 +92,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         message.setOnClickListener(this);
         ImageView share = (ImageView)view.findViewById(R.id.share);
         share.setOnClickListener(this);
+        mDelete = (ImageView)view.findViewById(R.id.delete);
+        mDelete.setOnClickListener(this);
 
         setHasOptionsMenu(true);
     }
@@ -120,6 +124,10 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
             case R.id.favorite:
                 mPresenter.favorite(getContext());
                 break;
+            case R.id.delete:
+                mPresenter.delete(getContext());
+                getActivity().finish();
+                break;
         }
     }
     private void copyToClipBoard(Context context, String content) {
@@ -127,6 +135,12 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         ClipData clip = ClipData.newPlainText("text", content);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(context , "已复制到剪切板" , Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showDelete() {
+        mDelete.setVisibility(View.VISIBLE);
+        mReply.setVisibility(View.GONE);
     }
 
     @Override

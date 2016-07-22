@@ -1,9 +1,9 @@
-package com.arenas.droidfan.main.Public;
+package com.arenas.droidfan.main.publicstatus;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
+import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 
 /**
  * Created by Arenas on 2016/7/18.

@@ -1,10 +1,10 @@
-package com.arenas.droidfan.main.Notice;
+package com.arenas.droidfan.main.notice;
 
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
+import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 
 /**
  * Created by Arenas on 2016/7/18.
@@ -29,12 +29,7 @@ public class NoticePresenter extends HomeTimelinePresenter {
     public void refresh() {
         mView.showRefreshBar();
         Paging p = new Paging();
-        if (AppContext.isFirstLoad()){
-            mView.startService(p);
-//            AppContext.setFirstLoad(false);
-        }else {
-            p.sinceId = mFanFouDB.getNoticeSinceId();
-            mView.startService(p);
-        }
+        p.sinceId = mFanFouDB.getNoticeSinceId();
+        mView.startService(p);
     }
 }

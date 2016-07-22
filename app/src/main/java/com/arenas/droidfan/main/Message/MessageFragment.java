@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.Message;
+package com.arenas.droidfan.main.message;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

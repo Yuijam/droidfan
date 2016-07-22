@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.arenas.droidfan.BasePresenter;
-import com.arenas.droidfan.BaseView;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineContract;
 
 /**
  * Created by Arenas on 2016/7/21.

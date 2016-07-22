@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,18 +18,17 @@ import android.widget.Toast;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.db.FanFouDB;
-import com.arenas.droidfan.main.HomeTimeline.HomeTimelineFragment;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.TabFragmentAdapter;
-import com.arenas.droidfan.profile.Favorite.FavoriteFragment;
-import com.arenas.droidfan.profile.Favorite.FavoritePresenter;
-import com.arenas.droidfan.profile.PhotoAlbum.PhotoFragment;
-import com.arenas.droidfan.profile.ProfileStatus.ProfileStatusFragment;
-import com.arenas.droidfan.profile.ProfileStatus.ProfileStatusPresenter;
+import com.arenas.droidfan.profile.favorite.FavoriteFragment;
+import com.arenas.droidfan.profile.favorite.FavoritePresenter;
+import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
+import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
+import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.IllegalFormatFlagsException;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View{
@@ -56,8 +54,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private LocalReceiver mLocalReceiver;
 
     private ProfileContract.Presenter mPresenter;
-
-    private boolean isFirstLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,17 +102,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         new ProfileStatusPresenter(FanFouDB.getInstance(this) , (ProfileStatusFragment)fragmentAdapter.getItem(0));
         new FavoritePresenter(FanFouDB.getInstance(this) , (FavoriteFragment)fragmentAdapter.getItem(2));
-
-        isFirstLoad = true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isFirstLoad){
-            mPresenter.start();
-            isFirstLoad = false;
-        }
+        mPresenter.start();
     }
 
     class LocalReceiver extends BroadcastReceiver {

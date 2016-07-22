@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.Notice;
+package com.arenas.droidfan.main.notice;
 
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;

@@ -45,6 +45,11 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void deleteItem(String tableName, String msgId) {
+        db.delete(tableName , "id = ?", new String[]{msgId});
+    }
+
+    @Override
     public String getFavoritesSinceId() {
         return getSinceId(FavoritesColumns.TABLE_NAME);
     }
@@ -78,8 +83,7 @@ public class FanFouDB implements DataSource{
     public void getUser(String id, GetUserCallback callback) {
         UserModel user = null;
         Cursor c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{id});
-        if (c != null){
-            c.moveToFirst();
+        if (c.moveToFirst()){
             user = new UserModel();
             user.setId(DBUtil.parseString(c , UserColumns.ID));
             user.setAccount(DBUtil.parseString(c , UserColumns.ACCOUNT));
@@ -107,9 +111,7 @@ public class FanFouDB implements DataSource{
             user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
 
         }
-        if (c != null){
-            c.close();
-        }
+        c.close();
         if (user != null){
             callback.onUserLoaded(user);
         }else {
@@ -269,13 +271,11 @@ public class FanFouDB implements DataSource{
     private String getSinceId(String tableName){
         String sinceId = null;
         Cursor c = db.query(tableName , null ,null ,null , null , null ,null);
-        if (c != null){
-            c.moveToFirst();
+        if (c.moveToFirst()){
+            Log.d(TAG , "c.moveToFirst != 0 -----");
             sinceId = DBUtil.parseString(c , HomeStatusColumns.ID);
         }
-        if (c != null){
-            c.close();
-        }
+        c.close();
         return sinceId;
     }
 

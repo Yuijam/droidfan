@@ -22,11 +22,13 @@ public interface DetailContract {
         void showPhoto(String url);
         void showError();
         void showFavorite(int resId);
+        void showDelete();
     }
 
     interface Presenter extends BasePresenter{
         void reply(Context context);
         void retweet(Context context);
         void favorite(Context context);
+        void delete(Context context);
     }
 }

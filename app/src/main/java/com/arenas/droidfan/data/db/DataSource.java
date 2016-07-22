@@ -77,4 +77,5 @@ public interface DataSource {
 
     String getFavoritesSinceId();
 
+    void deleteItem(String tableName , String msgId);
 }
