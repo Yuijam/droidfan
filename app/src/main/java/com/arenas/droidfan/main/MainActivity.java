@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         ViewPager viewPager = (ViewPager)findViewById(R.id.view_pager);
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         List<String> tabList = new ArrayList<>();
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         initNavHeader(navigationView.getHeaderView(0));
-        Log.d(TAG , "onCreate------->");
         new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
         new NoticePresenter(FanFouDB.getInstance(this) , (NoticeFragment)fragmentAdapter.getItem(1));
     }

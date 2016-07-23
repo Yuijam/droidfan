@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
+import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -40,7 +41,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     @Override
     public void onBindViewHolder(final StatusViewHolder holder, int position) {
         holder.mUsername.setText(mStatusList.get(position).getUserScreenName());
-        holder.mStatusText.setText(Utils.handleSimpleText(mContext , mStatusList.get(position).getSimpleText() ));
+        StatusUtils.setItemStatus(holder.mStatusText , mStatusList.get(position).getSimpleText());
         String avatarUrl = mStatusList.get(position).getUserProfileImageUrl();
         Picasso.with(mContext).load(avatarUrl).placeholder(R.drawable.ic_placeholder).into(holder.mAvatar);
         holder.mTime.setText(DateTimeUtils.getInterval(mStatusList.get(position).getTime()));

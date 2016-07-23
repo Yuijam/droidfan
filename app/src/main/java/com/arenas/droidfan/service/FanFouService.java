@@ -21,6 +21,7 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
  * Created by Arenas on 2016/7/10.
@@ -28,16 +29,22 @@ import java.util.List;
 public class FanFouService extends IntentService {
 
     private static final String TAG = FanFouService.class.getSimpleName();
-
+    //intent extra
     public static final String EXTRA_REQUEST = "extra_fanfou";
     public static final String EXTRA_PAGING = "extra_paging";
     public static final String EXTRA_STATUS_TEXT = "extra_status_text";
     public static final String EXTRA_PHOTO = "extra_photo";
     public static final String EXTRA_MSG_ID = "extra_msg_id";
     public static final String EXTRA_USER_ID = "extra_user_id";
+    public static final String EXTRA_USER_A = "extra_user_a";
+    public static final String EXTRA_USER_B = "extra_user_b";
 
+
+    public static final String EXTRA_IS_FRIEND = "extra_user_is_friend";
     public static final String EXTRA_HAS_NEW = "extra_has_new";
+    public static final String EXTRA_SUCCESS = "extra_has_success";
 
+    //requestCode
     public static final int HOME_TIMELINE = 1;
     public static final int UPDATE_STATUS = 2;
     public static final int UPLOAD_PHOTO = 3;
@@ -51,6 +58,9 @@ public class FanFouService extends IntentService {
     public static final int USER = 11;
     public static final int FAVORITES_LIST = 12;
     public static final int DELETE = 13;
+    public static final int IS_FRIEND = 14;
+    public static final int FOLLOW = 15;
+    public static final int UNFOLLOW = 16;
 
 
     private FanFouDB mFanFouDB;
@@ -58,9 +68,27 @@ public class FanFouService extends IntentService {
     private String mFilterAction;
 
     private boolean mHasNewData;
+    private boolean mIsFriend;
+    private boolean mSuccess;
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void unfollow(Context context , String userId){
+        start(context , UNFOLLOW , null , null , userId , null);
+    }
+
+    public static void follow(Context context , String userId){
+        start(context , FOLLOW , null , null , userId , null);
+    }
+
+    public static void isFriend(Context context , String userA , String userB){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , IS_FRIEND);
+        intent.putExtra(EXTRA_USER_A , userA);
+        intent.putExtra(EXTRA_USER_B , userB);
+        context.startService(intent);
     }
 
     public static void delete(Context context , String msgId){
@@ -111,7 +139,8 @@ public class FanFouService extends IntentService {
         start(context , PUBLIC , null , null , null , null);
     }
 
-    private static void start(Context context , int requestCode , Paging paging , String msgId , String userId ,String statusText){
+    private static void start(Context context , int requestCode , Paging paging , String msgId ,
+                              String userId ,String statusText ){
         Intent intent = new Intent(context , FanFouService.class);
         intent.putExtra(EXTRA_REQUEST , requestCode);
         intent.putExtra(EXTRA_PAGING , paging);
@@ -128,6 +157,8 @@ public class FanFouService extends IntentService {
         String mId;
         Paging p;
         String userId;
+        String userA;
+        String userB;
         mFanFouDB = FanFouDB.getInstance(this);
         try {
             switch (request){
@@ -222,6 +253,21 @@ public class FanFouService extends IntentService {
                     mFanFouDB.deleteItem(ProfileColumns.TABLE_NAME , mId);
                     mApi.deleteStatus(mId);
                     break;
+                case IS_FRIEND:
+                    userA = intent.getStringExtra(EXTRA_USER_A);
+                    userB = intent.getStringExtra(EXTRA_USER_B);
+                    mIsFriend = mApi.isFriends(userA , userB);
+                    break;
+                case FOLLOW:
+                    userId = intent.getStringExtra(EXTRA_USER_ID);
+                    saveUser(mApi.follow(userId));
+                    mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
+                    break;
+                case UNFOLLOW:
+                    userId = intent.getStringExtra(EXTRA_USER_ID);
+                    saveUser(mApi.unfollow(userId));
+                    mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
+                    break;
             }
         }catch (ApiException e){
             e.toString();
@@ -269,6 +315,8 @@ public class FanFouService extends IntentService {
         Log.d(TAG , "filterAction = " + filterAction);
 
         intent.putExtra(EXTRA_HAS_NEW , mHasNewData);
+        intent.putExtra(EXTRA_IS_FRIEND , mIsFriend);
+        intent.putExtra(EXTRA_SUCCESS , mSuccess);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

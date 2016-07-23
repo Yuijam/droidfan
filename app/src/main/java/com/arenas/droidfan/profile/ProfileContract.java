@@ -19,9 +19,17 @@ public class ProfileContract {
         void showStatusCount(int count);
         void showTitle(String username);
         void showError();
+        void showLocation(String text);
+        void showBirthday(String text);
+        void showFollowMe(String text);
+        void showProgress();
+        void hideProgress();
+        void showFoButton();
+        void showIsFollowing(String text);
     }
 
     interface Presenter extends BasePresenter {
         void onReceive(Context context , Intent intent);
+        void follow();
     }
 }

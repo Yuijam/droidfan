@@ -451,7 +451,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friends.ids
      */
-//    @Override
+    @Override
     public List<String> getFriendsIDs(String id, Paging paging)
             throws ApiException {
         checkNotEmpty(id);
@@ -465,7 +465,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/followers.ids
      */
-//    @Override
+    @Override
     public List<String> getFollowersIDs(String id, Paging paging)
             throws ApiException {
         checkNotEmpty(id);
@@ -502,7 +502,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.create
      */
-//    @Override
+    @Override
     public UserModel follow(String id) throws ApiException {
         checkNotEmpty(id);
         String url = String.format("/friendships/create/%s", utf8Encode(id));
@@ -514,7 +514,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.destroy
      */
-//    @Override
+    @Override
     public UserModel unfollow(String id) throws ApiException {
         checkNotEmpty(id);
         String url = String.format("/friendships/destroy/%s", utf8Encode(id));
@@ -526,7 +526,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.requests
      */
-//    @Override
+    @Override
     public List<String> friendshipsRequests(Paging paging) throws ApiException {
         RequestBuilder builder = new RequestBuilder();
         builder.url(makeUrl("/blocks/ids")).paging(paging);
@@ -539,7 +539,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.accept
      */
-//    @Override
+    @Override
     public UserModel acceptFriendshipsRequest(String id) throws ApiException {
         checkNotEmpty(id);
         return fetchUser("/friendships/accept", id, BaseModel.TYPE_NONE,
@@ -551,7 +551,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.deny
      */
-//    @Override
+    @Override
     public UserModel denyFriendshipsRequest(String id) throws ApiException {
         checkNotEmpty(id);
         return fetchUser("/friendships/deny", id, BaseModel.TYPE_NONE,
@@ -563,7 +563,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.exists
      */
-//    @Override
+    @Override
     public boolean isFriends(String userA, String userB) throws ApiException {
         checkNotEmpty(userA);
         checkNotEmpty(userB);
@@ -580,7 +580,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/friendships.show
      */
-//    @Override
+    @Override
     public BitSet friendshipsShow(String source, String target)
             throws ApiException {
         checkNotEmpty(source);

@@ -9,9 +9,17 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,13 +33,16 @@ import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity implements ProfileContract.View{
+public class ProfileActivity extends AppCompatActivity implements ProfileContract.View
+        , View.OnClickListener {
 
     public static final String TAG = ProfileActivity.class.getSimpleName();
     public static final String EXTRA_USER_ID = "extra_user_id";
@@ -48,6 +59,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private TextView mFollowingCount;
     private TextView mFollowerCount;
     private TextView mFavoritesCount;
+    private TextView mUsername;
+    private Button mFollow;
+    private TextView mFollowMe;
+    private TextView mLocation;
+    private TextView mBirthday;
+    private ProgressBar mProgressBar;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -94,6 +111,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mFavoritesCount = (TextView)findViewById(R.id.favorites);
         mStatusCount = (TextView)findViewById(R.id.status_count);
         mUserIdView = (TextView)findViewById(R.id.user_id);
+        mUsername = (TextView)findViewById(R.id.tv_username);
+        mFollow = (Button)findViewById(R.id.fo_and_unfo);
+        mLocation = (TextView)findViewById(R.id.tv_location);
+        mFollowMe = (TextView)findViewById(R.id.follow_me);
+        mBirthday = (TextView)findViewById(R.id.tv_birthday);
+        mFollow.setOnClickListener(this);
+        mProgressBar = (ProgressBar)findViewById(R.id.profile_progress);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(HomeTimelineFragment.FILTER_PROFILETIMELINE);
@@ -116,6 +140,15 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fo_and_unfo:
+                mPresenter.follow();
+                break;
+        }
     }
 
     public String getUserId(){
@@ -156,7 +189,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showFavoriteCount(int count) {
-        mFavoritesCount.setText("收藏数:" + count);
+        mFavoritesCount.setText("收藏数：" + count);
     }
 
     @Override
@@ -166,7 +199,41 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showTitle(String username) {
-        Log.d(TAG , "username = " + username);
-        mToolbar.setTitle(username);
+        mUsername.setText(username);
+    }
+
+    @Override
+    public void showLocation(String text) {
+        mLocation.setText(text);
+    }
+
+    @Override
+    public void showBirthday(String text) {
+        mBirthday.setText(text);
+    }
+
+    @Override
+    public void showFollowMe(String text) {
+        mFollowMe.setText(text);
+    }
+
+    @Override
+    public void showProgress() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showFoButton() {
+        mFollow.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showIsFollowing(String text) {
+        mFollow.setText(text);
     }
 }

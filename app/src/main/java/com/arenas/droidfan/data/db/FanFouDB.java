@@ -144,7 +144,6 @@ public class FanFouDB implements DataSource{
         cv.put(UserColumns.NOTIFICATIONS , user.getNotifications());
         cv.put(UserColumns.VERIFIED , user.getVerified());
         cv.put(UserColumns.FOLLOW_ME , user.getFollowMe());
-
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.replace(UserColumns.TABLE_NAME , null , cv);
     }
