@@ -34,13 +34,17 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void start() {
-        mFanFouDB.getUser(mUserId , this);
+        loadUser();
     }
 
     @Override
     public void onUserLoaded(UserModel userModel) {
         mUser = userModel;
         initView(userModel);
+    }
+
+    private void loadUser(){
+        mFanFouDB.getUser(mUserId , this);
     }
 
     @Override
@@ -60,6 +64,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mFanFouDB.getUser(mUserId , this);
+        loadUser();
     }
 }

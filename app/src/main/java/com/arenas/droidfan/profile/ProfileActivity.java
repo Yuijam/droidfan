@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle(AppContext.getScreenName());
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -166,6 +166,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showTitle(String username) {
+        Log.d(TAG , "username = " + username);
         mToolbar.setTitle(username);
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
@@ -19,10 +20,13 @@ import java.util.ArrayList;
 
 public class ProfileStatusFragment extends HomeTimelineFragment {
 
+    private String userId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profilestatus_list, container, false);
+        userId = ((ProfileActivity)getActivity()).getUserId();
         init(view);
         return view;
     }
@@ -52,6 +56,15 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     @Override
     public void startService(Paging p) {
-        FanFouService.getProfileTimeline(getContext() , p , ((ProfileActivity)getActivity()).getUserId());
+        FanFouService.getProfileTimeline(getContext() , p , userId);
+    }
+
+    @Override
+    public void showError() {
+        if (userId.equals(AppContext.getAccount())){
+            Toast.makeText(getContext() , getString(R.string.error_no_status) , Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(getContext() , getString(R.string.error_protected) , Toast.LENGTH_SHORT).show();
+        }
     }
 }

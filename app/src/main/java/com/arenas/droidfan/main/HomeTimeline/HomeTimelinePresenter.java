@@ -81,5 +81,4 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         }
         mView.hideRefreshBar();
     }
-
 }

@@ -30,6 +30,8 @@
     <string name="tab_status">消息</string>
     <string name="public_timeline">随便看看</string>
     <string name="scheme_profile">droidfan</string>
+    <string name="error_protected">只向关注TA的人公开消息</string>
+    <string name="error_no_status">没有消息</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
