@@ -14,6 +14,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -57,6 +58,10 @@ public class Utils {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameId,fragment);
         transaction.commit();
+    }
+
+    public static void showToast(Context context , String text){
+        Toast.makeText(context , text , Toast.LENGTH_SHORT).show();
     }
 
     public static SpannableStringBuilder handleTextWithColor(String text , Context context){

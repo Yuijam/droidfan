@@ -31,5 +31,7 @@ public class ProfileContract {
     interface Presenter extends BasePresenter {
         void onReceive(Context context , Intent intent);
         void follow();
+        void showFollower();
+        void showFollowing();
     }
 }

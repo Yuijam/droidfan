@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.hardware.usb.UsbRequest;
-import android.media.MediaRouter;
 import android.util.Log;
 
 import com.arenas.droidfan.data.FavoritesColumns;
@@ -13,7 +11,6 @@ import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
-import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
@@ -115,6 +112,53 @@ public class FanFouDB implements DataSource{
             callback.onUserLoaded(user);
         }else {
             callback.onDataNotAvailable();
+        }
+    }
+    @Override
+    public void getUsers(List<String> ids , LoadUserCallback callback){
+        UserModel user = null;
+        List<UserModel> users = new ArrayList<>();
+        int i = 0;
+        Cursor c = null;
+        while (i < ids.size()){
+            c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{ids.get(i++)});
+
+            if (c.moveToFirst()){
+                user = new UserModel();
+                user.setId(DBUtil.parseString(c , UserColumns.ID));
+                user.setAccount(DBUtil.parseString(c , UserColumns.ACCOUNT));
+                user.setOwner(DBUtil.parseString(c , UserColumns.OWNER));
+                user.setType(DBUtil.parseInt(c , UserColumns.TYPE));
+                user.setTime(DBUtil.parseLong(c , UserColumns.TIME));
+                user.setScreenName(DBUtil.parseString(c , UserColumns.SCREEN_NAME));
+                user.setLocation(DBUtil.parseString(c , UserColumns.LOCATION));
+                user.setGender(DBUtil.parseString(c , UserColumns.GENDER));
+
+                user.setBirthday(DBUtil.parseString(c , UserColumns.BIRTHDAY));
+                user.setDescription(DBUtil.parseString(c , UserColumns.DESCRIPTION));
+                user.setProfileImageUrl(DBUtil.parseString(c , UserColumns.PROFILE_IMAGE_URL));
+                user.setProfileImageUrlLarge(DBUtil.parseString(c , UserColumns.PROFILE_IMAGE_URL_LARGE));
+                user.setUrl(DBUtil.parseString(c , UserColumns.URL));
+                user.setStatus(DBUtil.parseString(c , UserColumns.STATUS));
+                user.setFollowersCount(DBUtil.parseInt(c , UserColumns.FOLLOWERS_COUNT));
+                user.setFriendsCount(DBUtil.parseInt(c , UserColumns.FRIENDS_COUNT));
+                user.setFavouritesCount(DBUtil.parseInt(c , UserColumns.FAVORITES_COUNT));
+                user.setStatusesCount(DBUtil.parseInt(c , UserColumns.STATUSES_COUNT));
+                user.setFollowing(DBUtil.parseInt(c , UserColumns.FOLLOWING));
+                user.setProtect(DBUtil.parseInt(c , UserColumns.PROTECTED));
+                user.setNotifications(DBUtil.parseInt(c , UserColumns.NOTIFICATIONS));
+                user.setVerified(DBUtil.parseInt(c , UserColumns.VERIFIED));
+                user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
+            }
+            users.add(user);
+        }
+        if (c != null){
+            c.close();
+        }
+        if (users.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onUsersLoaded(users);
         }
     }
 

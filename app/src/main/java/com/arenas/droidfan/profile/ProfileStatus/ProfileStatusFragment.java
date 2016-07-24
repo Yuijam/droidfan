@@ -9,7 +9,9 @@ import android.widget.Toast;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.StatusAdapter;
@@ -57,14 +59,5 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
     @Override
     public void startService(Paging p) {
         FanFouService.getProfileTimeline(getContext() , p , userId);
-    }
-
-    @Override
-    public void showError() {
-        if (userId.equals(AppContext.getAccount())){
-            Toast.makeText(getContext() , getString(R.string.error_no_status) , Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getContext() , getString(R.string.error_protected) , Toast.LENGTH_SHORT).show();
-        }
     }
 }

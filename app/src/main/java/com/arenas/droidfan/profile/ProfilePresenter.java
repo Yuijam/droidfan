@@ -92,7 +92,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     private boolean isFollowing(){
-        return mUser.getFollowing() != 0;
+        return mUser.getFollowing() == 1;
     }
 
     private String getLocation(){
@@ -122,5 +122,15 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         }else {
             FanFouService.follow(mContext , mUserId);
         }
+    }
+
+    @Override
+    public void showFollower() {
+
+    }
+
+    @Override
+    public void showFollowing() {
+
     }
 }

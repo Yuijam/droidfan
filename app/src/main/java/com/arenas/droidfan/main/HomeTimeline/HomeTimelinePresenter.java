@@ -66,7 +66,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         mView.showUpdateStatusUi();
     }
 
-    @Override
     public void onDataNotAvailable() {
         refresh();
     }
@@ -77,7 +76,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         if (hasNewData){
             loadStatus();
         }else {
-            mView.showError();
+            mView.showError("hometimeline something wrong!");
         }
         mView.hideRefreshBar();
     }

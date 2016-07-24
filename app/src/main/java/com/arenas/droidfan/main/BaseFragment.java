@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -131,8 +132,8 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     @Override
-    public void showError() {
-        Toast.makeText(getContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+    public void showError(String error) {
+        Utils.showToast(getContext() , error);
     }
 
     @Override

@@ -51,4 +51,5 @@ public class HomeTimelineFragment extends BaseFragment{
     public void startService(Paging p) {
         FanFouService.getHomeTimeline(getContext() , p);
     }
+
 }

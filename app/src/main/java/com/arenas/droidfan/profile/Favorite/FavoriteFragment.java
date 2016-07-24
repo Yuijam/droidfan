@@ -61,7 +61,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
     }
 
     @Override
-    public void showError() {
+    public void showError(String error) {
         if (userId.equals(AppContext.getAccount())){
             Toast.makeText(getContext() , getString(R.string.error_no_status) , Toast.LENGTH_SHORT).show();
         }else {

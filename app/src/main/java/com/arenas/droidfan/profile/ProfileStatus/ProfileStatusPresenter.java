@@ -2,16 +2,22 @@ package com.arenas.droidfan.profile.profilestatus;
 
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 
 /**
  * Created by Arenas on 2016/7/20.
  */
-public class ProfileStatusPresenter extends HomeTimelinePresenter {
+public class ProfileStatusPresenter extends HomeTimelinePresenter implements DataSource.GetUserCallback{
 
     private String mUserId;
+    private UserModel mUser;
+
+    public ProfileStatusPresenter() {
+    }
 
     public ProfileStatusPresenter(FanFouDB fanFouDB , HomeTimelineContract.View view , String userId){
         mView = view;
@@ -22,9 +28,13 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
         mView.setPresenter(this);
     }
 
+    private void loadUser(){
+        mFanFouDB.getUser(mUserId , this);
+    }
+
     @Override
     public void loadStatus() {
-        mFanFouDB.getProfileStatusList(mUserId , this);
+        loadUser();
     }
 
     @Override
@@ -34,5 +44,23 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
         p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
         p.count = 20;
         mView.startService(p);
+    }
+
+    @Override
+    public void onUserLoaded(UserModel userModel) {
+        mUser = userModel;
+        if (isProtected() && !isFollowing()){
+            mView.showError("只向关注TA的人公开消息");
+            return;
+        }
+        mFanFouDB.getProfileStatusList(mUserId , this);
+    }
+
+    protected boolean isFollowing(){
+        return mUser.getFollowing() == 1;
+    }
+
+    protected boolean isProtected(){
+        return mUser.getProtect() == 1 ;
     }
 }

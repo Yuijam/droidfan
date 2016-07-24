@@ -69,6 +69,8 @@ public interface DataSource {
 
     void getUser(String id , GetUserCallback callback);
 
+    void getUsers(List<String> ids , LoadUserCallback callback);
+
     void saveFavorites(StatusModel statusModel);
 
     void getFavorite(int _id , GetStatusCallback callback);
@@ -78,4 +80,5 @@ public interface DataSource {
     String getFavoritesSinceId(String owner);
 
     void deleteItem(String tableName , String msgId);
+
 }

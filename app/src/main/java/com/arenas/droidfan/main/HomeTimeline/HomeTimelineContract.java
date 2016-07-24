@@ -18,7 +18,7 @@ public interface HomeTimelineContract {
     interface View extends BaseView{
         void showStatus(List<StatusModel> status);
         void startService(Paging p);
-        void showError();
+        void showError(String error);
         void showUpdateStatusUi();
         void hideRefreshBar();
         void showRefreshBar();
