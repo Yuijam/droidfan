@@ -4,17 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.arenas.droidfan.api.Paging;
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
-import com.arenas.droidfan.main.StatusAdapter;
+import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;
 

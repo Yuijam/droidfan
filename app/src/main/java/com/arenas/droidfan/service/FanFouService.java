@@ -41,6 +41,7 @@ public class FanFouService extends IntentService {
     public static final String EXTRA_IS_FRIEND = "extra_user_is_friend";
     public static final String EXTRA_HAS_NEW = "extra_has_new";
     public static final String EXTRA_SUCCESS = "extra_has_success";
+    public static final String EXTRA_IDS = "extra_has_ids";
 
     //requestCode
     public static final int HOME_TIMELINE = 1;
@@ -64,6 +65,8 @@ public class FanFouService extends IntentService {
     public static final int FOLLOWING_IDS = 19;
     public static final int FOLLOWERS_IDS = 20;
 
+    //filter
+    public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
@@ -269,18 +272,22 @@ public class FanFouService extends IntentService {
                     break;
                 case FOLLOWERS:
                     saveUserList(mApi.getFollowers(userId , p));
+                    mFilterAction = FILTER_USERS;
                     // TODO: 2016/7/23  filter
                     break;
                 case FOLLOWING:
                     saveUserList(mApi.getFriends(userId , p));
+                    mFilterAction = FILTER_USERS;
                     //// TODO: 2016/7/23
                     break;
                 case FOLLOWERS_IDS:
                     userIds = mApi.getFollowersIDs(userId , p);
+                    mFilterAction = FILTER_USERS;
                     // TODO: 2016/7/24 filter
                     break;
                 case FOLLOWING_IDS:
                     userIds = mApi.getFriendsIDs(userId , p);
+                    mFilterAction = FILTER_USERS;
                     // TODO: 2016/7/24 filter
                     break;
 
@@ -338,6 +345,7 @@ public class FanFouService extends IntentService {
         intent.putExtra(EXTRA_HAS_NEW , mHasNewData);
         intent.putExtra(EXTRA_IS_FRIEND , mIsFriend);
         intent.putExtra(EXTRA_SUCCESS , mSuccess);
+        intent.putStringArrayListExtra(EXTRA_IDS , (ArrayList<String>)userIds);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

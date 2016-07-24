@@ -12,13 +12,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -146,6 +145,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     public void onRefresh() {
         mPresenter.refresh();
     }
+
 
     @Override
     public void hideRefreshBar() {

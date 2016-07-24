@@ -33,6 +33,8 @@ public class UserListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // TODO: 2016/7/24  new presenter()
     }
 
 }

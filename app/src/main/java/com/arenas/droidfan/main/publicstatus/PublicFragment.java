@@ -12,7 +12,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
-import com.arenas.droidfan.main.StatusAdapter;
+import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
