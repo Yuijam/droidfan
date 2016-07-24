@@ -2,6 +2,7 @@ package com.arenas.droidfan.users;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
@@ -9,12 +10,15 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Arenas on 2016/7/23.
  */
 public class UserPresenter implements UserContract.Presenter , DataSource.LoadUserCallback{
+
+    private static final String TAG = UserPresenter.class.getSimpleName();
 
     private String mUserId;
     private UserContract.View mView;
@@ -67,6 +71,7 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
 
     @Override
     public void onUsersLoaded(List<UserModel> userModelList) {
+        mView.hideProgressbar();
         mView.showUsers(userModelList);
     }
 
@@ -78,9 +83,12 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
     @Override
     public void onReceive(Context context, Intent intent) {
          mIds = intent.getStringArrayListExtra(FanFouService.EXTRA_IDS);
-        if (mIds.isEmpty()){
+        if (mIds == null){
             fetchUserIds();
         }else {
+            for (int i = 0 ; i < mIds.size() ; i ++){
+                Log.d(TAG , "mids = " + mIds.get(i));
+            }
             loadUsers();
         }
     }

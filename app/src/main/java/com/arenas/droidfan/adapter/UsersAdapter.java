@@ -2,6 +2,7 @@ package com.arenas.droidfan.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     @Override
     public void onBindViewHolder(final UserViewHolder holder, int position) {
         holder.username.setText(mUsersList.get(position).getScreenName());
-        holder.userId.setText(mUsersList.get(position).getAccount());
+        holder.userId.setText(mUsersList.get(position).getId());
+        String text = mUsersList.get(position).getDescription();
+//        if (TextUtils.isEmpty(text)){
+//            holder.description.setVisibility(View.GONE);
+//        }else {
+            holder.description.setText(text);
+//        }
         String avatarUrl = mUsersList.get(position).getProfileImageUrlLarge();
         Picasso.with(mContext).load(avatarUrl).into(holder.avatar);
 

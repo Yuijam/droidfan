@@ -9,32 +9,23 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.db.FanFouDB;
-import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.TabFragmentAdapter;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.profile.favorite.FavoriteFragment;
 import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
-import com.aspsine.swipetoloadlayout.OnRefreshListener;
-import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -105,19 +96,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        mAvatar = (RoundedImageView)findViewById(R.id.iv_avatar);
-        mFollowingCount = (TextView)findViewById(R.id.following);
-        mFollowerCount = (TextView)findViewById(R.id.follower);
-        mFavoritesCount = (TextView)findViewById(R.id.favorites);
-        mStatusCount = (TextView)findViewById(R.id.status_count);
-        mUserIdView = (TextView)findViewById(R.id.user_id);
-        mUsername = (TextView)findViewById(R.id.tv_username);
-        mFollow = (Button)findViewById(R.id.fo_and_unfo);
-        mLocation = (TextView)findViewById(R.id.tv_location);
-        mFollowMe = (TextView)findViewById(R.id.follow_me);
-        mBirthday = (TextView)findViewById(R.id.tv_birthday);
-        mFollow.setOnClickListener(this);
-        mProgressBar = (ProgressBar)findViewById(R.id.profile_progress);
+        initView();
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(HomeTimelineFragment.FILTER_PROFILETIMELINE);
@@ -136,6 +115,25 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         new FavoritePresenter(FanFouDB.getInstance(this) , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
     }
 
+    private void initView(){
+        mAvatar = (RoundedImageView)findViewById(R.id.iv_avatar);
+        mFollowingCount = (TextView)findViewById(R.id.following);
+        mFollowingCount.setOnClickListener(this);
+        mFollowerCount = (TextView)findViewById(R.id.follower);
+        mFollowerCount.setOnClickListener(this);
+
+        mFavoritesCount = (TextView)findViewById(R.id.favorites);
+        mStatusCount = (TextView)findViewById(R.id.status_count);
+        mUserIdView = (TextView)findViewById(R.id.user_id);
+        mUsername = (TextView)findViewById(R.id.tv_username);
+        mFollow = (Button)findViewById(R.id.fo_and_unfo);
+        mLocation = (TextView)findViewById(R.id.tv_location);
+        mFollowMe = (TextView)findViewById(R.id.follow_me);
+        mBirthday = (TextView)findViewById(R.id.tv_birthday);
+        mFollow.setOnClickListener(this);
+        mProgressBar = (ProgressBar)findViewById(R.id.profile_progress);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -147,6 +145,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         switch (view.getId()){
             case R.id.fo_and_unfo:
                 mPresenter.follow();
+                break;
+            case R.id.follower:
+                mPresenter.showFollower();
+                break;
+            case R.id.following:
+                mPresenter.showFollowing();
                 break;
         }
     }

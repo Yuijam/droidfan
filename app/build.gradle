@@ -38,5 +38,4 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.android.support:recyclerview-v7:24.0.0'
-    compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.3'
 }

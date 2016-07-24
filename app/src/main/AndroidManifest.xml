@@ -60,6 +60,7 @@
             android:label="@string/title_activity_scrolling"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

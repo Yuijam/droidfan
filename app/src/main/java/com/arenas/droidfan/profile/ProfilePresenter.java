@@ -10,6 +10,8 @@ import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
+import com.arenas.droidfan.update.UpdateActivity;
+import com.arenas.droidfan.users.UserListActivity;
 
 /**
  * Created by Arenas on 2016/7/22.
@@ -126,11 +128,11 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void showFollower() {
-
+        UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWERS);
     }
 
     @Override
     public void showFollowing() {
-
+        UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWING);
     }
 }

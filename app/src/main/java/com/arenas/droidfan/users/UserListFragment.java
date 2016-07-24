@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.menu.MenuView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +39,9 @@ public class UserListFragment extends Fragment implements UserContract.View{
     private LocalReceiver mLocalReceiver;
 
     private UsersAdapter mAdapter;
+
+    private SwipeRefreshLayout mSwipeRefresh;
+    private Toolbar mToolbar;
 
     public UserListFragment() {
 
@@ -75,7 +82,18 @@ public class UserListFragment extends Fragment implements UserContract.View{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_list, container, false);
+        initView(view);
+        return view;
+    }
+
+    private void initView(View view){
+        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(mAdapter);
+
+        mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
+        mToolbar = (Toolbar)view.findViewById(R.id.toolbar);
     }
 
     @Override
@@ -85,22 +103,22 @@ public class UserListFragment extends Fragment implements UserContract.View{
 
     @Override
     public void showTitle(String title) {
-
+        mToolbar.setTitle(title);
     }
 
     @Override
     public void showProgressbar() {
-
+        mSwipeRefresh.setRefreshing(true);
     }
 
     @Override
     public void hideProgressbar() {
-
+        mSwipeRefresh.setRefreshing(false);
     }
 
     @Override
     public void showUsers(List<UserModel> users) {
-
+        mAdapter.replaceData(users);
     }
 
     @Override
