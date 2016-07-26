@@ -29,5 +29,9 @@ public interface ChatContract {
     interface Presenter extends BasePresenter{
 
         void onReceive(Context context , Intent intent);
+
+        void refresh();
+
+        void send(String text);
     }
 }

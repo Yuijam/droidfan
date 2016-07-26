@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
@@ -29,7 +31,7 @@ import java.util.List;
  * Created by Arenas on 2016/7/26.
  */
 public class ChatFragment extends Fragment implements ChatContract.View
-        , SwipeRefreshLayout.OnRefreshListener{
+        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
     private static final String TAG = ChatFragment.class.getSimpleName();
 
@@ -43,6 +45,9 @@ public class ChatFragment extends Fragment implements ChatContract.View
     private LocalBroadcastManager mLocalBroadcastManager;
     private LocalReceiver mLocalReceiver;
     private RecyclerView mRecyclerView;
+
+    private EditText mInputText;
+    private Toolbar toolbar;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -83,6 +88,22 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
+
+        mInputText = (EditText)view.findViewById(R.id.input_text);
+        Button send = (Button)view.findViewById(R.id.send);
+        send.setOnClickListener(this);
+
+        toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.send:
+                mPresenter.send(mInputText.getText().toString());
+                mInputText.setText("");
+                break;
+        }
     }
 
     @Override
@@ -115,12 +136,13 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     @Override
     public void onRefresh() {
-
+        mPresenter.refresh();
     }
 
     @Override
     public void showTitle(String title) {
-        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle(title);
+        if (toolbar != null){
+            toolbar.setTitle(title);
+        }
     }
 }

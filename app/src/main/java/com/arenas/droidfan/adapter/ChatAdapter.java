@@ -42,10 +42,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         String senderName = model.getSenderScreenName();
         if (senderName.equals(AppContext.getScreenName())){
             holder.leftLayout.setVisibility(View.GONE);
+            holder.rightLayout.setVisibility(View.VISIBLE);
             holder.rightText.setText(model.getText());
             Picasso.with(mContext).load(model.getSenderProfileImageUrl()).into(holder.rightAvatar);
         }else {
             holder.rightLayout.setVisibility(View.GONE);
+            holder.leftLayout.setVisibility(View.VISIBLE);
             holder.leftText.setText(model.getText());
             Picasso.with(mContext).load(model.getSenderProfileImageUrl()).into(holder.leftAvatar);
         }

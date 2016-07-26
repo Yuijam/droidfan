@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.arenas.droidfan.AppContext;
@@ -97,6 +99,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
+
 
     }
 

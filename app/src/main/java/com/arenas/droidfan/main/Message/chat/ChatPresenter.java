@@ -78,4 +78,13 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         loadDM();
     }
 
+    @Override
+    public void refresh() {
+        fetchData();
+    }
+
+    @Override
+    public void send(String text) {
+        FanFouService.sendDM(mContext , AppContext.getAccount() , "6627741" , text);
+    }
 }

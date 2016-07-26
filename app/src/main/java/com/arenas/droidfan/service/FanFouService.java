@@ -37,6 +37,7 @@ public class FanFouService extends IntentService {
     public static final String EXTRA_USER_ID = "extra_user_id";
     public static final String EXTRA_USER_A = "extra_user_a";
     public static final String EXTRA_USER_B = "extra_user_b";
+    public static final String EXTRA_DM_TEXT = "extra_dm_text";
 
     public static final String EXTRA_IS_FRIEND = "extra_user_is_friend";
     public static final String EXTRA_HAS_NEW = "extra_has_new";
@@ -62,9 +63,9 @@ public class FanFouService extends IntentService {
     public static final int UNFOLLOW = 16;
     public static final int FOLLOWERS = 17;
     public static final int FOLLOWING = 18;
-    public static final int DM = 19;
     public static final int CONVERSATION_LIST = 20;
     public static final int CONVERSATION = 21;
+    public static final int SEND_DM = 22;
 
     //filter
     public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
@@ -81,6 +82,15 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void sendDM(Context context , String senderId , String recipientId , String text){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(EXTRA_REQUEST , SEND_DM);
+        intent.putExtra(EXTRA_USER_A , senderId);
+        intent.putExtra(EXTRA_USER_B , recipientId);
+        intent.putExtra(EXTRA_DM_TEXT , text);
+        context.startService(intent);
     }
 
     public static void getConversationList(Context context , Paging paging ){
@@ -183,6 +193,7 @@ public class FanFouService extends IntentService {
         String userB = intent.getStringExtra(EXTRA_USER_B);
         String userId = intent.getStringExtra(EXTRA_USER_ID);
         Paging p = intent.getParcelableExtra(EXTRA_PAGING);
+        String message = intent.getStringExtra(EXTRA_DM_TEXT);
         mFanFouDB = FanFouDB.getInstance(this);
         try {
             switch (request){
@@ -287,6 +298,10 @@ public class FanFouService extends IntentService {
                 case CONVERSATION_LIST:
                     mFanFouDB.saveDirectMessages(mApi.getConversationList(p));
                     mFilterAction = FILTER_CONVERSATION_LIST;
+                    break;
+                case SEND_DM:
+                    mFanFouDB.saveDirectMessage(mApi.createDirectmessage(userA , message , userB));
+                    mFilterAction = FILTER_CONVERSATION;
                     break;
             }
         }catch (ApiException e){
