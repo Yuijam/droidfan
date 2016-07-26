@@ -101,4 +101,6 @@ public interface DataSource {
     void saveDirectMessages(List<DirectMessageModel> dms);
 
     void getConversationList(LoadDMCallback callback);
+
+    void getConversation(String userId , LoadDMCallback callback);
 }

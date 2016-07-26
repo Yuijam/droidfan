@@ -64,10 +64,12 @@ public class FanFouService extends IntentService {
     public static final int FOLLOWING = 18;
     public static final int DM = 19;
     public static final int CONVERSATION_LIST = 20;
+    public static final int CONVERSATION = 21;
 
     //filter
     public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
-    public static final String FILTER_DM = "com.arenas.droidfan.DM";
+    public static final String FILTER_CONVERSATION_LIST = "com.arenas.droidfan.CONVERSATION_LIST";
+    public static final String FILTER_CONVERSATION = "com.arenas.droidfan.CONVERSATION";
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
@@ -86,7 +88,7 @@ public class FanFouService extends IntentService {
     }
 
     public static void getConversation(Context context , Paging paging , String userId){
-        start(context , DM , paging , null , userId , null);
+        start(context , CONVERSATION , paging , null , userId , null);
     }
 
     public static void getFollowing(Context context , String userId){
@@ -277,14 +279,14 @@ public class FanFouService extends IntentService {
                     mFanFouDB.saveFollowing(mApi.getFriends(userId , p) , userId);
                     mFilterAction = FILTER_USERS;
                     break;
-                case DM:
+                case CONVERSATION:
                     Log.d(TAG , "userId = " + userId);
                     mFanFouDB.saveDirectMessages(mApi.getConversation(userId , p));
-                    mFilterAction = FILTER_DM;
+                    mFilterAction = FILTER_CONVERSATION;
                     break;
                 case CONVERSATION_LIST:
                     mFanFouDB.saveDirectMessages(mApi.getConversationList(p));
-                    mFilterAction = FILTER_DM;
+                    mFilterAction = FILTER_CONVERSATION_LIST;
                     break;
             }
         }catch (ApiException e){

@@ -88,7 +88,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         notifyDataSetChanged();
     }
 
-    public DirectMessageModel getUser(int position){
+    public DirectMessageModel getDM(int position){
         return mMessage.get(position);
     }
 

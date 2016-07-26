@@ -46,6 +46,19 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void getConversation(String userId, LoadDMCallback callback) {
+        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
+        + DirectMessageColumns.TYPE + " = ? and " + DirectMessageColumns.CONVERSATION_ID + " = ? "
+        + " order by rawid " , new String[]{String.valueOf(DirectMessageModel.TYPE_OUTBOX) , userId} );
+        List<DirectMessageModel> models = getDM(cursor);
+        if (models.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onDMLoaded(models);
+        }
+    }
+
+    @Override
     public void getConversationList(LoadDMCallback callback) {
         Cursor c = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
         + DirectMessageColumns.TYPE + " = " + DirectMessageModel.TYPE_CONVERSATION_LIST , null);

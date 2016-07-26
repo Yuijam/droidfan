@@ -1,4 +1,4 @@
-package com.arenas.droidfan.main.message;
+package com.arenas.droidfan.main.message.chat;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,44 +11,42 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.ChatAdapter;
-import com.arenas.droidfan.adapter.ConversationListAdapter;
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.DirectMessageModel;
-import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Arenas on 2016/6/23.
+ * Created by Arenas on 2016/7/26.
  */
-public class MessageFragment extends Fragment implements MessageContract.View
+public class ChatFragment extends Fragment implements ChatContract.View
         , SwipeRefreshLayout.OnRefreshListener{
 
-    private String TAG = MessageFragment.class.getSimpleName();
+    private static final String TAG = ChatFragment.class.getSimpleName();
+
+    private ChatContract.Presenter mPresenter;
+
+    private SwipeRefreshLayout mSwipeRefresh;
+
+    private ChatAdapter mAdapter;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
     private LocalReceiver mLocalReceiver;
-
-    private MessageContract.Presenter mPresenter;
-    private ConversationListAdapter mAdapter;
-
-    private SwipeRefreshLayout mSwipeRefresh;
+    private RecyclerView mRecyclerView;
 
     @Override
     public void setPresenter(Object presenter) {
-        mPresenter = (MessageContract.Presenter)presenter;
+        mPresenter = (ChatContract.Presenter)presenter;
     }
 
     @Override
@@ -57,52 +55,45 @@ public class MessageFragment extends Fragment implements MessageContract.View
         mPresenter.start();
     }
 
-    ConversationListAdapter.OnItemClickListener listener = new ConversationListAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            String conversationId = mAdapter.getDM(position).getConversationId();
-            ChatActivity.start(getContext() , conversationId);
-        }
-
-        @Override
-        public void onItemLongClick(int id, int position) {
-
-        }
-    };
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_CONVERSATION_LIST);
+        mIntentFilter.addAction(FanFouService.FILTER_CONVERSATION);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
-        mAdapter = new ConversationListAdapter(getContext() , new ArrayList<DirectMessageModel>() , listener);
+        mAdapter = new ChatAdapter(getContext() , new ArrayList<DirectMessageModel>() , null);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_message , container , false);
-        initView(view);
+        View view = inflater.inflate(R.layout.fragment_chat , container , false);
+        init(view);
         return view;
     }
 
-    private void initView(View view){
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(mAdapter);
+    private void init(View view){
+
+        mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
-
     }
 
     @Override
-    public void onRefresh() {
-        mPresenter.refresh();
+    public void showChatItems(List<DirectMessageModel> models) {
+        mAdapter.replaceData(models);
+        mRecyclerView.smoothScrollToPosition(models.size());
+    }
+
+    @Override
+    public void showError(String text) {
+        Utils.showToast(getContext() , text);
     }
 
     @Override
@@ -123,12 +114,13 @@ public class MessageFragment extends Fragment implements MessageContract.View
     }
 
     @Override
-    public void showError(String text) {
-        Utils.showToast(getContext() , text);
+    public void onRefresh() {
+
     }
 
     @Override
-    public void showList(List<DirectMessageModel> models) {
-        mAdapter.replaceData(models);
+    public void showTitle(String title) {
+        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(title);
     }
 }

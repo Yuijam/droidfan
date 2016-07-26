@@ -234,7 +234,7 @@ final class FanFouParser implements ApiParser {
     @Override
     public List<DirectMessageModel> directMessageConversation(String response,
                                                               String userId) throws ApiException {
-        List<DirectMessageModel> dms = new ArrayList<DirectMessageModel>();
+        List<DirectMessageModel> dms = new ArrayList<>();
         try {
             JSONArray array = new JSONArray(response);
             for (int i = 0; i < array.length(); i++) {

@@ -1,10 +1,11 @@
-package com.arenas.droidfan.main.message;
+package com.arenas.droidfan.main.message.chat;
 
 import android.content.Context;
 import android.content.Intent;
 
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
+import com.arenas.droidfan.adapter.ConversationListAdapter;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 
 import java.util.List;
@@ -12,17 +13,21 @@ import java.util.List;
 /**
  * Created by Arenas on 2016/7/26.
  */
-public interface MessageContract {
+public interface ChatContract {
     interface View extends BaseView{
-        void showProgressbar();
-        void hideProgressbar();
+        void showChatItems(List<DirectMessageModel> models);
+
         void showError(String text);
-        void showList(List<DirectMessageModel> models);
+
+        void showProgressbar();
+
+        void hideProgressbar();
+
+        void showTitle(String title);
     }
 
     interface Presenter extends BasePresenter{
-        void refresh();
+
         void onReceive(Context context , Intent intent);
-//        void openConversation( )
     }
 }
