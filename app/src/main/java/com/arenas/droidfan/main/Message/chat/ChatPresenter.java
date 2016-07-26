@@ -2,8 +2,10 @@ package com.arenas.droidfan.main.message.chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
@@ -76,6 +78,7 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     public void onReceive(Context context, Intent intent) {
         mIsFirstFetch = false;
         loadDM();
+        mView.emptyInput();
     }
 
     @Override
@@ -85,6 +88,15 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
 
     @Override
     public void send(String text) {
+        if (TextUtils.isEmpty(text)){
+            mView.showError(mContext.getString(R.string.text_should_not_empty));
+            return;
+        }
+        if (text.length() > 140){
+            mView.showError(mContext.getString(R.string.text_too_more));
+            return;
+        }
         FanFouService.sendDM(mContext , mUserId , null , text);
     }
+
 }

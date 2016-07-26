@@ -22,10 +22,10 @@ import java.util.List;
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.MessageViewHolder> {
 
     private List<DirectMessageModel> mMessage;
-    private OnItemClickListener mListener;
+    private MyOnItemClickListener mListener;
     private Context mContext;
 
-    public ConversationListAdapter(Context context , List<DirectMessageModel> message , OnItemClickListener Listener) {
+    public ConversationListAdapter(Context context , List<DirectMessageModel> message , MyOnItemClickListener Listener) {
         this.mMessage = message;
         this.mListener = Listener;
         mContext = context;
@@ -106,8 +106,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         }
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(View view , int position);
-        void onItemLongClick(int id , int position);
-    }
+//    public interface OnItemClickListener{
+//        void onItemClick(View view , int position);
+//        void onItemLongClick(int id , int position);
+//    }
 }

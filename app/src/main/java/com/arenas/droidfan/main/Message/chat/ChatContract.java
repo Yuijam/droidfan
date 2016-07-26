@@ -24,6 +24,8 @@ public interface ChatContract {
         void hideProgressbar();
 
         void showTitle(String title);
+
+        void emptyInput();
     }
 
     interface Presenter extends BasePresenter{

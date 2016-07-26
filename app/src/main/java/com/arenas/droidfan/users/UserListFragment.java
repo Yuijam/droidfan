@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.UsersAdapter;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
@@ -44,7 +45,7 @@ public class UserListFragment extends Fragment implements UserContract.View
 
     }
 
-    UsersAdapter.OnItemClickListener Listener = new UsersAdapter.OnItemClickListener() {
+    MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view , int position) {
             // TODO: 2016/7/24

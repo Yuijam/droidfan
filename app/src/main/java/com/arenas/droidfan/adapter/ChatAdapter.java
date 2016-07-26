@@ -23,9 +23,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     private Context mContext;
     private List<DirectMessageModel> mDatas;
-    private OnItemClickListener mListener;
+    private MyOnItemClickListener mListener;
 
-    public ChatAdapter(Context mContext, List<DirectMessageModel> mDatas, OnItemClickListener mListener) {
+    public ChatAdapter(Context mContext, List<DirectMessageModel> mDatas, MyOnItemClickListener mListener) {
         this.mContext = mContext;
         this.mDatas = mDatas;
         this.mListener = mListener;
@@ -37,8 +37,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ChatViewHolder holder, int position) {
-        DirectMessageModel model = mDatas.get(position);
+    public void onBindViewHolder(ChatViewHolder holder, final int position) {
+        final DirectMessageModel model = mDatas.get(position);
         String senderName = model.getSenderScreenName();
         if (senderName.equals(AppContext.getScreenName())){
             holder.leftLayout.setVisibility(View.GONE);
@@ -50,6 +50,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.leftLayout.setVisibility(View.VISIBLE);
             holder.leftText.setText(model.getText());
             Picasso.with(mContext).load(model.getSenderProfileImageUrl()).into(holder.leftAvatar);
+        }
+
+        if (mListener != null){
+            holder.leftText.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mListener.onItemLongClick(0 , position);
+                    return false;
+                }
+            });
+
+            holder.rightText.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mListener.onItemLongClick(0 , position);
+                    return false;
+                }
+            });
         }
     }
 
@@ -91,8 +109,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(View view , int position);
-        void onItemLongClick(int id , int position);
-    }
+//    public interface MyOnItemClickListener{
+//        void onItemClick(View view , int position);
+//        void onItemLongClick(int id , int position);
+//    }
 }

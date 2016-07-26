@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder>{
     private List<UserModel> mUsersList;
-    private OnItemClickListener mListener;
+    private MyOnItemClickListener mListener;
     private Context mContext;
 
-    public UsersAdapter(Context context , List<UserModel> usersList , OnItemClickListener Listener) {
+    public UsersAdapter(Context context , List<UserModel> usersList , MyOnItemClickListener Listener) {
         this.mUsersList = usersList;
         this.mListener = Listener;
         mContext = context;
@@ -97,8 +97,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         }
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(View view , int position);
-        void onItemLongClick(int id , int position);
-    }
+//    public interface OnItemClickListener{
+//        void onItemClick(View view , int position);
+//        void onItemLongClick(int id , int position);
+//    }
 }

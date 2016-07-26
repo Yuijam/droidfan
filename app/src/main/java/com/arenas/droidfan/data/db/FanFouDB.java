@@ -46,6 +46,18 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void saveConversationList(List<DirectMessageModel> dms) {
+        db.execSQL("delete from " + DirectMessageColumns.TABLE_NAME + " where "
+        + DirectMessageColumns.TYPE + " = " + DirectMessageModel.TYPE_CONVERSATION_LIST);
+        saveDirectMessages(dms);
+    }
+
+    @Override
+    public void deleteDirectMessage(String dmId) {
+        db.delete(DirectMessageColumns.TABLE_NAME , "id = ?" , new String[]{dmId});
+    }
+
+    @Override
     public void getConversation(String userId, LoadDMCallback callback) {
         Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
         + DirectMessageColumns.TYPE + " = ? and " + DirectMessageColumns.CONVERSATION_ID + " = ? "

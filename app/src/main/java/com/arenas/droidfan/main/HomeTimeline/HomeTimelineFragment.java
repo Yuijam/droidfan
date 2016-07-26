@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -32,7 +33,7 @@ public class HomeTimelineFragment extends BaseFragment{
         return view;
     }
 
-    StatusAdapter.OnItemClickListener Listener = new StatusAdapter.OnItemClickListener() {
+    MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view , int position) {
             int _id = mAdapter.getStatus(position).get_id();

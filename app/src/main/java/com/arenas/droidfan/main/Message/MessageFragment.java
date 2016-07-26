@@ -23,6 +23,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.ChatAdapter;
 import com.arenas.droidfan.adapter.ConversationListAdapter;
+import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
@@ -59,7 +60,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
         mPresenter.start();
     }
 
-    ConversationListAdapter.OnItemClickListener listener = new ConversationListAdapter.OnItemClickListener() {
+    MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
             String conversationId = mAdapter.getDM(position).getConversationId();

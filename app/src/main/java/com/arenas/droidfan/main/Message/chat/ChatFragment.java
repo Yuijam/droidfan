@@ -12,15 +12,19 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.ChatAdapter;
+import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.service.FanFouService;
 
@@ -31,9 +35,10 @@ import java.util.List;
  * Created by Arenas on 2016/7/26.
  */
 public class ChatFragment extends Fragment implements ChatContract.View
-        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
+        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
+    private static final int MAX_TEXT_LENGTH = 140;
 
     private ChatContract.Presenter mPresenter;
 
@@ -48,6 +53,8 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     private EditText mInputText;
     private Toolbar toolbar;
+    private ImageView mSend;
+    private CharSequence temp;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -60,6 +67,19 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mPresenter.start();
     }
 
+    MyOnItemClickListener listener = new MyOnItemClickListener() {
+        @Override
+        public void onItemClick(View view, int position) {
+
+        }
+
+        @Override
+        public void onItemLongClick(int id, int position) {
+            // TODO: 2016/7/26
+            Utils.showToast(getContext() , "long click !! ");
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +89,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
-        mAdapter = new ChatAdapter(getContext() , new ArrayList<DirectMessageModel>() , null);
+        mAdapter = new ChatAdapter(getContext() , new ArrayList<DirectMessageModel>() , listener);
     }
 
     @Nullable
@@ -90,8 +110,10 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mSwipeRefresh.setOnRefreshListener(this);
 
         mInputText = (EditText)view.findViewById(R.id.input_text);
-        Button send = (Button)view.findViewById(R.id.send);
-        send.setOnClickListener(this);
+//        mInputText.addTextChangedListener(this);
+
+        mSend = (ImageView)view.findViewById(R.id.send);
+        mSend.setOnClickListener(this);
 
         toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
     }
@@ -101,7 +123,6 @@ public class ChatFragment extends Fragment implements ChatContract.View
         switch (view.getId()){
             case R.id.send:
                 mPresenter.send(mInputText.getText().toString());
-                mInputText.setText("");
                 break;
         }
     }
@@ -144,5 +165,38 @@ public class ChatFragment extends Fragment implements ChatContract.View
         if (toolbar != null){
             toolbar.setTitle(title);
         }
+    }
+
+    //TextWatch
+//    @Override
+//    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//        temp = charSequence;
+//    }
+//
+//    @Override
+//    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//    }
+//
+//    @Override
+//    public void afterTextChanged(Editable editable) {
+//        int rest = MAX_TEXT_LENGTH - temp.length();
+//        if (rest < 0){
+//            invalidSend();
+//        }else {
+//            activateSend();
+//        }
+//    }
+
+//    private void activateSend(){
+//        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
+//    }
+//    private void invalidSend(){
+//        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
+//    }
+
+    @Override
+    public void emptyInput() {
+        mInputText.setText("");
     }
 }

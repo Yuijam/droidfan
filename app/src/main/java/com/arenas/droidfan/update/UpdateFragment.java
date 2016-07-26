@@ -23,7 +23,8 @@ import com.arenas.droidfan.Util.Utils;
 /**
  * Created by Arenas on 2016/7/11.
  */
-public class UpdateFragment extends Fragment implements UpdateContract.View , View.OnClickListener , TextWatcher{
+public class UpdateFragment extends Fragment implements UpdateContract.View
+        , View.OnClickListener , TextWatcher{
 
     private static final String TAG = UpdateFragment.class.getSimpleName();
     private static final int MAX_TEXT_LENGTH = 140;

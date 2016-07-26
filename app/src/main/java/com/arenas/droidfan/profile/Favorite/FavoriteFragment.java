@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
@@ -32,7 +33,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
         return view;
     }
 
-    StatusAdapter.OnItemClickListener Listener = new StatusAdapter.OnItemClickListener() {
+    MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view , int position) {
             int _id = mAdapter.getStatus(position).get_id();

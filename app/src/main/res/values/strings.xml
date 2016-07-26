@@ -34,8 +34,11 @@
     <string name="error_no_status">没有消息</string>
     <string name="hint_input_message">发送新私信</string>
     <string name="send">发送</string>
+    <string name="text_should_not_empty">内容不能为空</string>
+    <string name="text_too_more">内容不能超过140个字</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="title_activity_user_list">ScrollingActivity</string>
 
 </resources>

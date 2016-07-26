@@ -297,7 +297,7 @@ public class FanFouService extends IntentService {
                     mFilterAction = FILTER_CONVERSATION;
                     break;
                 case CONVERSATION_LIST:
-                    mFanFouDB.saveDirectMessages(mApi.getConversationList(p));
+                    mFanFouDB.saveConversationList(mApi.getConversationList(p));
                     mFilterAction = FILTER_CONVERSATION_LIST;
                     break;
                 case SEND_DM:

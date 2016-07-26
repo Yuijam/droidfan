@@ -23,10 +23,10 @@ import java.util.List;
 public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusViewHolder> {
 
     private List<StatusModel> mStatusList;
-    private OnItemClickListener mListener;
+    private MyOnItemClickListener mListener;
     private Context mContext;
 
-    public StatusAdapter(Context context , List<StatusModel> mStatusList , OnItemClickListener Listener) {
+    public StatusAdapter(Context context , List<StatusModel> mStatusList , MyOnItemClickListener Listener) {
         this.mStatusList = mStatusList;
         this.mListener = Listener;
         mContext = context;
@@ -111,8 +111,8 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         }
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(View view , int position);
-        void onItemLongClick(int id , int position);
-    }
+//    public interface OnItemClickListener{
+//        void onItemClick(View view , int position);
+//        void onItemLongClick(int id , int position);
+//    }
 }
