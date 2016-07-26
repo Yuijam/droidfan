@@ -32,12 +32,10 @@
     <string name="scheme_profile">droidfan</string>
     <string name="error_protected">只向关注TA的人公开消息</string>
     <string name="error_no_status">没有消息</string>
+    <string name="hint_input_message">发送新私信</string>
+    <string name="send">发送</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_user_list">UserListActivity</string>
 
 </resources>

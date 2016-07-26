@@ -27,7 +27,7 @@ public class DirectMessageModel {
     private String recipientId;
     private String recipientScreenName;
     private String recipientProfileImageUrl;
-    private String conversationId;
+    public String conversationId;
     private int read;
     private int incoming;
     private UserModel sender = null;

@@ -13,6 +13,7 @@ import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.MainActivity;
@@ -84,11 +85,11 @@ public class FanFouService extends IntentService {
         super("FanFouService");
     }
 
-    public static void sendDM(Context context , String senderId , String recipientId , String text){
+    public static void sendDM(Context context , String recipientId , String reply_msg_id , String text){
         Intent intent = new Intent(context , FanFouService.class);
         intent.putExtra(EXTRA_REQUEST , SEND_DM);
-        intent.putExtra(EXTRA_USER_A , senderId);
-        intent.putExtra(EXTRA_USER_B , recipientId);
+        intent.putExtra(EXTRA_USER_ID , recipientId);
+//        intent.putExtra(EXTRA_USER_B , recipientId);
         intent.putExtra(EXTRA_DM_TEXT , text);
         context.startService(intent);
     }
@@ -300,7 +301,9 @@ public class FanFouService extends IntentService {
                     mFilterAction = FILTER_CONVERSATION_LIST;
                     break;
                 case SEND_DM:
-                    mFanFouDB.saveDirectMessage(mApi.createDirectmessage(userA , message , userB));
+                    DirectMessageModel model = mApi.createDirectmessage(userId , message , userB);
+                    model.conversationId = userId;
+                    mFanFouDB.saveDirectMessage(model);
                     mFilterAction = FILTER_CONVERSATION;
                     break;
             }

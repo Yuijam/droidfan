@@ -31,13 +31,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Type somthing here"
+            android:hint="@string/hint_input_message"
             android:maxLines="5" />
         <Button
             android:id="@+id/send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="@string/send" />
     </LinearLayout>
 
 </LinearLayout>
