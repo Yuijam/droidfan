@@ -31,14 +31,24 @@ public class UserListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        int type = getIntent().getIntExtra(EXTRA_TYPE , -1);
 
         // TODO: 2016/7/24  new presenter()
-        new UserPresenter(this , getIntent().getStringExtra(EXTRA_USER_ID)
-                , (UserListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment) ,
-                getIntent().getIntExtra(EXTRA_TYPE , -1));
-    }
+        switch (type){
+            case TYPE_FOLLOWERS:
+                toolbar.setTitle("关注者");
+                break;
+            case TYPE_FOLLOWING:
+                toolbar.setTitle("正在关注");
+                break;
+        }
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        new UserPresenter(this , getIntent().getStringExtra(EXTRA_USER_ID)
+                , (UserListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment) ,type);
+    }
 }

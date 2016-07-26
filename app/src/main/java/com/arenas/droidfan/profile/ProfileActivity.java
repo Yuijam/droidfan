@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -73,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
-
+        Log.d(TAG , "onCreate!!!!!!!");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ViewPager viewPager = (ViewPager)findViewById(R.id.view_pager);
@@ -106,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         if (getIntent().hasExtra(EXTRA_USER_ID)){
             mUserId = getIntent().getStringExtra(EXTRA_USER_ID);
-        }else {
+        }else if (getIntent().getData() != null){
             mUserId = getIntent().getData().getPathSegments().get(0);
         }
         mPresenter = new ProfilePresenter(FanFouDB.getInstance(this) , this , mUserId , this);
@@ -138,6 +140,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+        Log.d(TAG , "onResume!!!!1");
     }
 
     @Override
@@ -167,8 +170,26 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     }
 
     @Override
-    public void showError() {
-        Toast.makeText(this , getString(R.string.error) , Toast.LENGTH_SHORT).show();
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG , "onDestroy!!!!!!!!!");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG , "onPause!!!!!!!");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG , "onStop!!!!!!!!");
+    }
+
+    @Override
+    public void showError(String text) {
+        Toast.makeText(this , text , Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -217,7 +238,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     }
 
     @Override
-    public void showFollowMe(String text) {
+    public void showFollowState(String text) {
         mFollowMe.setText(text);
     }
 

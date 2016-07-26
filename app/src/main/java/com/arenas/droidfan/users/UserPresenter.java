@@ -2,15 +2,12 @@ package com.arenas.droidfan.users;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +22,14 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
     private Context mContext;
     private int mType;
     private FanFouDB mFanFouDB;
-    private List<String> mIds;
+    private boolean mFirstEnter;
 
     public UserPresenter(Context context , String userId , UserContract.View view , int usersType){
         mContext = context;
         mUserId = userId;
         mView = view;
         mType = usersType;
+        mFirstEnter = true;
 
         mFanFouDB = FanFouDB.getInstance(context);
         mView.setPresenter(this);
@@ -40,10 +38,11 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
     @Override
     public void start() {
         mView.showProgressbar();
-        fetchUsers();
+        loadUsers();
     }
 
     private void fetchUsers(){
+        mView.showProgressbar();
         switch (mType){
             case UserListActivity.TYPE_FOLLOWERS:
                 FanFouService.getFollowers(mContext , mUserId);
@@ -54,19 +53,15 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
         }
     }
 
-    private void fetchUserIds(){
+    private void loadUsers(){
         switch (mType){
             case UserListActivity.TYPE_FOLLOWERS:
-                FanFouService.getFollowersIds(mContext , mUserId , new Paging());
+                mFanFouDB.getFollowers(mUserId , this);
                 break;
             case UserListActivity.TYPE_FOLLOWING:
-                FanFouService.getFollowingIds(mContext , mUserId , new Paging());
+                mFanFouDB.getFollowing(mUserId , this);
                 break;
         }
-    }
-
-    private void loadUsers(){
-        mFanFouDB.getUsers(mIds , this);
     }
 
     @Override
@@ -77,19 +72,22 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
 
     @Override
     public void onDataNotAvailable() {
-        mView.showError("oh on !!! no user to show !");
+        if (mFirstEnter){
+            fetchUsers();
+        }else {
+            mView.hideProgressbar();
+            mView.showError("no users to show");
+        }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-         mIds = intent.getStringArrayListExtra(FanFouService.EXTRA_IDS);
-        if (mIds == null){
-            fetchUserIds();
-        }else {
-            for (int i = 0 ; i < mIds.size() ; i ++){
-                Log.d(TAG , "mids = " + mIds.get(i));
-            }
-            loadUsers();
-        }
+        mFirstEnter = false;
+        loadUsers();
+    }
+
+    @Override
+    public void refresh() {
+        fetchUsers();
     }
 }

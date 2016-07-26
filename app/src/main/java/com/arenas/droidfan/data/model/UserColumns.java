@@ -72,6 +72,7 @@ public interface  UserColumns {
 
             + "unique ( "
             + ACCOUNT + ","
+            + TYPE + ","
             + ID
             + " ) on conflict ignore );";
 }

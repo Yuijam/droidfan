@@ -1,35 +1,25 @@
 package com.arenas.droidfan.data.model;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-
 /**
  * @author mcxiaoke
  * @version 1.3 2012.02.27
  */
-public class DirectMessageModel extends BaseModel {
+public class DirectMessageModel {
     public static final int TYPE_CONVERSATION_LIST = 301;
     public static final int TYPE_CONVERSATION = 302;
     public static final int TYPE_INBOX = 303;
     public static final int TYPE_OUTBOX = 304;
 
     public static final String TAG = DirectMessageModel.class.getSimpleName();
-    public static final Parcelable.Creator<DirectMessageModel> CREATOR = new Parcelable.Creator<DirectMessageModel>() {
 
-        @Override
-        public DirectMessageModel createFromParcel(Parcel source) {
-            return new DirectMessageModel(source);
-        }
+    private String id;// id in string format
+    private String account; // related account id/userid
+    private String owner; // owner id of the item
 
-        @Override
-        public DirectMessageModel[] newArray(int size) {
-            return new DirectMessageModel[size];
-        }
-    };
+    private int type; // type of the item
+
+    private long rawid; // raw id in number format
+    private long time; // created at of the item
     private String text;
     private String senderId;
     private String senderScreenName;
@@ -38,8 +28,8 @@ public class DirectMessageModel extends BaseModel {
     private String recipientScreenName;
     private String recipientProfileImageUrl;
     private String conversationId;
-    private boolean read;
-    private boolean incoming;
+    private int read;
+    private int incoming;
     private UserModel sender = null;
     private UserModel recipient = null;
 
@@ -47,128 +37,68 @@ public class DirectMessageModel extends BaseModel {
 
     }
 
-    public DirectMessageModel(Parcel in) {
-        readBase(in);
-        text = in.readString();
-
-        senderId = in.readString();
-        senderScreenName = in.readString();
-        senderProfileImageUrl = in.readString();
-
-        recipientId = in.readString();
-        recipientScreenName = in.readString();
-        recipientProfileImageUrl = in.readString();
-
-        conversationId = in.readString();
-
-        read = in.readInt() == 0 ? false : true;
-        incoming = in.readInt() == 0 ? false : true;
+    public String getId() {
+        return id;
     }
 
-    public static DirectMessageModel from(Cursor cursor) {
-        if (cursor == null) {
-            return null;
-        }
-
-        DirectMessageModel dm = new DirectMessageModel();
-//        dm.id = DataController.parseString(cursor, IBaseColumns.ID);
-//        dm.account = DataController.parseString(cursor,
-//                IBaseColumns.ACCOUNT);
-//        dm.owner = DataController.parseString(cursor,
-//                IBaseColumns.OWNER);
-//        dm.note = DataController.parseString(cursor, IBaseColumns.NOTE);
-//
-//        dm.type = DataController.parseInt(cursor, IBaseColumns.TYPE);
-//        dm.flag = DataController.parseInt(cursor, IBaseColumns.FLAG);
-//
-//        dm.rawid = DataController.parseLong(cursor, IBaseColumns.RAWID);
-//        dm.time = DataController.parseLong(cursor, IBaseColumns.TIME);
-//
-//        dm.text = DataController.parseString(cursor, DirectMessageColumns.TEXT);
-//
-//        dm.senderId = DataController.parseString(cursor,
-//                DirectMessageColumns.SENDER_ID);
-//        dm.senderScreenName = DataController.parseString(cursor,
-//                DirectMessageColumns.SENDER_SCREEN_NAME);
-//        dm.senderProfileImageUrl = DataController.parseString(cursor,
-//                DirectMessageColumns.SENDER_PROFILE_IMAGE_URL);
-//
-//        dm.recipientId = DataController.parseString(cursor,
-//                DirectMessageColumns.RECIPIENT_ID);
-//        dm.recipientScreenName = DataController.parseString(cursor,
-//                DirectMessageColumns.RECIPIENT_SCREEN_NAME);
-//        dm.recipientProfileImageUrl = DataController.parseString(cursor,
-//                DirectMessageColumns.RECIPIENT_PROFILE_IMAGE_URL);
-//
-//        dm.conversationId = DataController.parseString(cursor,
-//                DirectMessageColumns.CONVERSATION_ID);
-//
-//        dm.read = DataController
-//                .parseBoolean(cursor, DirectMessageColumns.READ);
-//        dm.incoming = DataController.parseBoolean(cursor,
-//                DirectMessageColumns.INCOMING);
-
-        return dm;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    @Override
-    public ContentValues values() {
-        ContentValues cv = convert();
-
-//        cv.put(DirectMessageColumns.TEXT, this.text);
-//
-//        cv.put(DirectMessageColumns.SENDER_ID, this.senderId);
-//        cv.put(DirectMessageColumns.SENDER_SCREEN_NAME, this.senderScreenName);
-//        cv.put(DirectMessageColumns.SENDER_PROFILE_IMAGE_URL,
-//                this.senderProfileImageUrl);
-//
-//        cv.put(DirectMessageColumns.RECIPIENT_ID, this.recipientId);
-//        cv.put(DirectMessageColumns.RECIPIENT_SCREEN_NAME,
-//                this.recipientScreenName);
-//        cv.put(DirectMessageColumns.RECIPIENT_PROFILE_IMAGE_URL,
-//                this.recipientProfileImageUrl);
-//
-//        cv.put(DirectMessageColumns.CONVERSATION_ID, this.conversationId);
-//
-//        cv.put(DirectMessageColumns.READ, this.read);
-//        cv.put(DirectMessageColumns.INCOMING, this.incoming);
-
-        return cv;
+    public String getOwner() {
+        return owner;
     }
 
-    @Override
-    public Uri getContentUri() {
-        return null;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    @Override
-    public String getTable() {
-        return null;
+    public String getAccount() {
+        return account;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        writeBase(dest, flags);
-        dest.writeString(text);
+    public int getType() {
+        return type;
+    }
 
-        dest.writeString(senderId);
-        dest.writeString(senderScreenName);
-        dest.writeString(senderProfileImageUrl);
+    public void setType(int type) {
+        this.type = type;
+    }
 
-        dest.writeString(recipientId);
-        dest.writeString(recipientScreenName);
-        dest.writeString(recipientProfileImageUrl);
+    public long getRawid() {
+        return rawid;
+    }
 
-        dest.writeString(conversationId);
+    public void setRawid(long rawid) {
+        this.rawid = rawid;
+    }
 
-        dest.writeInt(read ? 1 : 0);
-        dest.writeInt(incoming ? 1 : 0);
+    public long getTime() {
+        return time;
+    }
 
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public int getRead() {
+        return read;
+    }
+
+    public void setRead(int read) {
+        this.read = read;
+    }
+
+    public int getIncoming() {
+        return incoming;
+    }
+
+    public void setIncoming(int incoming) {
+        this.incoming = incoming;
     }
 
     public String getText() {
@@ -233,22 +163,6 @@ public class DirectMessageModel extends BaseModel {
 
     public void setConversationId(String conversationId) {
         this.conversationId = conversationId;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
-
-    public boolean isIncoming() {
-        return incoming;
-    }
-
-    public void setIncoming(boolean incoming) {
-        this.incoming = incoming;
     }
 
     public UserModel getSender() {

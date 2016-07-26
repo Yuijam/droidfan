@@ -353,7 +353,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.inbox
      */
-//    @Override
+    @Override
     public List<DirectMessageModel> getDirectMessagesInbox(Paging paging)
             throws ApiException {
         String response = fetchDirectMessages("/direct_messages/inbox", paging,
@@ -366,7 +366,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.sent
      */
-//    @Override
+    @Override
     public List<DirectMessageModel> getDirectMessagesOutbox(Paging paging)
             throws ApiException {
         String response = fetchDirectMessages("/direct_messages/sent", paging,
@@ -381,7 +381,7 @@ final class FanFouApi implements Api {
      * https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.conversation
      * -list
      */
-//    @Override
+    @Override
     public List<DirectMessageModel> getConversationList(Paging paging)
             throws ApiException {
         String response = fetchDirectMessages(
@@ -397,7 +397,7 @@ final class FanFouApi implements Api {
      * @see
      * https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.conversation
      */
-//    @Override
+    @Override
     public List<DirectMessageModel> getConversation(String id, Paging paging)
             throws ApiException {
         checkNotEmpty(id);
@@ -414,7 +414,7 @@ final class FanFouApi implements Api {
      * @see
      * https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.destroy
      */
-//    @Override
+    @Override
     public DirectMessageModel deleteDirectMessage(String id)
             throws ApiException {
         checkNotEmpty(id);
@@ -432,7 +432,7 @@ final class FanFouApi implements Api {
      *
      * @see https://github.com/FanfouAPI/FanFouAPIDoc/wiki/direct-messages.new
      */
-//    @Override
+    @Override
     public DirectMessageModel createDirectmessage(String id, String text,
                                                   String replyId) throws ApiException {
         checkNotEmpty(id);
@@ -1012,6 +1012,7 @@ final class FanFouApi implements Api {
                 debug("fetch() statusCode=" + statusCode + " builder=" + builder);
             }
             if (statusCode >= 200 && statusCode < 300) {
+                Log.d(TAG , "body = " + body);
                 return body;
             }
             throw new ApiException(statusCode, FanFouParser.error(body));

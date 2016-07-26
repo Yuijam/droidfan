@@ -17,10 +17,10 @@ public interface UserContract {
 
     interface Presenter extends BasePresenter{
         void onReceive(Context context , Intent intent);
+        void refresh();
     }
 
     interface View extends BaseView{
-        void showTitle(String title);
         void showProgressbar();
         void hideProgressbar();
         void showUsers(List<UserModel> users);

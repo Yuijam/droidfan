@@ -22,6 +22,7 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 import com.arenas.droidfan.main.message.MessageFragment;
+import com.arenas.droidfan.main.message.MessagePresenter;
 import com.arenas.droidfan.main.notice.NoticeFragment;
 import com.arenas.droidfan.main.notice.NoticePresenter;
 import com.arenas.droidfan.main.publicstatus.PublicActivity;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity
         initNavHeader(navigationView.getHeaderView(0));
         new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
         new NoticePresenter(FanFouDB.getInstance(this) , (NoticeFragment)fragmentAdapter.getItem(1));
+        new MessagePresenter(FanFouDB.getInstance(this) , (MessageFragment)fragmentAdapter.getItem(2) , this);
     }
 
     private void initNavHeader(View view){
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         TextView screenNameView = (TextView)view.findViewById(R.id.screen_name);
         TextView userIdView = (TextView)view.findViewById(R.id.user_id);
 
-        Picasso.with(this).load(AppContext.getAvatarUrl()).placeholder(R.drawable.ic_placeholder).into(avatar);
+        Picasso.with(this).load(AppContext.getAvatarUrl()).into(avatar);
         screenNameView.setText(AppContext.getScreenName());
         userIdView.setText("@" + AppContext.getAccount());
     }

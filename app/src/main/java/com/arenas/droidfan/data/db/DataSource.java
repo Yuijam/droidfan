@@ -1,5 +1,6 @@
 package com.arenas.droidfan.data.db;
 
+import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
@@ -28,6 +29,11 @@ public interface DataSource {
 
     interface LoadUserCallback{
         void onUsersLoaded(List<UserModel> userModelList);
+        void onDataNotAvailable();
+    }
+
+    interface LoadDMCallback{
+        void onDMLoaded(List<DirectMessageModel> messageModels);
         void onDataNotAvailable();
     }
 
@@ -65,12 +71,6 @@ public interface DataSource {
 
     String getProfileSinceId(String owner);
 
-    void saveUser(UserModel user , int type );
-
-    void getUser(String id , GetUserCallback callback);
-
-    void getUsers(List<String> ids , LoadUserCallback callback);
-
     void saveFavorites(StatusModel statusModel);
 
     void getFavorite(int _id , GetStatusCallback callback);
@@ -81,4 +81,24 @@ public interface DataSource {
 
     void deleteItem(String tableName , String msgId);
 
+
+    //User
+    void saveUser(UserModel user , int type );
+
+    void getUserById(String id , GetUserCallback callback);
+
+    void getFollowers(String owner , LoadUserCallback callback);
+
+    void getFollowing(String owner , LoadUserCallback callback);
+
+    void saveFollowers(List<UserModel> users , String owner);
+
+    void saveFollowing(List<UserModel> users , String owner);
+
+    //DM
+    void saveDirectMessage(DirectMessageModel dm);
+
+    void saveDirectMessages(List<DirectMessageModel> dms);
+
+    void getConversationList(LoadDMCallback callback);
 }

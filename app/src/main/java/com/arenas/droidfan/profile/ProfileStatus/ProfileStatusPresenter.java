@@ -29,7 +29,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
     }
 
     private void loadUser(){
-        mFanFouDB.getUser(mUserId , this);
+        mFanFouDB.getUserById(mUserId , this);
     }
 
     @Override

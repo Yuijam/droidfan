@@ -2,6 +2,7 @@ package com.arenas.droidfan.api;
 
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.model.BaseModel;
@@ -196,6 +197,7 @@ final class FanFouParser implements ApiParser {
     public UserModel user(String response, int type, String owner)
             throws ApiException {
         try {
+            Log.d(TAG , "FanFouParser user()--->");
             return user(new JSONObject(response), type, owner);
         } catch (JSONException e) {
             throw new ApiException(ApiException.DATA_ERROR, e.getMessage(), e);
@@ -205,7 +207,7 @@ final class FanFouParser implements ApiParser {
     @Override
     public List<StatusModel> timeline(String response, int type, String owner)
             throws ApiException {
-        List<StatusModel> ss = new ArrayList<>();
+        List<StatusModel> ss = new ArrayList<StatusModel>();
         try {
             JSONArray array = new JSONArray(response);
             for (int i = 0; i < array.length(); i++) {
@@ -237,17 +239,17 @@ final class FanFouParser implements ApiParser {
             JSONArray array = new JSONArray(response);
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-//                DirectMessageModel dm = directMessage(o,
-//                        BaseModel.TYPE_NONE);
-//                if (dm != null) {
-//                    if (account.equals(dm.getRecipientId())) {
-//                        dm.setType(DirectMessageModel.TYPE_INBOX);
-//                    } else {
-//                        dm.setType(DirectMessageModel.TYPE_OUTBOX);
-//                    }
-//                    dm.setConversationId(userId);
-//                    dms.add(dm);
-//                }
+                DirectMessageModel dm = directMessage(o,
+                        BaseModel.TYPE_NONE);
+                if (dm != null) {
+                    if (account.equals(dm.getRecipientId())) {
+                        dm.setType(DirectMessageModel.TYPE_INBOX);
+                    } else {
+                        dm.setType(DirectMessageModel.TYPE_OUTBOX);
+                    }
+                    dm.setConversationId(userId);
+                    dms.add(dm);
+                }
             }
             return dms;
         } catch (JSONException e) {
@@ -263,16 +265,16 @@ final class FanFouParser implements ApiParser {
             if (array.length() == 0) {
                 return null;
             }
-            List<DirectMessageModel> dms = new ArrayList<DirectMessageModel>();
+            List<DirectMessageModel> dms = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 JSONObject dmo = o.getJSONObject("dm");
-//                DirectMessageModel dm = directMessage(dmo,
-//                        DirectMessageModel.TYPE_CONVERSATION_LIST);
-//                String conversationId = o.getString("otherid");
-//                dm.setConversationId(conversationId);
-//                dm.setIncoming(dm.getSenderId().equals(conversationId));
-//                dms.add(dm);
+                DirectMessageModel dm = directMessage(dmo,
+                        DirectMessageModel.TYPE_CONVERSATION_LIST);
+                String conversationId = o.getString("otherid");
+                dm.setConversationId(conversationId);
+                dm.setIncoming(dm.getSenderId().equals(conversationId) ? 1 : 0);
+                dms.add(dm);
             }
             return dms;
         } catch (JSONException e) {
@@ -291,11 +293,11 @@ final class FanFouParser implements ApiParser {
             List<DirectMessageModel> dms = new ArrayList<DirectMessageModel>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-//                DirectMessageModel dm = directMessage(o,
-//                        DirectMessageModel.TYPE_INBOX);
-//                dm.setConversationId(dm.getSenderId());
-//                dm.setIncoming(true);
-//                dms.add(dm);
+                DirectMessageModel dm = directMessage(o,
+                        DirectMessageModel.TYPE_INBOX);
+                dm.setConversationId(dm.getSenderId());
+                dm.setIncoming(1);
+                dms.add(dm);
             }
             return dms;
         } catch (Exception e) {
@@ -314,11 +316,11 @@ final class FanFouParser implements ApiParser {
             List<DirectMessageModel> dms = new ArrayList<DirectMessageModel>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-//                DirectMessageModel dm = directMessage(o,
-//                        DirectMessageModel.TYPE_OUTBOX);
-//                dm.setConversationId(dm.getRecipientId());
-//                dm.setIncoming(false);
-//                dms.add(dm);
+                DirectMessageModel dm = directMessage(o,
+                        DirectMessageModel.TYPE_OUTBOX);
+                dm.setConversationId(dm.getRecipientId());
+                dm.setIncoming(0);
+                dms.add(dm);
             }
             return dms;
         } catch (Exception e) {
@@ -331,7 +333,7 @@ final class FanFouParser implements ApiParser {
             throws ApiException {
         try {
             JSONObject o = new JSONObject(response);
-            return directMessage("", type);
+            return directMessage(o, type);
         } catch (JSONException e) {
             throw new ApiException(ApiException.DATA_ERROR, e.getMessage(), e);
         }
@@ -365,13 +367,13 @@ final class FanFouParser implements ApiParser {
             List<Search> ss = new ArrayList<Search>();
 
             JSONArray a = new JSONArray(response);
-            for (int i = 0; i < a.length(); i++) {
-                JSONObject o = a.getJSONObject(i);
+//            for (int i = 0; i < a.length(); i++) {
+//                JSONObject o = a.getJSONObject(i);
 //                Search sh = savedSearch(o);
 //                if (sh != null) {
 //                    ss.add(sh);
 //                }
-            }
+//            }
             return ss;
         } catch (JSONException e) {
             throw new ApiException(ApiException.DATA_ERROR, e.getMessage(), e);
@@ -381,8 +383,8 @@ final class FanFouParser implements ApiParser {
     @Override
     public Search savedSearch(String response) throws ApiException {
         try {
-            return savedSearch("");
-        } catch (NullPointerException e) {
+            return savedSearch(new JSONObject(response));
+        } catch (JSONException e) {
             throw new ApiException(ApiException.DATA_ERROR, e.getMessage(), e);
         }
     }
@@ -407,12 +409,11 @@ final class FanFouParser implements ApiParser {
         model.setId(o.getString("id"));
         model.setAccount(account);
         model.setOwner(owner);
-        // model.setNote();
 
-//        model.setRawid(0);
+        model.setType(type);
+
         model.setTime(FanFouParser.date(o.getString("created_at")).getTime());
 
-//        model.setName(o.getString("name"));
         model.setScreenName(o.getString("screen_name"));
         model.setLocation(o.getString("location"));
         model.setGender(o.getString("gender"));
@@ -446,7 +447,6 @@ final class FanFouParser implements ApiParser {
 //                            + model.getAccount()
 //            );
         }
-
         return model;
     }
 
@@ -457,6 +457,8 @@ final class FanFouParser implements ApiParser {
         model.setId(o.getString("id"));
         model.setAccount(account);
         model.setOwner(owner);
+        // model.setNote();
+
         model.setRawId(o.getLong("rawid"));
         model.setTime(FanFouParser.date(o.getString("created_at")).getTime());
 
@@ -518,6 +520,61 @@ final class FanFouParser implements ApiParser {
         return model;
     }
 
+    private DirectMessageModel directMessage(JSONObject o, int type)
+            throws JSONException {
+
+        DirectMessageModel model = new DirectMessageModel();
+
+        model.setId(o.getString("id"));
+        model.setAccount(account);
+        model.setOwner(account);
+        // model.setNote();
+
+        model.setType(type);
+
+        model.setRawid(stringToLong(model.getId()));
+        model.setTime(FanFouParser.date(o.getString("created_at")).getTime());
+
+        model.setText(o.getString("text"));
+        model.setSenderId(o.getString("sender_id"));
+        model.setSenderScreenName(o.getString("sender_screen_name"));
+
+        if (o.has("sender")) {
+            JSONObject ro = o.getJSONObject("sender");
+            UserModel sender = user(ro, BaseModel.TYPE_NONE, account);
+            model.setSender(sender);
+        }
+
+        model.setRecipientId(o.getString("recipient_id"));
+        model.setRecipientScreenName(o.getString("recipient_screen_name"));
+
+        if (o.has("recipient")) {
+            JSONObject ro = o.getJSONObject("recipient");
+            UserModel recipient = user(ro, BaseModel.TYPE_NONE, account);
+            model.setRecipient(recipient);
+        }
+
+        model.setRead(0);
+        return model;
+    }
+
+//    private Search trend(JSONObject o, Date date) throws JSONException {
+//        Search sh = new Search();
+//        sh.url = o.getString("url");
+//        sh.query = o.getString("query");
+//        sh.name = o.getString("name");
+//        sh.createdAt = date;
+//        return sh;
+//    }
+//
+    private Search savedSearch(JSONObject o) throws JSONException {
+        Search sh = new Search();
+        sh.id = o.getString("id");
+        sh.query = o.getString("query");
+        sh.name = o.getString("name");
+        sh.createdAt = date(o.getString("created_at"));
+        return sh;
+    }
     private int booleanToInt(boolean booleanData){
         return booleanData ? 1 : 0;
     }

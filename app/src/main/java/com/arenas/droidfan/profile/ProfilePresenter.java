@@ -10,7 +10,6 @@ import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
-import com.arenas.droidfan.update.UpdateActivity;
 import com.arenas.droidfan.users.UserListActivity;
 
 /**
@@ -64,7 +63,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     private void loadUser(){
-        mFanFouDB.getUser(mUserId , this);
+        mFanFouDB.getUserById(mUserId , this);
     }
 
     @Override
@@ -83,9 +82,19 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         mView.showLocation(getLocation());
         mView.showBirthday(getBirthday());
         if (!isMe()){
-            mView.showFollowMe(isFollowMe());
+            mView.showFollowState(getFollowState());
             mView.showFoButton();
             mView.showIsFollowing(followText());
+        }
+    }
+
+    private String getFollowState(){
+        if (isFollowing() && mIsFriend){
+            return "互相关注中";
+        }else if (mIsFriend){
+            return "正在关注你";
+        }else {
+            return "没有关注你";
         }
     }
 
@@ -105,10 +114,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         return TextUtils.isEmpty(mUser.getBirthday()) ? "未知" : mUser.getBirthday();
     }
 
-    private String isFollowMe(){
-        return mIsFriend ? "正在关注你" : "没有关注你";
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         mIsFriend = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
@@ -126,13 +131,25 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         }
     }
 
+    private boolean isProtected(){
+        return mUser.getProtect() == 1;
+    }
+
     @Override
     public void showFollower() {
-        UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWERS);
+        if (isProtected() && !isFollowing()){
+            mView.showError("只向关注TA的人公开");
+        }else {
+            UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWERS);
+        }
     }
 
     @Override
     public void showFollowing() {
-        UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWING);
+        if (isProtected() && !isFollowing()){
+            mView.showError("只向关注TA的人公开");
+        }else {
+            UserListActivity.start(mContext, mUserId, UserListActivity.TYPE_FOLLOWING);
+        }
     }
 }

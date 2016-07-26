@@ -9,28 +9,26 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
-import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.adapter.UsersAdapter;
-import com.arenas.droidfan.api.rest.UsersMethods;
-import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
-import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserListFragment extends Fragment implements UserContract.View{
+public class UserListFragment extends Fragment implements UserContract.View
+        , SwipeRefreshLayout.OnRefreshListener{
 
     private UserContract.Presenter mPresenter;
 
@@ -41,7 +39,6 @@ public class UserListFragment extends Fragment implements UserContract.View{
     private UsersAdapter mAdapter;
 
     private SwipeRefreshLayout mSwipeRefresh;
-    private Toolbar mToolbar;
 
     public UserListFragment() {
 
@@ -51,8 +48,6 @@ public class UserListFragment extends Fragment implements UserContract.View{
         @Override
         public void onItemClick(View view , int position) {
             // TODO: 2016/7/24
-//            int _id = mAdapter.getUser(position).get_id();
-//            DetailActivity.start(getContext() , DetailActivity.TYPE_HOME , _id);
         }
 
         @Override
@@ -71,12 +66,22 @@ public class UserListFragment extends Fragment implements UserContract.View{
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
         mAdapter = new UsersAdapter(getContext() , new ArrayList<UserModel>(0) , Listener);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            getActivity().finish();
+        }
+        return true;
     }
 
     @Override
@@ -93,17 +98,19 @@ public class UserListFragment extends Fragment implements UserContract.View{
         recyclerView.setAdapter(mAdapter);
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-        mToolbar = (Toolbar)view.findViewById(R.id.toolbar);
+        mSwipeRefresh.setOnRefreshListener(this);
+    }
+
+
+
+    @Override
+    public void onRefresh() {
+        mPresenter.refresh();
     }
 
     @Override
     public void setPresenter(Object presenter) {
         mPresenter = (UserContract.Presenter)presenter;
-    }
-
-    @Override
-    public void showTitle(String title) {
-        mToolbar.setTitle(title);
     }
 
     @Override
@@ -123,7 +130,9 @@ public class UserListFragment extends Fragment implements UserContract.View{
 
     @Override
     public void showError(String errorText) {
-        Utils.showToast(getContext() , errorText);
+//        Toast.makeText(getContext() , errorText , Toast.LENGTH_SHORT).show();
+//        Utils.showToast(getContext() , errorText);
+        //// TODO: 2016/7/25 怎么会有bug？？？
     }
 
     class LocalReceiver extends BroadcastReceiver {

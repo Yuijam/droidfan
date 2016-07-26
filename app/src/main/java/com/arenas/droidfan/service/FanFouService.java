@@ -3,23 +3,23 @@ package com.arenas.droidfan.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaRouter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.main.MainActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
+import com.arenas.droidfan.users.UserListActivity;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,11 +62,12 @@ public class FanFouService extends IntentService {
     public static final int UNFOLLOW = 16;
     public static final int FOLLOWERS = 17;
     public static final int FOLLOWING = 18;
-    public static final int FOLLOWING_IDS = 19;
-    public static final int FOLLOWERS_IDS = 20;
+    public static final int DM = 19;
+    public static final int CONVERSATION_LIST = 20;
 
     //filter
     public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
+    public static final String FILTER_DM = "com.arenas.droidfan.DM";
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
@@ -75,18 +76,17 @@ public class FanFouService extends IntentService {
     private boolean mHasNewData;
     private boolean mIsFriend;
     private boolean mSuccess;
-    private List<String> userIds;
 
     public FanFouService(){
         super("FanFouService");
     }
 
-    public static void getFollowersIds(Context context , String userId , Paging paging){
-        start(context , FOLLOWERS_IDS , paging , null , userId , null);
+    public static void getConversationList(Context context , Paging paging ){
+        start(context , CONVERSATION_LIST , paging , null , null , null);
     }
 
-    public static void getFollowingIds(Context context , String userId , Paging paging){
-        start(context , FOLLOWING_IDS , paging , null , userId , null);
+    public static void getConversation(Context context , Paging paging , String userId){
+        start(context , DM , paging , null , userId , null);
     }
 
     public static void getFollowing(Context context , String userId){
@@ -240,9 +240,8 @@ public class FanFouService extends IntentService {
                     }
                     break;
                 case USER:
-                    Log.d(TAG , "getUser------->");
                     mFilterAction = HomeTimelineFragment.FILTER_USER;
-                    saveUser(mApi.showUser(userId));
+                    saveUser(mApi.showUser(userId) , 0);
                     break;
                 case FAVORITES_LIST:
                     Log.d(TAG , "get favorites list-------->");
@@ -263,34 +262,30 @@ public class FanFouService extends IntentService {
                     mIsFriend = mApi.isFriends(userA , userB);
                     break;
                 case FOLLOW:
-                    saveUser(mApi.follow(userId));
+                    saveUser(mApi.follow(userId) , 0);
                     mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
                     break;
                 case UNFOLLOW:
-                    saveUser(mApi.unfollow(userId));
+                    saveUser(mApi.unfollow(userId) , 0);
                     mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
                     break;
                 case FOLLOWERS:
-                    saveUserList(mApi.getFollowers(userId , p));
+                    mFanFouDB.saveFollowers(mApi.getFollowers(userId , p) , userId);
                     mFilterAction = FILTER_USERS;
-                    // TODO: 2016/7/23  filter
                     break;
                 case FOLLOWING:
-                    saveUserList(mApi.getFriends(userId , p));
+                    mFanFouDB.saveFollowing(mApi.getFriends(userId , p) , userId);
                     mFilterAction = FILTER_USERS;
-                    //// TODO: 2016/7/23
                     break;
-                case FOLLOWERS_IDS:
-                    userIds = mApi.getFollowersIDs(userId , p);
-                    mFilterAction = FILTER_USERS;
-                    // TODO: 2016/7/24 filter
+                case DM:
+                    Log.d(TAG , "userId = " + userId);
+                    mFanFouDB.saveDirectMessages(mApi.getConversation(userId , p));
+                    mFilterAction = FILTER_DM;
                     break;
-                case FOLLOWING_IDS:
-                    userIds = mApi.getFriendsIDs(userId , p);
-                    mFilterAction = FILTER_USERS;
-                    // TODO: 2016/7/24 filter
+                case CONVERSATION_LIST:
+                    mFanFouDB.saveDirectMessages(mApi.getConversationList(p));
+                    mFilterAction = FILTER_DM;
                     break;
-
             }
         }catch (ApiException e){
             e.toString();
@@ -304,18 +299,17 @@ public class FanFouService extends IntentService {
         }
     }
 
-    private void saveUserList(List<UserModel> userModels){
+    private void saveUserList(List<UserModel> userModels , int type){
         for (UserModel u : userModels){
-            saveUser(u);
+            saveUser(u , type);
         }
     }
 
-    private void saveUser(UserModel user){
-        mFanFouDB.saveUser(user , 0);
+    private void saveUser(UserModel user , int type){
+        mFanFouDB.saveUser(user , type);
     }
 
     private void saveProfileStatus(List<StatusModel> statusModels){
-        Log.d(TAG , "saveProfileStatus--------->");
         for (StatusModel s : statusModels){
             mFanFouDB.saveProfileStatus(s);
         }
@@ -345,7 +339,6 @@ public class FanFouService extends IntentService {
         intent.putExtra(EXTRA_HAS_NEW , mHasNewData);
         intent.putExtra(EXTRA_IS_FRIEND , mIsFriend);
         intent.putExtra(EXTRA_SUCCESS , mSuccess);
-        intent.putStringArrayListExtra(EXTRA_IDS , (ArrayList<String>)userIds);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

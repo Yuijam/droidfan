@@ -18,10 +18,10 @@ public class ProfileContract {
         void showFavoriteCount(int count);
         void showStatusCount(int count);
         void showTitle(String username);
-        void showError();
+        void showError(String text);
         void showLocation(String text);
         void showBirthday(String text);
-        void showFollowMe(String text);
+        void showFollowState(String text);
         void showProgress();
         void hideProgress();
         void showFoButton();

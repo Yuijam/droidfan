@@ -11,11 +11,15 @@ import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
+import com.arenas.droidfan.data.model.DirectMessageColumns;
+import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.users.UserListActivity;
 
 import java.util.ArrayList;
+import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 /**
@@ -39,6 +43,126 @@ public class FanFouDB implements DataSource{
             INSTANCE = new FanFouDB(context);
         }
         return INSTANCE;
+    }
+
+    @Override
+    public void getConversationList(LoadDMCallback callback) {
+        Cursor c = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
+        + DirectMessageColumns.TYPE + " = " + DirectMessageModel.TYPE_CONVERSATION_LIST , null);
+        List<DirectMessageModel> cl = getDM(c);
+        if (cl.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onDMLoaded(cl);
+        }
+    }
+
+    private List<DirectMessageModel> getDM(Cursor c){
+        List<DirectMessageModel> messageList = new ArrayList<>();
+        if (c.moveToFirst()){
+            do {
+                DirectMessageModel model = new DirectMessageModel();
+                model.setId(DBUtil.parseString(c , DirectMessageColumns.ID));
+                model.setAccount(DBUtil.parseString(c , DirectMessageColumns.ACCOUNT));
+                model.setOwner(DBUtil.parseString(c , DirectMessageColumns.OWNER));
+                model.setType(DBUtil.parseInt(c , DirectMessageColumns.TYPE));
+                model.setRawid(DBUtil.parseLong(c , DirectMessageColumns.RAWID));
+                model.setTime(DBUtil.parseLong(c , DirectMessageColumns.TIME));
+                model.setText(DBUtil.parseString(c , DirectMessageColumns.TEXT));
+                model.setSenderId(DBUtil.parseString(c , DirectMessageColumns.SENDER_ID));
+                model.setSenderScreenName(DBUtil.parseString(c , DirectMessageColumns.SENDER_SCREEN_NAME));
+                model.setSenderProfileImageUrl(DBUtil.parseString(c , DirectMessageColumns.SENDER_PROFILE_IMAGE_URL));
+                model.setRecipientId(DBUtil.parseString(c , DirectMessageColumns.RECIPIENT_ID));
+                model.setRecipientScreenName(DBUtil.parseString(c , DirectMessageColumns.RECIPIENT_SCREEN_NAME));
+                model.setRecipientProfileImageUrl(DBUtil.parseString(c , DirectMessageColumns.RECIPIENT_PROFILE_IMAGE_URL));
+                model.setConversationId(DBUtil.parseString(c , DirectMessageColumns.CONVERSATION_ID));
+                model.setRead(DBUtil.parseInt(c , DirectMessageColumns.READ));
+                model.setIncoming(DBUtil.parseInt(c , DirectMessageColumns.INCOMING));
+                messageList.add(model);
+            }while (c.moveToNext());
+        }
+        c.close();
+        return messageList;
+    }
+
+    @Override
+    public void saveDirectMessages(List<DirectMessageModel> dms) {
+        for (DirectMessageModel dm : dms){
+            saveDirectMessage(dm);
+        }
+    }
+
+    @Override
+    public void saveDirectMessage(DirectMessageModel dm) {
+        ContentValues values = new ContentValues();
+        values.put(DirectMessageColumns.ID , dm.getId());
+        values.put(DirectMessageColumns.ACCOUNT , dm.getAccount());
+        values.put(DirectMessageColumns.OWNER , dm.getOwner());
+        values.put(DirectMessageColumns.TYPE , dm.getType());
+        values.put(DirectMessageColumns.RAWID , dm.getRawid());
+        values.put(DirectMessageColumns.TIME , dm.getTime());
+        values.put(DirectMessageColumns.TEXT , dm.getText());
+        values.put(DirectMessageColumns.SENDER_ID , dm.getSenderId());
+        values.put(DirectMessageColumns.SENDER_SCREEN_NAME , dm.getSenderScreenName());
+        values.put(DirectMessageColumns.SENDER_PROFILE_IMAGE_URL , dm.getSenderProfileImageUrl());
+        values.put(DirectMessageColumns.RECIPIENT_ID , dm.getRecipientId());
+        values.put(DirectMessageColumns.RECIPIENT_SCREEN_NAME , dm.getRecipientScreenName());
+        values.put(DirectMessageColumns.RECIPIENT_PROFILE_IMAGE_URL , dm.getRecipientProfileImageUrl());
+        values.put(DirectMessageColumns.CONVERSATION_ID , dm.getConversationId());
+        values.put(DirectMessageColumns.READ , dm.getRead());
+        values.put(DirectMessageColumns.INCOMING , dm.getIncoming());
+        db.insert(DirectMessageColumns.TABLE_NAME , null , values);
+    }
+
+
+    //user
+    @Override
+    public void getFollowing(String owner , LoadUserCallback callback){
+        Cursor cursor = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where " +
+                UserColumns.OWNER + " = ? " + " and " + UserColumns.TYPE + " = ? "
+                 , new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWING)});
+
+        List<UserModel> users = getUsers(cursor);
+        if (users.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onUsersLoaded(users);
+        }
+    }
+
+    @Override
+    public void saveFollowers(List<UserModel> users , String owner){
+        db.delete(UserColumns.TABLE_NAME , "owner = ? and type = ?",
+                new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWERS)});
+        for (UserModel u : users){
+            saveUser(u , UserListActivity.TYPE_FOLLOWERS);
+        }
+    }
+
+    @Override
+    public void saveFollowing(List<UserModel> users , String owner){
+        db.delete(UserColumns.TABLE_NAME , "owner = ? and type = ?",
+                new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWING)});
+        if (users.isEmpty())
+            return;
+        for (UserModel u : users){
+            saveUser(u , UserListActivity.TYPE_FOLLOWING);
+        }
+    }
+
+    @Override
+    public void getFollowers(String owner , LoadUserCallback callback){
+
+        Cursor cursor = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where " +
+                UserColumns.OWNER + " = ? " + " and " + UserColumns.TYPE + " = ? "
+                , new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWERS)});
+
+        List<UserModel> users = getUsers(cursor);
+        if (users.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onUsersLoaded(users);
+        }
     }
 
     @Override
@@ -77,9 +201,18 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void getUser(String id, GetUserCallback callback) {
-        UserModel user = null;
+    public void getUserById(String id , GetUserCallback callback) {
         Cursor c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{id});
+        UserModel user = getUser(c);
+        if (user != null){
+            callback.onUserLoaded(user);
+        }else {
+            callback.onDataNotAvailable();
+        }
+    }
+
+    private UserModel getUser(Cursor c ){
+        UserModel user = null;
         if (c.moveToFirst()){
             user = new UserModel();
             user.setId(DBUtil.parseString(c , UserColumns.ID));
@@ -108,23 +241,15 @@ public class FanFouDB implements DataSource{
             user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
         }
         c.close();
-        if (user != null){
-            callback.onUserLoaded(user);
-        }else {
-            callback.onDataNotAvailable();
-        }
+        return user;
     }
-    @Override
-    public void getUsers(List<String> ids , LoadUserCallback callback){
-        UserModel user = null;
-        List<UserModel> users = new ArrayList<>();
-        int i = 0;
-        Cursor c = null;
-        while (i < ids.size()){
-            c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{ids.get(i++)});
 
-            if (c.moveToFirst()){
-                user = new UserModel();
+
+    private List<UserModel> getUsers(Cursor c){
+        List<UserModel> users = new ArrayList<>();
+        if (c.moveToFirst()){
+            do{
+                UserModel user = new UserModel();
                 user.setId(DBUtil.parseString(c , UserColumns.ID));
                 user.setAccount(DBUtil.parseString(c , UserColumns.ACCOUNT));
                 user.setOwner(DBUtil.parseString(c , UserColumns.OWNER));
@@ -149,17 +274,11 @@ public class FanFouDB implements DataSource{
                 user.setNotifications(DBUtil.parseInt(c , UserColumns.NOTIFICATIONS));
                 user.setVerified(DBUtil.parseInt(c , UserColumns.VERIFIED));
                 user.setFollowMe(DBUtil.parseInt(c , UserColumns.FOLLOW_ME));
-            }
-            users.add(user);
+                users.add(user);
+            }while (c.moveToNext());
         }
-        if (c != null){
-            c.close();
-        }
-        if (users.isEmpty()){
-            callback.onDataNotAvailable();
-        }else {
-            callback.onUsersLoaded(users);
-        }
+        c.close();
+        return users;
     }
 
     @Override
@@ -167,7 +286,7 @@ public class FanFouDB implements DataSource{
         ContentValues cv = new ContentValues();
         cv.put(UserColumns.ID , user.getId());
         cv.put(UserColumns.ACCOUNT , user.getAccount());
-        cv.put(UserColumns.TYPE , user.getType());
+        cv.put(UserColumns.TYPE , type);
         cv.put(UserColumns.OWNER , user.getOwner());
         cv.put(UserColumns.TIME , user.getTime());
         cv.put(UserColumns.STATUS, user.getStatus());
