@@ -1,5 +1,7 @@
 package com.arenas.droidfan.profile.profilestatus;
 
+import android.content.Context;
+
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.DataSource;
@@ -7,6 +9,7 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.service.FanFouService;
 
 /**
  * Created by Arenas on 2016/7/20.
@@ -19,10 +22,11 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
     public ProfileStatusPresenter() {
     }
 
-    public ProfileStatusPresenter(FanFouDB fanFouDB , HomeTimelineContract.View view , String userId){
+    public ProfileStatusPresenter(Context context , HomeTimelineContract.View view , String userId){
         mView = view;
-        mFanFouDB = fanFouDB;
+        mFanFouDB = FanFouDB.getInstance(context);
         mApi = AppContext.getApi();
+        mContext = context;
 
         mUserId = userId;
         mView.setPresenter(this);
@@ -38,12 +42,15 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
     }
 
     @Override
-    public void refresh() {
-        mView.showRefreshBar();
-        Paging p = new Paging();
+    protected void initPaging() {
+        p = new Paging();
         p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
         p.count = 20;
-        mView.startService(p);
+    }
+
+    @Override
+    protected void startService() {
+        FanFouService.getProfileTimeline(mContext , p , mUserId);
     }
 
     @Override

@@ -1,10 +1,13 @@
 package com.arenas.droidfan.main.notice;
 
+import android.content.Context;
+
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
+import com.arenas.droidfan.service.FanFouService;
 
 /**
  * Created by Arenas on 2016/7/18.
@@ -13,9 +16,10 @@ public class NoticePresenter extends HomeTimelinePresenter {
 
     private static final String TAG = NoticePresenter.class.getSimpleName();
 
-    public NoticePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
+    public NoticePresenter(Context context , HomeTimelineContract.View view){
         mView = view;
-        mFanFouDB = fanFouDB;
+        mFanFouDB = FanFouDB.getInstance(context);
+        mContext = context;
         mApi = AppContext.getApi();
         mView.setPresenter(this);
     }
@@ -26,10 +30,13 @@ public class NoticePresenter extends HomeTimelinePresenter {
     }
 
     @Override
-    public void refresh() {
-        mView.showRefreshBar();
-        Paging p = new Paging();
+    protected void initPaging() {
+        p = new Paging();
         p.sinceId = mFanFouDB.getNoticeSinceId();
-        mView.startService(p);
+    }
+
+    @Override
+    protected void startService() {
+        FanFouService.getMentions(mContext , p);
     }
 }

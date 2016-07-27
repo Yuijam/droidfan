@@ -110,9 +110,4 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             mTime = (TextView)itemView.findViewById(R.id.time);
         }
     }
-
-//    public interface OnItemClickListener{
-//        void onItemClick(View view , int position);
-//        void onItemLongClick(int id , int position);
-//    }
 }

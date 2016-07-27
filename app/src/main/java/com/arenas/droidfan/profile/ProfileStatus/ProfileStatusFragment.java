@@ -19,13 +19,14 @@ import java.util.ArrayList;
 
 public class ProfileStatusFragment extends HomeTimelineFragment {
 
-    private String userId;
+    public ProfileStatusFragment(){
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profilestatus_list, container, false);
-        userId = ((ProfileActivity)getActivity()).getUserId();
         init(view);
         return view;
     }
@@ -51,10 +52,5 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
     @Override
     public void initAdapter() {
         mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener);
-    }
-
-    @Override
-    public void startService(Paging p) {
-        FanFouService.getProfileTimeline(getContext() , p , userId);
     }
 }

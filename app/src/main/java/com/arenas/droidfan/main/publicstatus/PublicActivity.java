@@ -34,6 +34,6 @@ public class PublicActivity extends AppCompatActivity {
         }
         Utils.addFragmentToActivity(getSupportFragmentManager() , publicFragment , R.id.content_frame);
 
-        new PublicPresenter(FanFouDB.getInstance(this) , publicFragment);
+        new PublicPresenter(this , publicFragment);
     }
 }

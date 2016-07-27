@@ -50,10 +50,4 @@ public class HomeTimelineFragment extends BaseFragment{
     public void initAdapter() {
         mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener);
     }
-
-    @Override
-    public void startService(Paging p) {
-        FanFouService.getHomeTimeline(getContext() , p);
-    }
-
 }

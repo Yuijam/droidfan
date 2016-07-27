@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -22,13 +23,14 @@ import java.util.ArrayList;
 
 public class FavoriteFragment extends HomeTimelineFragment {
 
-    private String userId;
+    public FavoriteFragment(){
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-        userId = ((ProfileActivity)getActivity()).getUserId();
         init(view);
         return view;
     }
@@ -57,16 +59,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
     }
 
     @Override
-    public void startService(Paging p) {
-        FanFouService.getFavoritesList(getContext() , userId , p);
-    }
-
-    @Override
     public void showError(String error) {
-        if (userId.equals(AppContext.getAccount())){
-            Toast.makeText(getContext() , getString(R.string.error_no_status) , Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getContext() , getString(R.string.error_protected) , Toast.LENGTH_SHORT).show();
-        }
+        Utils.showToast(getContext() , error);
     }
 }

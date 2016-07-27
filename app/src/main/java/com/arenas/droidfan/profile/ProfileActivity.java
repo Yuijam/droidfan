@@ -26,6 +26,7 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.profile.favorite.FavoriteFragment;
 import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
+import com.arenas.droidfan.profile.photoalbum.PhotoPresenter;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -113,8 +114,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         }
         mPresenter = new ProfilePresenter(FanFouDB.getInstance(this) , this , mUserId , this);
 
-        new ProfileStatusPresenter(FanFouDB.getInstance(this) , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
-        new FavoritePresenter(FanFouDB.getInstance(this) , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
+        new ProfileStatusPresenter(this , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
+        new PhotoPresenter(this , (PhotoFragment)fragmentAdapter.getItem(1) , mUserId);
+        new FavoritePresenter(this , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
     }
 
     private void initView(){

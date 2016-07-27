@@ -10,6 +10,7 @@ import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.main.message.MessageContract;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
@@ -24,15 +25,20 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected  HomeTimelineContract.View mView;
     protected  FanFouDB mFanFouDB;
     protected  Api mApi;
+    protected  Context mContext;
+
+    protected Paging p;
 
     public HomeTimelinePresenter(){
 
     }
 
-    public HomeTimelinePresenter(FanFouDB fanFouDB , HomeTimelineContract.View view){
+    public HomeTimelinePresenter(Context context , HomeTimelineContract.View view){
         mView = view;
-        mFanFouDB = fanFouDB;
+        mFanFouDB = FanFouDB.getInstance(context);
         mApi = AppContext.getApi();
+        mContext = context;
+
         mView.setPresenter(this);
     }
 
@@ -56,9 +62,17 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     @Override
     public void refresh() {
         mView.showRefreshBar();
-        Paging p = new Paging();
+        initPaging();
+        startService();
+    }
+
+    protected void initPaging(){
+        p = new Paging();
         p.sinceId = mFanFouDB.getHomeTLSinceId();
-        mView.startService(p);
+    }
+
+    protected void startService(){
+        FanFouService.getHomeTimeline(mContext , p);
     }
 
     @Override

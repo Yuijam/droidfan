@@ -26,11 +26,10 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
     private boolean mIsFirstFetch;
 
-    public MessagePresenter(FanFouDB mFanFouDB, MessageContract.View mView, Context mContext) {
-        this.mFanFouDB = mFanFouDB;
+    public MessagePresenter(Context context, MessageContract.View mView ) {
+        this.mFanFouDB = FanFouDB.getInstance(context);
+        mContext = context;
         this.mView = mView;
-        this.mContext = mContext;
-
         mIsFirstFetch = true;
 
         mView.setPresenter(this);

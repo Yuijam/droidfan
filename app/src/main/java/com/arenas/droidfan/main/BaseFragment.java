@@ -40,7 +40,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     public static final String FILTER_FAVORITES = "com.arenas.droidfan.FAVORITES";
     public static final String FILTER_USER = "com.arenas.droidfan.USER";
 
-    private HomeTimelineContract.Presenter mPresenter;
+    protected HomeTimelineContract.Presenter mPresenter;
 
     //broadcast
     protected IntentFilter mIntentFilter;
@@ -49,7 +49,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
 
     protected StatusAdapter mAdapter;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -114,9 +114,6 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         Intent intent = new Intent(getContext() , UpdateActivity.class);
         startActivity(intent);
     }
-
-    @Override
-    public abstract void startService(Paging p);
 
     @Override
     public void showStatus(List<StatusModel> status) {

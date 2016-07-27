@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         initNavHeader(navigationView.getHeaderView(0));
-        new HomeTimelinePresenter(FanFouDB.getInstance(this) , (HomeTimelineFragment)fragmentAdapter.getItem(0));
-        new NoticePresenter(FanFouDB.getInstance(this) , (NoticeFragment)fragmentAdapter.getItem(1));
-        new MessagePresenter(FanFouDB.getInstance(this) , (MessageFragment)fragmentAdapter.getItem(2) , this);
+        new HomeTimelinePresenter(this , (HomeTimelineFragment)fragmentAdapter.getItem(0));
+        new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
+        new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
     }
 
     private void initNavHeader(View view){
