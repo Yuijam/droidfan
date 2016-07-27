@@ -7,6 +7,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
@@ -92,12 +95,7 @@ public class FanFouService extends IntentService {
     }
 
     public static void sendDM(Context context , String recipientId , String reply_msg_id , String text){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , SEND_DM);
-        intent.putExtra(EXTRA_USER_ID , recipientId);
-//        intent.putExtra(EXTRA_USER_B , recipientId);
-        intent.putExtra(EXTRA_DM_TEXT , text);
-        context.startService(intent);
+        start(context , SEND_DM , null , null , recipientId , text);
     }
 
     public static void getConversationList(Context context , Paging paging ){
@@ -125,11 +123,7 @@ public class FanFouService extends IntentService {
     }
 
     public static void isFriend(Context context , String userA , String userB){
-        Intent intent = new Intent(context , FanFouService.class);
-        intent.putExtra(EXTRA_REQUEST , IS_FRIEND);
-        intent.putExtra(EXTRA_USER_A , userA);
-        intent.putExtra(EXTRA_USER_B , userB);
-        context.startService(intent);
+        start(context , IS_FRIEND , null , userA , userB , null);
     }
 
     public static void delete(Context context , String msgId){
@@ -182,6 +176,10 @@ public class FanFouService extends IntentService {
 
     private static void start(Context context , int requestCode , Paging paging , String msgId ,
                               String userId ,String statusText ){
+        if (!NetworkUtils.isNetworkConnected(context)){
+            Utils.showToast(context , context.getString(R.string.network_is_disconnected));
+            return;
+        }
         Intent intent = new Intent(context , FanFouService.class);
         intent.putExtra(EXTRA_REQUEST , requestCode);
         intent.putExtra(EXTRA_PAGING , paging);
@@ -196,11 +194,8 @@ public class FanFouService extends IntentService {
         int request = intent.getIntExtra(EXTRA_REQUEST , 0);
         String mStatusText = intent.getStringExtra(EXTRA_STATUS_TEXT);
         String mId = intent.getStringExtra(EXTRA_MSG_ID);
-        String userA = intent.getStringExtra(EXTRA_USER_A);
-        String userB = intent.getStringExtra(EXTRA_USER_B);
         String userId = intent.getStringExtra(EXTRA_USER_ID);
         Paging p = intent.getParcelableExtra(EXTRA_PAGING);
-        String message = intent.getStringExtra(EXTRA_DM_TEXT);
         mFanFouDB = FanFouDB.getInstance(this);
         try {
             switch (request){
@@ -236,7 +231,7 @@ public class FanFouService extends IntentService {
                     mApi.unfavorite(mId);
                     break;
                 case MENTIONS:
-                    if (mApi.getMentions(p).size() == 0){
+                    if (mApi.getMentions(p).isEmpty()){
                         mHasNewData = false;
                     }else {
                         saveMentions(mApi.getMentions(p));
@@ -246,7 +241,12 @@ public class FanFouService extends IntentService {
                     Log.d(TAG , "getMetions--------->");
                     break;
                 case PUBLIC:
-                    savePublicStatus(mApi.getPublicTimeline());
+                    if (mApi.getPublicTimeline().isEmpty()){
+                        mHasNewData = false;
+                    }else {
+                        mHasNewData = true;
+                        savePublicStatus(mApi.getPublicTimeline());
+                    }
                     mFilterAction = HomeTimelineFragment.FILTER_PUBLICTIMELINE;
                     Log.d(TAG , "getPublicStatus------->");
                     break;
@@ -281,7 +281,7 @@ public class FanFouService extends IntentService {
                     mApi.deleteStatus(mId);
                     break;
                 case IS_FRIEND:
-                    mIsFriend = mApi.isFriends(userA , userB);
+                    mIsFriend = mApi.isFriends(mId , userId);
                     break;
                 case FOLLOW:
                     saveUser(mApi.follow(userId) , 0);
@@ -309,7 +309,7 @@ public class FanFouService extends IntentService {
                     mFilterAction = FILTER_CONVERSATION_LIST;
                     break;
                 case SEND_DM:
-                    DirectMessageModel model = mApi.createDirectmessage(userId , message , userB);
+                    DirectMessageModel model = mApi.createDirectmessage(userId , mStatusText , null);
                     model.conversationId = userId;
                     mFanFouDB.saveDirectMessage(model);
                     mFilterAction = FILTER_CONVERSATION;

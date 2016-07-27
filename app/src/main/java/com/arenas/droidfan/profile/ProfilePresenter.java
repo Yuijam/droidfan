@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;

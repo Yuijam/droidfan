@@ -1,6 +1,7 @@
 package com.arenas.droidfan.main.publicstatus;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
@@ -24,6 +25,11 @@ public class PublicPresenter extends HomeTimelinePresenter {
     @Override
     public void loadStatus() {
         mFanFouDB.getPublicStatusList(this);
+    }
+
+    @Override
+    protected void initPaging() {
+
     }
 
     @Override

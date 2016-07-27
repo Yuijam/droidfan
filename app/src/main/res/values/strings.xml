@@ -39,6 +39,8 @@
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
     <string name="delete_dialog_message">确定删除该消息？</string>
+    <string name="no_new_status">没有新消息</string>
+    <string name="network_is_disconnected">没有网络！</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

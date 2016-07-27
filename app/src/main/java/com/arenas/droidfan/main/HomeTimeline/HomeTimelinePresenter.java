@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
@@ -91,7 +94,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
             loadStatus();
         }else {
             Log.d(TAG , "hasNewData is false--------");
-            mView.showError("hometimeline something wrong!");
+            mView.showError(context.getString(R.string.no_new_status));
         }
         mView.hideRefreshBar();
     }
