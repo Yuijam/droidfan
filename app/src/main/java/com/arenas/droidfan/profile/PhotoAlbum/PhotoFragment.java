@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends HomeTimelineFragment {
 
 
     public PhotoFragment() {

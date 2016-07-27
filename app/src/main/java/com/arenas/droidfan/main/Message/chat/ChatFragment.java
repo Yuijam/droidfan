@@ -38,7 +38,6 @@ public class ChatFragment extends Fragment implements ChatContract.View
         , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
-    private static final int MAX_TEXT_LENGTH = 140;
 
     private ChatContract.Presenter mPresenter;
 

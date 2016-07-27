@@ -7,9 +7,6 @@ package com.arenas.droidfan.api;
 public final class ApiFactory {
     private static final int TWITTER = 0;
     private static final int FANFOU = 1;
-    private static final int SINA = 2;
-    private static final int TECENT = 3;
-    private static final int NETEASE = 4;
 
     public static Api getDefaultApi() {
         return new FanFouApi();

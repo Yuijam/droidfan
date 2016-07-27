@@ -9,6 +9,7 @@ import android.util.Log;
 import com.arenas.droidfan.data.FavoritesColumns;
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
+import com.arenas.droidfan.data.PhotoColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
 import com.arenas.droidfan.data.model.DirectMessageColumns;
@@ -45,6 +46,39 @@ public class FanFouDB implements DataSource{
         return INSTANCE;
     }
 
+    @Override
+    public String getPhotoSinceId(String owner) {
+        return getSinceId(PhotoColumns.TABLE_NAME , owner);
+    }
+
+    @Override
+    public void savePhotoTimeline(List<StatusModel> statusModels) {
+        for (StatusModel s : statusModels){
+            saveStatus(PhotoColumns.TABLE_NAME , s);
+        }
+    }
+
+    @Override
+    public void loadPhotoTimeline(String owner, LoadStatusCallback callback) {
+        List<StatusModel> photoList = getStatusList(PhotoColumns.TABLE_NAME , owner);
+        if (photoList.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onStatusLoaded(photoList);
+        }
+    }
+
+    @Override
+    public void getPhotoStatus(int _id, GetStatusCallback callback) {
+        StatusModel photoStatus = getStatus(_id , PhotoColumns.TABLE_NAME);
+        if (photoStatus == null){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onStatusLoaded(photoStatus);
+        }
+    }
+
+    //dm
     @Override
     public void saveConversationList(List<DirectMessageModel> dms) {
         db.execSQL("delete from " + DirectMessageColumns.TABLE_NAME + " where "

@@ -13,8 +13,8 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
  */
 public class ProfileStatusPresenter extends HomeTimelinePresenter implements DataSource.GetUserCallback{
 
-    private String mUserId;
-    private UserModel mUser;
+    protected String mUserId;
+    protected UserModel mUser;
 
     public ProfileStatusPresenter() {
     }
@@ -28,7 +28,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
         mView.setPresenter(this);
     }
 
-    private void loadUser(){
+    protected void loadUser(){
         mFanFouDB.getUserById(mUserId , this);
     }
 
@@ -49,10 +49,14 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
     @Override
     public void onUserLoaded(UserModel userModel) {
         mUser = userModel;
-        if (isProtected() && !isFollowing()){
+        if (!isStatusAvailable()){
             mView.showError("只向关注TA的人公开消息");
             return;
         }
+        getStatusList();
+    }
+
+    protected void getStatusList(){
         mFanFouDB.getProfileStatusList(mUserId , this);
     }
 
@@ -62,5 +66,9 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
 
     protected boolean isProtected(){
         return mUser.getProtect() == 1 ;
+    }
+
+    private boolean isStatusAvailable(){
+        return mUserId.equals(AppContext.getAccount()) || isFollowing() || !isProtected();
     }
 }

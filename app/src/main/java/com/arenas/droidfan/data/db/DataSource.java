@@ -107,4 +107,14 @@ public interface DataSource {
     void deleteDirectMessage(String dmId);
 
     void saveConversationList(List<DirectMessageModel> dms);
+
+    //photo
+    void savePhotoTimeline(List<StatusModel> statusModels);
+
+    void loadPhotoTimeline(String userId , LoadStatusCallback callback);
+
+    void getPhotoStatus(int _id , GetStatusCallback callback);
+
+    String getPhotoSinceId(String owner);
+
 }

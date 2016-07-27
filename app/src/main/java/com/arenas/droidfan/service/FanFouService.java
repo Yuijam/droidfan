@@ -67,11 +67,13 @@ public class FanFouService extends IntentService {
     public static final int CONVERSATION_LIST = 20;
     public static final int CONVERSATION = 21;
     public static final int SEND_DM = 22;
+    public static final int PHOTO_TIMELINE = 23;
 
     //filter
     public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
     public static final String FILTER_CONVERSATION_LIST = "com.arenas.droidfan.CONVERSATION_LIST";
     public static final String FILTER_CONVERSATION = "com.arenas.droidfan.CONVERSATION";
+    public static final String FILTER_PHOTOTIMELINE = "com.arenas.droidfan.PHOTOTIMELINE";
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
@@ -83,6 +85,10 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void getPhotoTimeline(Context context , String owner , Paging paging){
+        start(context , PHOTO_TIMELINE , paging , null , owner , null);
     }
 
     public static void sendDM(Context context , String recipientId , String reply_msg_id , String text){
@@ -305,6 +311,10 @@ public class FanFouService extends IntentService {
                     model.conversationId = userId;
                     mFanFouDB.saveDirectMessage(model);
                     mFilterAction = FILTER_CONVERSATION;
+                    break;
+                case PHOTO_TIMELINE:
+                    mFanFouDB.savePhotoTimeline(mApi.getPhotosTimeline(userId , p));
+                    mFilterAction = FILTER_PHOTOTIMELINE;
                     break;
             }
         }catch (ApiException e){
