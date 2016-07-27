@@ -46,7 +46,7 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     @Override
     public void addAction() {
-        mIntentFilter.addAction(FILTER_PROFILETIMELINE);
+        mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
     }
 
     @Override

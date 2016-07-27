@@ -37,8 +37,7 @@ public class PhotoPresenter extends ProfileStatusPresenter {
     }
 
     @Override
-    protected void getStatusList() {
+    public void loadStatus() {
         mFanFouDB.loadPhotoTimeline(mUserId , this);
     }
-
 }

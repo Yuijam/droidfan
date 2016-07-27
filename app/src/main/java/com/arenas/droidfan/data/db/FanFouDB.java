@@ -59,8 +59,10 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void loadPhotoTimeline(String owner, LoadStatusCallback callback) {
-        List<StatusModel> photoList = getStatusList(PhotoColumns.TABLE_NAME , owner);
+    public void loadPhotoTimeline(String userId, LoadStatusCallback callback) {
+        Cursor cursor = db.rawQuery("select * from " + PhotoColumns.TABLE_NAME + " where "
+                + " user_id = ? order by rawid desc " , new String[]{userId});
+        List<StatusModel> photoList = getStatusList(cursor);
         if (photoList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -251,7 +253,9 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getFavoritesList(String owner , LoadStatusCallback callback) {
-        List<StatusModel> statusModelList = getStatusList(FavoritesColumns.TABLE_NAME , owner);
+        Cursor cursor = db.rawQuery("select * from " + FavoritesColumns.TABLE_NAME + " where "
+                + " owner = ? order by rawid desc " , new String[]{owner});
+        List<StatusModel> statusModelList = getStatusList(cursor);
         if (statusModelList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -382,7 +386,9 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getProfileStatusList(String owner , LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(ProfileColumns.TABLE_NAME , owner);
+        Cursor cursor = db.rawQuery("select * from " + ProfileColumns.TABLE_NAME + " where "
+                + " owner = ? order by rawid desc " , new String[]{owner});
+        List<StatusModel> statusList = getStatusList(cursor);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -407,7 +413,8 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getPublicStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(PublicStatusColumns.TABLE_NAME , null);
+        Cursor cursor = db.rawQuery("select * from " + PublicStatusColumns.TABLE_NAME + " order by rawid desc ",null);
+        List<StatusModel> statusList = getStatusList(cursor);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -432,7 +439,8 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getNoticeStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(NoticeColumns.TABLE_NAME , null);
+        Cursor cursor = db.rawQuery("select * from " + NoticeColumns.TABLE_NAME + " order by rawid desc" , null);
+        List<StatusModel> statusList = getStatusList(cursor);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -512,7 +520,8 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getHomeTLStatusList(LoadStatusCallback callback) {
-        List<StatusModel> statusList = getStatusList(HomeStatusColumns.TABLE_NAME , null);
+        Cursor cursor = db.rawQuery("select * from " + HomeStatusColumns.TABLE_NAME + " order by rawid desc" , null);
+        List<StatusModel> statusList = getStatusList(cursor);
         if (statusList.isEmpty()){
             callback.onDataNotAvailable();
         }else {
@@ -607,14 +616,8 @@ public class FanFouDB implements DataSource{
         return status;
     }
 
-    private List<StatusModel> getStatusList(String tableName , String owner){
+    private List<StatusModel> getStatusList(Cursor c){
         List<StatusModel> statusList = new ArrayList<>();
-        Cursor c ;
-        if (owner == null){
-            c = db.query(tableName , null , null , null , null , null , HomeStatusColumns.RAWID + " desc");
-        }else {
-            c = db.rawQuery("select * from " + tableName + " where owner = ? order by rawid desc" , new String[]{owner});
-        }
         if (c.moveToFirst()){
             do {
                 StatusModel status = new StatusModel();

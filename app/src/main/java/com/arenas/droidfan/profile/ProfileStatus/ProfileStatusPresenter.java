@@ -32,13 +32,18 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
         mView.setPresenter(this);
     }
 
+    @Override
+    public void start() {
+        loadUser();
+    }
+
     protected void loadUser(){
         mFanFouDB.getUserById(mUserId , this);
     }
 
     @Override
     public void loadStatus() {
-        loadUser();
+        mFanFouDB.getProfileStatusList(mUserId , this);
     }
 
     @Override
@@ -60,11 +65,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
             mView.showError("只向关注TA的人公开消息");
             return;
         }
-        getStatusList();
-    }
-
-    protected void getStatusList(){
-        mFanFouDB.getProfileStatusList(mUserId , this);
+        loadStatus();
     }
 
     protected boolean isFollowing(){

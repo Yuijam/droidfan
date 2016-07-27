@@ -27,8 +27,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     private boolean mIsFriend;
     private boolean mSuccess;
 
-    public ProfilePresenter(FanFouDB mFanFouDB, ProfileContract.View mView , String userId ,Context context) {
-        this.mFanFouDB = mFanFouDB;
+    public ProfilePresenter(ProfileContract.View mView , String userId ,Context context) {
+        this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
         mUserId = userId;
         mContext = context;
@@ -36,9 +36,11 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     private void fetchUser() {
         FanFouService.getUser(mContext , mUserId);
+        Log.d(TAG , "fetchUser!!!");
     }
 
     private void testFriend(){
+        Log.d(TAG , "testFriend!!!!!!!");
         FanFouService.isFriend(mContext , mUserId , AppContext.getAccount());
     }
 
@@ -57,9 +59,10 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void onUserLoaded(UserModel userModel) {
+        mView.hideProgress();
         mUser = userModel;
         initView(userModel);
-        mView.hideProgress();
+        Log.d(TAG , "onUserLoaded------->");
     }
 
     private void loadUser(){
@@ -116,9 +119,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG , "onReceive!!!!!!1");
         mIsFriend = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
-//        mSuccess = intent.getBooleanExtra(FanFouService.EXTRA_SUCCESS , false);
-        Log.d(TAG , "profile presenter onReceive-------");
         loadUser();
     }
 

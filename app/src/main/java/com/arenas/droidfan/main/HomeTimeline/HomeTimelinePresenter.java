@@ -90,6 +90,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         if (hasNewData){
             loadStatus();
         }else {
+            Log.d(TAG , "hasNewData is false--------");
             mView.showError("hometimeline something wrong!");
         }
         mView.hideRefreshBar();

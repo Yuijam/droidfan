@@ -29,6 +29,7 @@ import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
 import com.arenas.droidfan.profile.photoalbum.PhotoPresenter;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
+import com.arenas.droidfan.service.FanFouService;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -102,7 +103,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         initView();
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(HomeTimelineFragment.FILTER_PROFILETIMELINE);
+        mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
@@ -112,7 +113,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         }else if (getIntent().getData() != null){
             mUserId = getIntent().getData().getPathSegments().get(0);
         }
-        mPresenter = new ProfilePresenter(FanFouDB.getInstance(this) , this , mUserId , this);
+
+        mPresenter = new ProfilePresenter(this , mUserId , this);
 
         new ProfileStatusPresenter(this , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
         new PhotoPresenter(this , (PhotoFragment)fragmentAdapter.getItem(1) , mUserId);

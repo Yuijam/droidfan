@@ -253,9 +253,11 @@ public class FanFouService extends IntentService {
                 case PROFILE_TIMELINE:
                     mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
                     if (mApi.getUserTimeline(userId , p).size() == 0 ){
+                        Log.d(TAG , "mHasNewData = false--------->");
                         mHasNewData = false;
                     }else {
                         saveProfileStatus(mApi.getUserTimeline(userId , p));
+                        Log.d(TAG , "mHasNewData = true--------->");
                         mHasNewData = true;
                     }
                     break;

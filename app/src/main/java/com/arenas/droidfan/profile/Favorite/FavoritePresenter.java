@@ -47,7 +47,7 @@ public class FavoritePresenter extends ProfileStatusPresenter {
     }
 
     @Override
-    protected void getStatusList() {
+    public void loadStatus() {
         mFanFouDB.getFavoritesList(mUserId , this);
     }
 }
