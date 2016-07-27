@@ -23,6 +23,7 @@ public interface DetailContract {
         void showError();
         void showFavorite(int resId);
         void showDelete();
+        void finish();
     }
 
     interface Presenter extends BasePresenter{

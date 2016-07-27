@@ -36,6 +36,9 @@
     <string name="send">发送</string>
     <string name="text_should_not_empty">内容不能为空</string>
     <string name="text_too_more">内容不能超过140个字</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+    <string name="delete_dialog_message">确定删除该消息？</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

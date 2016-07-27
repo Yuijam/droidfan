@@ -1,6 +1,7 @@
 package com.arenas.droidfan.Util;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -35,9 +37,6 @@ import java.util.regex.Pattern;
  * Created by Arenas on 2016/6/2.
  */
 public class Utils {
-    private static final Pattern PATTERN_USER = Pattern.compile("(@.+?)\\s+", Pattern.MULTILINE);
-    private static Pattern PATTERN_USERLINK = Pattern
-            .compile("<a href=\"http://fanfou\\.com/(.*?)\" class=\"former\">(.*?)</a>");
 
     public static String getCurTimeStr(){
         String curTime;
@@ -62,59 +61,5 @@ public class Utils {
 
     public static void showToast(Context context , String text){
         Toast.makeText(context , text , Toast.LENGTH_SHORT).show();
-    }
-
-    public static SpannableStringBuilder handleTextWithColor(String text , Context context){
-        SpannableStringBuilder builder = new SpannableStringBuilder(text);
-        int firstIndex;
-        int endIndex;
-        if (text.contains("@") && text.contains(" ")){
-            firstIndex = text.indexOf("@" );
-            endIndex = text.indexOf(" " , firstIndex);
-            while ( endIndex < text.length() && endIndex != -1){
-                builder.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorPrimary))
-                        , firstIndex , endIndex , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                String subString = text.substring(endIndex , text.length());
-                if (subString.contains("@") && subString.contains(" ")){
-                    firstIndex = text.indexOf("@" , endIndex);
-                    endIndex = text.indexOf(" " , firstIndex);
-                }else {
-                    break;
-                }
-            }
-        }
-        return builder;
-    }
-
-    public static SpannableStringBuilder handleSimpleText(Context context , String simpleText){
-        String source = simpleText + " ";
-        SpannableStringBuilder builder = new SpannableStringBuilder(source);
-        String regex = "@(.+?)\\s+";
-        Pattern pattern = PATTERN_USER.compile(regex);
-        Matcher matcher = pattern.matcher(source);
-        while (matcher.find()){
-            builder.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorPrimary)) ,
-                    matcher.start() , matcher.end() , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return builder;
-    }
-
-    public static List<String> findUser(String htmlText){
-        List<String> users = new ArrayList<>();
-        final Matcher m = PATTERN_USERLINK.matcher(htmlText);
-        while (m.find()) {
-            String screenName = Html.fromHtml(m.group(2)).toString();
-            users.add(screenName);
-        }
-        return users;
-    }
-
-    public static void highlightUser(Context context , StatusModel statusModel , List<String> key){
-        String source = statusModel.getSimpleText();
-        for (String s : key){
-            for (int i = 0 ; i < source.length() ; i++){
-                statusModel.getSimpleText().indexOf(s);
-            }
-        }
     }
 }

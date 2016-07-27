@@ -4,9 +4,10 @@ package com.arenas.droidfan.detail;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,6 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
-import com.arenas.droidfan.Util.Utils;
-import com.arenas.droidfan.data.db.DataSource;
 import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment implements DetailContract.View , View.OnClickListener{
@@ -102,14 +101,10 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                showHome();
+                finish();
                 break;
         }
         return true;
-    }
-
-    private void showHome(){
-        getActivity().finish();
     }
 
     @Override
@@ -125,11 +120,16 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 mPresenter.favorite(getContext());
                 break;
             case R.id.delete:
-                mPresenter.delete(getContext());
-                getActivity().finish();
+                showDeleteDialog();
                 break;
         }
     }
+
+    @Override
+    public void finish() {
+        getActivity().finish();
+    }
+
     private void copyToClipBoard(Context context, String content) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("text", content);
@@ -186,5 +186,18 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     @Override
     public void showError() {
         Toast.makeText(getContext() , "something is wrong ! " , Toast.LENGTH_SHORT).show();
+    }
+
+    private void showDeleteDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final AlertDialog alertDialog = builder.setMessage(getString(R.string.delete_dialog_message))
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.delete(getContext());
+                    }
+                }).create();
+        alertDialog.show();
     }
 }

@@ -104,6 +104,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     @Override
     public void delete(Context context) {
         FanFouService.delete(context , mStatusModel.getId());
+        mView.finish();
     }
 
     @Override
