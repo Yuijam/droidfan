@@ -494,8 +494,8 @@ final class FanFouParser implements ApiParser {
             JSONObject po = o.getJSONObject("photo");
             model.setPhoto(po.getString("url"));
             model.setPhotoImageUrl(po.getString("imageurl"));
-            model.setPhotoLargeUrl(po.getString("thumburl"));
-            model.setPhotoThumbUrl(po.getString("largeurl"));
+            model.setPhotoLargeUrl(po.getString("largeurl"));
+            model.setPhotoThumbUrl(po.getString("thumburl"));
         }
 
         model.setFavorited(booleanToInt(o.getBoolean("favorited")));

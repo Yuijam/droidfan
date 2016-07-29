@@ -9,6 +9,7 @@ import android.view.WindowManager;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +43,8 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
         StatusModel model = mDatas.get(position);
 
         if (model.getPhotoThumbUrl() != null)
-        Picasso.with(mContext).load(model.getPhotoThumbUrl()).resize(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
+//        Picasso.with(mContext).load(model.getPhotoLargeUrl()).resize(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
+            Glide.with(mContext).load(model.getPhotoLargeUrl()).override(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
 
         if (mListener != null){
             holder.photo.setOnClickListener(new View.OnClickListener() {

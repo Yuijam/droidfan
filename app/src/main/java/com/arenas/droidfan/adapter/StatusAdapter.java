@@ -1,6 +1,7 @@
 package com.arenas.droidfan.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,13 @@ import android.widget.TextView;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.DateTimeUtils;
 import com.arenas.droidfan.Util.StatusUtils;
+import com.arenas.droidfan.data.model.Photo;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.photo.PhotoActivity;
+import com.bm.library.Info;
+import com.bm.library.PhotoView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -25,10 +32,13 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     private List<StatusModel> mStatusList;
     private MyOnItemClickListener mListener;
     private Context mContext;
+    private OnStatusImageClickListener imageClickListener;
 
-    public StatusAdapter(Context context , List<StatusModel> mStatusList , MyOnItemClickListener Listener) {
+    public StatusAdapter(Context context , List<StatusModel> mStatusList ,
+                         MyOnItemClickListener Listener , OnStatusImageClickListener imageClickListener) {
         this.mStatusList = mStatusList;
         this.mListener = Listener;
+        this.imageClickListener = imageClickListener;
         mContext = context;
     }
 
@@ -39,14 +49,23 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     @Override
     public void onBindViewHolder(final StatusViewHolder holder, int position) {
-        holder.mUsername.setText(mStatusList.get(position).getUserScreenName());
-        StatusUtils.setItemStatus(holder.mStatusText , mStatusList.get(position).getSimpleText());
-        String avatarUrl = mStatusList.get(position).getUserProfileImageUrl();
+        final StatusModel model = mStatusList.get(position);
+        holder.mUsername.setText(model.getUserScreenName());
+        StatusUtils.setItemStatus(holder.mStatusText , model.getSimpleText());
+        String avatarUrl = model.getUserProfileImageUrl();
         Picasso.with(mContext).load(avatarUrl).into(holder.mAvatar);
-        holder.mTime.setText(DateTimeUtils.getInterval(mStatusList.get(position).getTime()));
-        String photoThumbUrl = mStatusList.get(position).getPhotoThumbUrl();
-        if (photoThumbUrl != null){
-            showPhotoThumb(photoThumbUrl , holder.mPhotoThumb);
+        holder.mTime.setText(DateTimeUtils.getInterval(model.getTime()));
+        final String photoImageUrl = model.getPhotoLargeUrl();
+
+        if (photoImageUrl != null){
+            showPhotoThumb(photoImageUrl , holder.mPhotoThumb);
+            holder.mPhotoThumb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    PhotoActivity.start(mContext , model.get_id() , null );
+                    imageClickListener.onImageClick(model.get_id());
+                }
+            });
         } else {
             hidePhotoThumb(holder.mPhotoThumb);
         }
@@ -88,10 +107,11 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     public void showPhotoThumb(String url , ImageView imageView){
         imageView.setVisibility(View.VISIBLE);
-        Picasso.with(mContext).load(url).resize(300 , 300).centerCrop().into(imageView);
+//        Picasso.with(mContext).load(url).resize(300 , 300).centerCrop().into(imageView);
+        Glide.with(mContext).load(url).override(300 , 300).centerCrop().crossFade().into(imageView);
     }
 
-    public void hidePhotoThumb(ImageView imageView){
+    public void hidePhotoThumb(ImageView imageView ){
         imageView.setVisibility(View.GONE);
     }
 

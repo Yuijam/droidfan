@@ -77,12 +77,16 @@
             android:name=".users.UserListActivity"
             android:label="@string/title_activity_user_list"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".main.message.chat.ChatActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".photo.PhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".profile.ProfileDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 package com.arenas.droidfan.data.db;
 
+import android.database.Cursor;
+
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;

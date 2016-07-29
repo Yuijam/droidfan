@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment implements DetailContract.View , View.OnClickListener{
@@ -175,7 +176,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     @Override
     public void showPhoto(String url) {
-        Picasso.with(getContext()).load(url).into(mPhoto);
+//        Picasso.with(getContext()).load(url).into(mPhoto);
+        Glide.with(getContext()).load(url).into(mPhoto);
     }
 
     @Override

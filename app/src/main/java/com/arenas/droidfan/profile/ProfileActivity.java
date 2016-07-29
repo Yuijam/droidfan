@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,13 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.TabFragmentAdapter;
-import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.profile.favorite.FavoriteFragment;
 import com.arenas.droidfan.profile.favorite.FavoritePresenter;
-import com.arenas.droidfan.profile.photoalbum.PhotoFragment;
-import com.arenas.droidfan.profile.photoalbum.PhotoPresenter;
+import com.arenas.droidfan.profile.photoalbum.PhotoAlbumFragment;
+import com.arenas.droidfan.profile.photoalbum.PhotoAlbumPresenter;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
 import com.arenas.droidfan.service.FanFouService;
@@ -89,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new ProfileStatusFragment());
-        fragments.add(new PhotoFragment());
+        fragments.add(new PhotoAlbumFragment());
         fragments.add(new FavoriteFragment());
 
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(0)));//添加tab
@@ -117,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mPresenter = new ProfilePresenter(this , mUserId , this);
 
         new ProfileStatusPresenter(this , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
-        new PhotoPresenter(this , (PhotoFragment)fragmentAdapter.getItem(1) , mUserId);
+        new PhotoAlbumPresenter(this , (PhotoAlbumFragment)fragmentAdapter.getItem(1) , mUserId);
         new FavoritePresenter(this , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
     }
 

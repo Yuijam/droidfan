@@ -572,7 +572,7 @@ public class FanFouDB implements DataSource{
         db.replaceOrThrow(tableName , null , cv);
     }
 
-    private StatusModel getStatus(int _id , String tableName){
+    public StatusModel getStatus(int _id , String tableName){
         StatusModel status = null;
         Cursor c = db.rawQuery("select * from " + tableName + " where _id = " + _id , null);
         if (c != null){

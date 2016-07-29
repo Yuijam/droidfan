@@ -6,12 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
+import com.arenas.droidfan.adapter.OnStatusImageClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.adapter.StatusAdapter;
+import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;
 
@@ -44,6 +47,13 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
         }
     };
 
+    OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
+        @Override
+        public void onImageClick(int _id) {
+            PhotoActivity.start(getContext() , _id , ProfileColumns.TABLE_NAME , null , 0);
+        }
+    };
+
     @Override
     public void addAction() {
         mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
@@ -51,6 +61,6 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     @Override
     public void initAdapter() {
-        mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener);
+        mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener , imageClickListener);
     }
 }

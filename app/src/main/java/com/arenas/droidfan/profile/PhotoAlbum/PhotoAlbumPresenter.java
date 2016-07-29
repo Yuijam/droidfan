@@ -12,9 +12,9 @@ import com.arenas.droidfan.service.FanFouService;
 /**
  * Created by Arenas on 2016/7/27.
  */
-public class PhotoPresenter extends ProfileStatusPresenter {
+public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
-    public PhotoPresenter(Context context , HomeTimelineContract.View view , String userId){
+    public PhotoAlbumPresenter(Context context , HomeTimelineContract.View view , String userId){
         mView = view;
         mFanFouDB = FanFouDB.getInstance(context);
         mContext = context;

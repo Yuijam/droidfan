@@ -134,7 +134,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     @Override
     public void showError(String text) {
-        Utils.showToast(getContext() , text);
+//        Utils.showToast(getContext() , text);
     }
 
     @Override

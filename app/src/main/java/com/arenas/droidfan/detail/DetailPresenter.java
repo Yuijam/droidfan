@@ -82,7 +82,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         mView.showStatusText(statusModel.getText());
         mView.showDate(DateTimeUtils.formatDate(statusModel.getTime()));
         mView.showSource("通过"+statusModel.getSource());
-        mView.showPhoto(statusModel.getPhotoThumbUrl());
+        mView.showPhoto(statusModel.getPhotoLargeUrl());
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_black);
         }
