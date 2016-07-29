@@ -86,7 +86,11 @@
             android:name=".photo.PhotoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".profile.ProfileDetailActivity"></activity>
+        <activity
+            android:name=".profile.ProfileDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>

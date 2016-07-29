@@ -14,7 +14,7 @@ import com.arenas.droidfan.service.FanFouService;
 /**
  * Created by Arenas on 2016/7/20.
  */
-public class ProfileStatusPresenter extends HomeTimelinePresenter implements DataSource.GetUserCallback{
+public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     protected String mUserId;
     protected UserModel mUser;
@@ -34,11 +34,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
 
     @Override
     public void start() {
-        loadUser();
-    }
-
-    protected void loadUser(){
-        mFanFouDB.getUserById(mUserId , this);
+        loadStatus();
     }
 
     @Override
@@ -56,27 +52,5 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter implements Dat
     @Override
     protected void startService() {
         FanFouService.getProfileTimeline(mContext , p , mUserId);
-    }
-
-    @Override
-    public void onUserLoaded(UserModel userModel) {
-        mUser = userModel;
-        if (!isStatusAvailable()){
-            mView.showError("只向关注TA的人公开消息");
-            return;
-        }
-        loadStatus();
-    }
-
-    protected boolean isFollowing(){
-        return mUser.getFollowing() == 1;
-    }
-
-    protected boolean isProtected(){
-        return mUser.getProtect() == 1 ;
-    }
-
-    private boolean isStatusAvailable(){
-        return mUserId.equals(AppContext.getAccount()) || isFollowing() || !isProtected();
     }
 }

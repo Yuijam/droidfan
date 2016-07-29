@@ -42,6 +42,8 @@
     <string name="no_new_status">没有新消息</string>
     <string name="network_is_disconnected">没有网络！</string>
     <string name="view_photo">查看图片</string>
+    <string name="follow">正在关注</string>
+    <string name="follower">关注者</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

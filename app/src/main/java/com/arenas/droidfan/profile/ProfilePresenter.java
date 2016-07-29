@@ -85,8 +85,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         mView.showFollowingCount(user.getFriendsCount());
         mView.showStatusCount(user.getStatusesCount());
         mView.showTitle(user.getScreenName());
-        mView.showLocation(getLocation());
-        mView.showBirthday(getBirthday());
+        mView.showDescription(user.getDescription());
         if (!isMe()){
             mView.showFollowState(getFollowState());
             mView.showFoButton();
@@ -122,7 +121,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG , "onReceive!!!!!!1");
+        Log.d(TAG , "onReceive!!!!!!");
         mIsFriend = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
         loadUser();
     }
@@ -141,8 +140,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     @Override
-    public void showFollower() {
-        if (isProtected() && !isFollowing()){
+    public void openFollower() {
+        if (!isStatusAvailable()){
             mView.showError("只向关注TA的人公开");
         }else {
             UserListActivity.start(mContext , mUserId , UserListActivity.TYPE_FOLLOWERS);
@@ -150,11 +149,43 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     @Override
-    public void showFollowing() {
-        if (isProtected() && !isFollowing()){
+    public void openFollowing() {
+        if (!isStatusAvailable()){
             mView.showError("只向关注TA的人公开");
         }else {
             UserListActivity.start(mContext, mUserId, UserListActivity.TYPE_FOLLOWING);
+        }
+    }
+
+    private boolean isStatusAvailable(){
+        return mUserId.equals(AppContext.getAccount()) || isFollowing() || !isProtected();
+    }
+
+    @Override
+    public void openStatus() {
+        if (!isStatusAvailable()){
+            mView.showError("只向关注TA的人公开");
+        }else {
+            Log.d(TAG , "openStatus()---");
+            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 0);
+        }
+    }
+
+    @Override
+    public void openFavorites() {
+        if (!isStatusAvailable()){
+            mView.showError("只向关注TA的人公开");
+        }else {
+            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 2);
+        }
+    }
+
+    @Override
+    public void openPhotoAlbum() {
+        if (!isStatusAvailable()){
+            mView.showError("只向关注TA的人公开");
+        }else {
+            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 1);
         }
     }
 }

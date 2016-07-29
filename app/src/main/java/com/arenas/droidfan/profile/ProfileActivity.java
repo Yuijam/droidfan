@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,19 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.main.TabFragmentAdapter;
-import com.arenas.droidfan.profile.favorite.FavoriteFragment;
-import com.arenas.droidfan.profile.favorite.FavoritePresenter;
-import com.arenas.droidfan.profile.photoalbum.PhotoAlbumFragment;
-import com.arenas.droidfan.profile.photoalbum.PhotoAlbumPresenter;
-import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
-import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
 import com.arenas.droidfan.service.FanFouService;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View
         , View.OnClickListener {
@@ -46,17 +33,14 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     }
 
     private RoundedImageView mAvatar;
-    private TextView mUserIdView;
     private TextView mStatusCount;
     private TextView mFollowingCount;
     private TextView mFollowerCount;
     private TextView mFavoritesCount;
-    private TextView mUsername;
     private Button mFollow;
     private TextView mFollowMe;
-    private TextView mLocation;
-    private TextView mBirthday;
     private ProgressBar mProgressBar;
+    private TextView mDescription;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -64,7 +48,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     private ProfileContract.Presenter mPresenter;
 
-    private String mUserId;
     private Toolbar mToolbar;
 
     @Override
@@ -74,48 +57,25 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
-        Log.d(TAG , "onCreate!!!!!!!");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        ViewPager viewPager = (ViewPager)findViewById(R.id.view_pager);
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
-        List<String> tabList = new ArrayList<>();
-        tabList.add(getString(R.string.tab_status));
-        tabList.add(getString(R.string.photo_album));
-        tabList.add(getString(R.string.favorite));
-
-        List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new ProfileStatusFragment());
-        fragments.add(new PhotoAlbumFragment());
-        fragments.add(new FavoriteFragment());
-
-        tabLayout.addTab(tabLayout.newTab().setText(tabList.get(0)));//添加tab
-        tabLayout.addTab(tabLayout.newTab().setText(tabList.get(1)));
-        tabLayout.addTab(tabLayout.newTab().setText(tabList.get(2)));
-        TabFragmentAdapter fragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), tabList ,fragments);
-        viewPager.setAdapter(fragmentAdapter);//给ViewPager设置适配器
-        tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         initView();
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
+        mIntentFilter.addAction(FanFouService.FILTER_PROFILE);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mLocalReceiver = new LocalReceiver();
         mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
+        String userId = null;
+
         if (getIntent().hasExtra(EXTRA_USER_ID)){
-            mUserId = getIntent().getStringExtra(EXTRA_USER_ID);
+            userId = getIntent().getStringExtra(EXTRA_USER_ID);
         }else if (getIntent().getData() != null){
-            mUserId = getIntent().getData().getPathSegments().get(0);
+            userId = getIntent().getData().getPathSegments().get(0);
         }
 
-        mPresenter = new ProfilePresenter(this , mUserId , this);
-
-        new ProfileStatusPresenter(this , (ProfileStatusFragment)fragmentAdapter.getItem(0) , mUserId);
-        new PhotoAlbumPresenter(this , (PhotoAlbumFragment)fragmentAdapter.getItem(1) , mUserId);
-        new FavoritePresenter(this , (FavoriteFragment)fragmentAdapter.getItem(2) , mUserId);
+        mPresenter = new ProfilePresenter(this , userId , this);
     }
 
     private void initView(){
@@ -126,15 +86,14 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mFollowerCount.setOnClickListener(this);
 
         mFavoritesCount = (TextView)findViewById(R.id.favorites);
+        mFavoritesCount.setOnClickListener(this);
         mStatusCount = (TextView)findViewById(R.id.status_count);
-        mUserIdView = (TextView)findViewById(R.id.user_id);
-        mUsername = (TextView)findViewById(R.id.tv_username);
+        mStatusCount.setOnClickListener(this);
         mFollow = (Button)findViewById(R.id.fo_and_unfo);
-        mLocation = (TextView)findViewById(R.id.tv_location);
         mFollowMe = (TextView)findViewById(R.id.follow_me);
-        mBirthday = (TextView)findViewById(R.id.tv_birthday);
         mFollow.setOnClickListener(this);
         mProgressBar = (ProgressBar)findViewById(R.id.profile_progress);
+        mDescription = (TextView)findViewById(R.id.description);
     }
 
     @Override
@@ -151,16 +110,18 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
                 mPresenter.follow();
                 break;
             case R.id.follower:
-                mPresenter.showFollower();
+                mPresenter.openFollower();
                 break;
             case R.id.following:
-                mPresenter.showFollowing();
+                mPresenter.openFollowing();
+                break;
+            case R.id.status_count:
+                mPresenter.openStatus();
+                break;
+            case R.id.favorites:
+                mPresenter.openFavorites();
                 break;
         }
-    }
-
-    public String getUserId(){
-        return mUserId;
     }
 
     class LocalReceiver extends BroadcastReceiver {
@@ -168,24 +129,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         public void onReceive(Context context, Intent intent) {
             mPresenter.onReceive(context , intent);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG , "onDestroy!!!!!!!!!");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG , "onPause!!!!!!!");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG , "onStop!!!!!!!!");
     }
 
     @Override
@@ -200,46 +143,37 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showUserId(String userId) {
-        mUserIdView.setText(userId);
+        mToolbar.setSubtitle(userId);
     }
 
     @Override
     public void showFollowingCount(int count) {
-        mFollowingCount.setText("正在关注：" + count);
+        mFollowingCount.setText(""+count);
     }
 
     @Override
     public void showFollowerCount(int count) {
-        mFollowerCount.setText("关注者：" + count);
+        mFollowerCount.setText(""+count);
     }
 
     @Override
     public void showFavoriteCount(int count) {
-        mFavoritesCount.setText("收藏数：" + count);
+        mFavoritesCount.setText(""+count);
     }
 
     @Override
     public void showStatusCount(int count) {
-        mStatusCount.setText("消息数：" + count);
+        mStatusCount.setText( ""+count);
     }
 
     @Override
     public void showTitle(String username) {
-        mUsername.setText(username);
-    }
-
-    @Override
-    public void showLocation(String text) {
-        mLocation.setText(text);
-    }
-
-    @Override
-    public void showBirthday(String text) {
-        mBirthday.setText(text);
+        mToolbar.setTitle(username);
     }
 
     @Override
     public void showFollowState(String text) {
+        mFollowMe.setVisibility(View.VISIBLE);
         mFollowMe.setText(text);
     }
 
@@ -262,4 +196,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     public void showIsFollowing(String text) {
         mFollow.setText(text);
     }
+
+    @Override
+    public void showDescription(String text) {
+        mDescription.setText(text);
+    }
+
 }

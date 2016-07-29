@@ -77,6 +77,9 @@ public class FanFouService extends IntentService {
     public static final String FILTER_CONVERSATION_LIST = "com.arenas.droidfan.CONVERSATION_LIST";
     public static final String FILTER_CONVERSATION = "com.arenas.droidfan.CONVERSATION";
     public static final String FILTER_PHOTOTIMELINE = "com.arenas.droidfan.PHOTOTIMELINE";
+    public static final String FILTER_PROFILE = "com.arenas.droidfan.PROFILE";
+    public static final String FILTER_PROFILE_STATUS = "com.arenas.droidfan.PROFILE_STATUS";
+    public static final String FILTER_PROFILE_FAVORITES = "com.arenas.droidfan.PROFILE_FAVORITES";
 
     private FanFouDB mFanFouDB;
     private static final Api mApi = AppContext.getApi();
@@ -251,7 +254,7 @@ public class FanFouService extends IntentService {
                     Log.d(TAG , "getPublicStatus------->");
                     break;
                 case PROFILE_TIMELINE:
-                    mFilterAction = HomeTimelineFragment.FILTER_PROFILETIMELINE;
+                    mFilterAction = FILTER_PROFILE_STATUS;
                     if (mApi.getUserTimeline(userId , p).size() == 0 ){
                         Log.d(TAG , "mHasNewData = false--------->");
                         mHasNewData = false;
@@ -262,12 +265,12 @@ public class FanFouService extends IntentService {
                     }
                     break;
                 case USER:
-                    mFilterAction = HomeTimelineFragment.FILTER_USER;
+                    mFilterAction = FILTER_PROFILE;
                     saveUser(mApi.showUser(userId) , 0);
                     break;
                 case FAVORITES_LIST:
                     Log.d(TAG , "get favorites list-------->");
-                    mFilterAction = HomeTimelineFragment.FILTER_FAVORITES;
+                    mFilterAction = FILTER_PROFILE_FAVORITES;
                     if (mApi.getFavorites(userId , p).size() == 0){
                         mHasNewData = false;
                     }else {

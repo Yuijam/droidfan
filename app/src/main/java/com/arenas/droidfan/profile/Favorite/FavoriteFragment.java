@@ -60,7 +60,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
 
     @Override
     public void addAction() {
-        mIntentFilter.addAction(FILTER_FAVORITES);
+        mIntentFilter.addAction(FanFouService.FILTER_PROFILE_FAVORITES);
     }
 
     @Override

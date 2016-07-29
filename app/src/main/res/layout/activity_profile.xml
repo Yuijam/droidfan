@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".profile.ProfileActivity"
+    android:background="@color/white"
     >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
         >
 
@@ -22,13 +22,6 @@
             android:layout_height="wrap_content"
             >
 
-        <ProgressBar
-            android:id="@+id/profile_progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            />
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -36,11 +29,17 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 />
-            <include layout="@layout/layout_profile" />
         </android.support.design.widget.AppBarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_profile" />
+    <ProgressBar
+        android:id="@+id/profile_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <include layout="@layout/layout_profile" />
 
 </android.support.design.widget.CoordinatorLayout>
