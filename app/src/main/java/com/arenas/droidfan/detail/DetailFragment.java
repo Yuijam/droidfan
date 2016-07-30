@@ -112,17 +112,21 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.reply:
-                mPresenter.reply(getContext());
+                mPresenter.reply();
                 break;
             case R.id.retweet:
-                mPresenter.retweet(getContext());
+                mPresenter.retweet();
                 break;
             case R.id.favorite:
-                mPresenter.favorite(getContext());
+                mPresenter.favorite();
                 break;
             case R.id.delete:
                 showDeleteDialog();
                 break;
+            case R.id.message:
+                mPresenter.sendMessage();
+                break;
+
         }
     }
 
@@ -197,7 +201,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mPresenter.delete(getContext());
+                        mPresenter.delete();
                     }
                 }).create();
         alertDialog.show();

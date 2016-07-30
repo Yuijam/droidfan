@@ -31,7 +31,7 @@ public interface DataSource {
 
     interface LoadUserCallback{
         void onUsersLoaded(List<UserModel> userModelList);
-        void onDataNotAvailable();
+        void onUsersNotAvailable();
     }
 
     interface LoadDMCallback{

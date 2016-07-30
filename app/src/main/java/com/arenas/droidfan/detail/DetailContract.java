@@ -27,9 +27,10 @@ public interface DetailContract {
     }
 
     interface Presenter extends BasePresenter{
-        void reply(Context context);
-        void retweet(Context context);
-        void favorite(Context context);
-        void delete(Context context);
+        void reply();
+        void retweet();
+        void favorite();
+        void delete();
+        void sendMessage();
     }
 }

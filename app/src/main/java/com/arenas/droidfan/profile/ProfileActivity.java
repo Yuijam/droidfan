@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,7 +22,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View
-        , View.OnClickListener {
+        , View.OnClickListener , SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAG = ProfileActivity.class.getSimpleName();
     public static final String EXTRA_USER_ID = "extra_user_id";
@@ -39,8 +40,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private TextView mFavoritesCount;
     private Button mFollow;
     private TextView mFollowMe;
-    private ProgressBar mProgressBar;
     private TextView mDescription;
+    private SwipeRefreshLayout mSwipeRefresh;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -92,8 +93,16 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mFollow = (Button)findViewById(R.id.fo_and_unfo);
         mFollowMe = (TextView)findViewById(R.id.follow_me);
         mFollow.setOnClickListener(this);
-        mProgressBar = (ProgressBar)findViewById(R.id.profile_progress);
         mDescription = (TextView)findViewById(R.id.description);
+
+        mSwipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+    }
+
+    @Override
+    public void onRefresh() {
+        mPresenter.refresh();
     }
 
     @Override
@@ -179,12 +188,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
     @Override
     public void showProgress() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        mSwipeRefresh.setRefreshing(true);
     }
 
     @Override
     public void hideProgress() {
-        mProgressBar.setVisibility(View.GONE);
+        mSwipeRefresh.setRefreshing(false);
     }
 
     @Override

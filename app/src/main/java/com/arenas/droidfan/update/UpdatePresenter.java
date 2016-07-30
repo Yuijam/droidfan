@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.Util.CompatUtils;
 import com.arenas.droidfan.Util.ImageUtils;
 import com.arenas.droidfan.Util.StatusUtils;
@@ -16,16 +17,20 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.detail.DetailActivity;
+import com.arenas.droidfan.main.message.MessageContract;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Arenas on 2016/7/11.
  */
-public class UpdatePresenter implements UpdateContract.Presenter , DataSource.GetStatusCallback{
+public class UpdatePresenter implements UpdateContract.Presenter
+        , DataSource.GetStatusCallback , DataSource.LoadUserCallback {
 
     private static final String TAG = UpdatePresenter.class.getSimpleName();
 
@@ -38,16 +43,26 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
     private StatusModel mStatusModel;
     private int mActionType;
     private int mStatusType;
+    private Context mContext;
 
-    public UpdatePresenter(int _id ,int type , int statusType ,  FanFouDB mFanFouDB, UpdateContract.View mView) {
-        this.mFanFouDB = mFanFouDB;
+    public UpdatePresenter(int _id ,int type , int statusType , Context context , UpdateContract.View mView) {
+        this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
 
         m_Id = _id;
         mActionType = type;
         mStatusType = statusType;
+        mContext = context;
 
         mView.setPresenter(this);
+    }
+
+    @Override
+    public void start() {
+        if (!isNewStatus()){
+            populateStatusText();
+        }
+        loadFollowing();
     }
 
     @Override
@@ -56,20 +71,43 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
             mView.showError();
             return;
         }
-        startService(context , text , mPhoto);
+        startService(text , mPhoto);
     }
 
-    private void startService(Context context , String text , File photo) {
+    private void loadFollowing(){
+        mFanFouDB.getFollowing(AppContext.getAccount() , this);
+    }
+
+    @Override
+    public void onUsersLoaded(List<UserModel> userModelList) {
+        String[] users = new String[userModelList.size()];
+        int i = 0;
+        for (UserModel u : userModelList){
+            users[i++] = "@" + u.getScreenName();
+        }
+        mView.setAutoTextAdapter(users);
+    }
+
+    @Override
+    public void onDataNotAvailable() {
+        mView.showError();
+    }
+
+    private void fetchUsers(){
+        FanFouService.getFollowing(mContext , AppContext.getAccount());
+    }
+
+    private void startService(String text , File photo) {
         if (photo == null){
             switch (mActionType){
                 case UpdateActivity.TYPE_REPLY:
-                    FanFouService.reply(context , mStatusModel.getId() , text);
+                    FanFouService.reply(mContext , mStatusModel.getId() , text);
                     break;
                 case UpdateActivity.TYPE_RETWEET:
-                    FanFouService.retweet(context , mStatusModel.getId() , text);
+                    FanFouService.retweet(mContext , mStatusModel.getId() , text);
                     break;
                 default:
-                    FanFouService.newStatus(context , text);
+                    FanFouService.newStatus(mContext , text);
                     break;
             }
             mView.showHome();
@@ -80,13 +118,6 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
 //            context.startService(intent);
         }
 
-    }
-
-    @Override
-    public void start() {
-        if (!isNewStatus()){
-            populateStatusText();
-        }
     }
 
     private void populateStatusText(){
@@ -131,8 +162,8 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
     }
 
     @Override
-    public void onDataNotAvailable() {
-        mView.showError();
+    public void onUsersNotAvailable() {
+        fetchUsers();
     }
 
     private boolean isNewStatus(){
@@ -173,5 +204,10 @@ public class UpdatePresenter implements UpdateContract.Presenter , DataSource.Ge
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
         fragment.startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        loadFollowing();
     }
 }

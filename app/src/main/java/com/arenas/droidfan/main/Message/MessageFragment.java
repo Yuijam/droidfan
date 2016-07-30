@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,8 +28,10 @@ import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.service.FanFouService;
 
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ import java.util.List;
  * Created by Arenas on 2016/6/23.
  */
 public class MessageFragment extends Fragment implements MessageContract.View
-        , SwipeRefreshLayout.OnRefreshListener{
+        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
     private String TAG = MessageFragment.class.getSimpleName();
 
@@ -63,8 +66,9 @@ public class MessageFragment extends Fragment implements MessageContract.View
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            String conversationId = mAdapter.getDM(position).getConversationId();
-            ChatActivity.start(getContext() , conversationId);
+            DirectMessageModel model = mAdapter.getDM(position);
+
+            ChatActivity.start(getContext() , model.getConversationId() , getChatUsername(model));
         }
 
         @Override
@@ -73,6 +77,10 @@ public class MessageFragment extends Fragment implements MessageContract.View
         }
     };
 
+    private String getChatUsername(DirectMessageModel model){
+        return model.getSenderScreenName().equals(AppContext.getScreenName()) ?
+                model.getRecipientScreenName() : model.getSenderScreenName();
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,8 +108,19 @@ public class MessageFragment extends Fragment implements MessageContract.View
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
+        FloatingActionButton mFab = (FloatingActionButton)view.findViewById(R.id.fab);
+        mFab.setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fab:
+                // TODO: 2016/7/30  
+                break;
+        }
     }
 
     @Override

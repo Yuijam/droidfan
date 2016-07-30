@@ -15,10 +15,12 @@ import com.arenas.droidfan.detail.DetailFragment;
 public class ChatActivity extends AppCompatActivity {
 
     public static final String EXTRA_USERID = "extra_userid";
+    public static final String EXTRA_USERNAME = "extra_username";
 
-    public static void start(Context context , String userId){
+    public static void start(Context context , String userId , String username){
         Intent intent = new Intent(context , ChatActivity.class);
         intent.putExtra(EXTRA_USERID , userId);
+        intent.putExtra(EXTRA_USERNAME , username);
         context.startActivity(intent);
     }
 
@@ -27,14 +29,17 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        String userId = getIntent().getStringExtra(EXTRA_USERID);
+        String username = getIntent().getStringExtra(EXTRA_USERNAME);
+
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+        toolbar.setTitle(username);
+
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowHomeEnabled(true);
 
-        String userId = getIntent().getStringExtra(EXTRA_USERID);
 
         ChatFragment chatFragment = (ChatFragment)getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (chatFragment == null){
@@ -42,6 +47,6 @@ public class ChatActivity extends AppCompatActivity {
         }
         Utils.addFragmentToActivity(getSupportFragmentManager() , chatFragment , R.id.content_frame);
 
-        new ChatPresenter(userId , FanFouDB.getInstance(this) , chatFragment , this);
+        new ChatPresenter(userId , username , chatFragment , this);
     }
 }

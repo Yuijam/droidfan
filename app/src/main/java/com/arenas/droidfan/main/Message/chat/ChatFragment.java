@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.service.FanFouService;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +53,6 @@ public class ChatFragment extends Fragment implements ChatContract.View
     private RecyclerView mRecyclerView;
 
     private EditText mInputText;
-    private Toolbar toolbar;
     private ImageView mSend;
     private CharSequence temp;
 
@@ -114,7 +115,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mSend = (ImageView)view.findViewById(R.id.send);
         mSend.setOnClickListener(this);
 
-        toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -124,6 +125,16 @@ public class ChatFragment extends Fragment implements ChatContract.View
                 mPresenter.send(mInputText.getText().toString());
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                getActivity().finish();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -157,13 +168,6 @@ public class ChatFragment extends Fragment implements ChatContract.View
     @Override
     public void onRefresh() {
         mPresenter.refresh();
-    }
-
-    @Override
-    public void showTitle(String title) {
-        if (toolbar != null){
-            toolbar.setTitle(title);
-        }
     }
 
     //TextWatch

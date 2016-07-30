@@ -11,7 +11,7 @@
         android:layout_weight="1"
         android:layout_height="0dp"
         >
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/et_status_text"
             android:gravity="top"
             android:layout_width="0dp"

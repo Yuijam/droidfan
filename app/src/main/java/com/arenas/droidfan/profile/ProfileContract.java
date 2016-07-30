@@ -35,5 +35,6 @@ public class ProfileContract {
         void openStatus();
         void openFavorites();
         void openPhotoAlbum();
+        void refresh();
     }
 }

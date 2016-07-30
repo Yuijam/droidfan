@@ -48,6 +48,6 @@ public class DetailActivity extends AppCompatActivity {
 
         int _id = getIntent().getIntExtra(EXTRA_STATUS_ID , -1);
         int type = getIntent().getIntExtra(EXTRA_STATUS_TYPE , -1);
-        new DetailPresenter(_id , type , FanFouDB.getInstance(this) , detailFragment);
+        new DetailPresenter(_id , type , this , detailFragment);
     }
 }

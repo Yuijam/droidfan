@@ -12,6 +12,8 @@ import com.arenas.droidfan.data.StatusColumns;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.main.message.MessageContract;
+import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.arenas.droidfan.service.FanFouService;
 import com.arenas.droidfan.update.UpdateActivity;
 
@@ -29,12 +31,15 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     private int m_id;
     private boolean mIsFavorite;
     private int mActionType;
+    private Context mContext;
 
-    public DetailPresenter(int _id , int type ,  FanFouDB mFanFouDB , DetailContract.View mView) {
-        this.mFanFouDB = mFanFouDB;
+    public DetailPresenter(int _id , int type , Context context , DetailContract.View mView) {
+        this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
         m_id = _id;
         mActionType = type;
+
+        mContext = context;
 
         mView.setPresenter(this);
     }
@@ -92,34 +97,39 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     }
 
     @Override
-    public void reply(Context context) {
-        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_REPLY , mActionType);
+    public void reply() {
+        UpdateActivity.start(mContext , m_id , UpdateActivity.TYPE_REPLY , mActionType);
     }
 
     @Override
-    public void retweet(Context context) {
-        UpdateActivity.start(context , m_id , UpdateActivity.TYPE_RETWEET , mActionType);
+    public void retweet() {
+        UpdateActivity.start(mContext , m_id , UpdateActivity.TYPE_RETWEET , mActionType);
     }
 
     @Override
-    public void delete(Context context) {
-        FanFouService.delete(context , mStatusModel.getId());
+    public void delete() {
+        FanFouService.delete(mContext , mStatusModel.getId());
         mView.finish();
     }
 
     @Override
-    public void favorite(Context context) {
+    public void favorite() {
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_grey);
             mFanFouDB.updateFavorite(m_id , 0 );
-            FanFouService.unfavorite(context , mStatusModel.getId());
+            FanFouService.unfavorite(mContext , mStatusModel.getId());
             mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
             mIsFavorite = false;
         }else {
             mView.showFavorite(R.drawable.ic_favorite_black);
             mFanFouDB.updateFavorite(m_id , 1);
-            FanFouService.favorite(context , mStatusModel.getId());
+            FanFouService.favorite(mContext , mStatusModel.getId());
             mIsFavorite = true;
         }
+    }
+
+    @Override
+    public void sendMessage() {
+        ChatActivity.start(mContext , mStatusModel.getUserId() , mStatusModel.getUserScreenName());
     }
 }

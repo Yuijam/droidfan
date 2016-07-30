@@ -247,7 +247,12 @@ final class FanFouParser implements ApiParser {
                     } else {
                         dm.setType(DirectMessageModel.TYPE_OUTBOX);
                     }
-                    dm.setConversationId(userId);
+//                    dm.setConversationId(userId);
+                    if (dm.getSenderScreenName().equals(AppContext.getScreenName())) {
+                        dm.setConversationId(dm.getRecipientScreenName());
+                    }else {
+                        dm.setConversationId(dm.getSenderScreenName());
+                    }
                     dms.add(dm);
                 }
             }
@@ -295,7 +300,7 @@ final class FanFouParser implements ApiParser {
                 JSONObject o = array.getJSONObject(i);
                 DirectMessageModel dm = directMessage(o,
                         DirectMessageModel.TYPE_INBOX);
-                dm.setConversationId(dm.getSenderId());
+                dm.setConversationId(dm.getSenderScreenName());
                 dm.setIncoming(1);
                 dms.add(dm);
             }
@@ -318,7 +323,7 @@ final class FanFouParser implements ApiParser {
                 JSONObject o = array.getJSONObject(i);
                 DirectMessageModel dm = directMessage(o,
                         DirectMessageModel.TYPE_OUTBOX);
-                dm.setConversationId(dm.getRecipientId());
+                dm.setConversationId(dm.getRecipientScreenName());
                 dm.setIncoming(0);
                 dms.add(dm);
             }

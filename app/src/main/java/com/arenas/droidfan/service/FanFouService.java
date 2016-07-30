@@ -313,7 +313,7 @@ public class FanFouService extends IntentService {
                     break;
                 case SEND_DM:
                     DirectMessageModel model = mApi.createDirectmessage(userId , mStatusText , null);
-                    model.conversationId = userId;
+                    model.conversationId = model.getRecipientScreenName();
                     mFanFouDB.saveDirectMessage(model);
                     mFilterAction = FILTER_CONVERSATION;
                     break;

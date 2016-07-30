@@ -11,6 +11,7 @@ import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Arenas on 2016/7/11.
@@ -25,6 +26,7 @@ public interface UpdateContract {
         void showHome();
         void setStatusText(String statusText);
         void setSelection(String text);
+        void setAutoTextAdapter(String[] users);
     }
 
     interface Presenter extends BasePresenter{
@@ -33,5 +35,6 @@ public interface UpdateContract {
         void onResult(Context context , int requestCode, int resultCode, Intent data);
         void deletePhoto();
         void takePhoto(Fragment fragment , int requestCode);
+        void onReceive(Context context , Intent intent);
     }
 }

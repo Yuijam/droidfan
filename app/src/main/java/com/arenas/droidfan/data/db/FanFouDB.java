@@ -20,7 +20,6 @@ import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.users.UserListActivity;
 
 import java.util.ArrayList;
-import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 /**
@@ -94,10 +93,10 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void getConversation(String userId, LoadDMCallback callback) {
+    public void getConversation(String username, LoadDMCallback callback) {
         Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
         + DirectMessageColumns.TYPE + " = ? and " + DirectMessageColumns.CONVERSATION_ID + " = ? "
-        + " order by rawid " , new String[]{String.valueOf(DirectMessageModel.TYPE_OUTBOX) , userId} );
+        + " order by rawid " , new String[]{String.valueOf(DirectMessageModel.TYPE_OUTBOX) , username} );
         List<DirectMessageModel> models = getDM(cursor);
         if (models.isEmpty()){
             callback.onDataNotAvailable();
@@ -185,7 +184,7 @@ public class FanFouDB implements DataSource{
 
         List<UserModel> users = getUsers(cursor);
         if (users.isEmpty()){
-            callback.onDataNotAvailable();
+            callback.onUsersNotAvailable();
         }else {
             callback.onUsersLoaded(users);
         }
@@ -220,7 +219,7 @@ public class FanFouDB implements DataSource{
 
         List<UserModel> users = getUsers(cursor);
         if (users.isEmpty()){
-            callback.onDataNotAvailable();
+            callback.onUsersNotAvailable();
         }else {
             callback.onUsersLoaded(users);
         }

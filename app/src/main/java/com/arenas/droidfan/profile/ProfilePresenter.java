@@ -188,4 +188,9 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
             ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 1);
         }
     }
+
+    @Override
+    public void refresh() {
+        fetchUser();
+    }
 }

@@ -3,6 +3,7 @@ package com.arenas.droidfan.main.message.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
@@ -19,20 +20,25 @@ import java.util.List;
  */
 public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDMCallback{
 
+    private static final String TAG = ChatPresenter.class.getSimpleName();
+
     private FanFouDB mFanFouDB;
     private ChatContract.View mView;
     private Context mContext;
 
     private String mUserId;
     private DirectMessageModel model;
+    private String mUsername;
 
     private boolean mIsFirstFetch;
 
-    public ChatPresenter(String userId , FanFouDB mFanFouDB, ChatContract.View mView, Context mContext) {
-        this.mFanFouDB = mFanFouDB;
+    public ChatPresenter(String userId , String username , ChatContract.View mView, Context mContext) {
+        this.mFanFouDB = FanFouDB.getInstance(mContext);
         this.mView = mView;
         this.mContext = mContext;
         mUserId = userId;
+        mUsername = username;
+        Log.d(TAG , "userId = " + userId);
 
         mIsFirstFetch = true;
         mView.setPresenter(this);
@@ -45,7 +51,7 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
 
     private void loadDM(){
         mView.showProgressbar();
-        mFanFouDB.getConversation(mUserId , this);
+        mFanFouDB.getConversation(mUsername , this);
     }
 
     @Override
@@ -53,20 +59,12 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         model = messageModels.get(0);
         mView.hideProgressbar();
         mView.showChatItems(messageModels);
-        mView.showTitle(getTitle());
-    }
-
-    private String getTitle(){
-        return model.getSenderScreenName().equals(AppContext.getScreenName()) ?
-                model.getRecipientScreenName() : model.getSenderScreenName();
     }
 
     @Override
     public void onDataNotAvailable() {
         if (mIsFirstFetch){
             fetchData();
-        }else {
-            mView.showError("on chat data not available!");
         }
     }
 

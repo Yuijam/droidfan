@@ -49,6 +49,6 @@ public class UpdateActivity extends AppCompatActivity {
         int _id = getIntent().getIntExtra(EXTRA_ID , -1);
         int actionType = getIntent().getIntExtra(EXTRA_ACTION_TYPE, -1);
         int statusType = getIntent().getIntExtra(EXTRA_STATUS_TYPE, -1);
-        new UpdatePresenter( _id , actionType , statusType , FanFouDB.getInstance(this) , updateFragment);
+        new UpdatePresenter( _id , actionType , statusType , this , updateFragment);
     }
 }

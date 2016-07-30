@@ -71,7 +71,7 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
     }
 
     @Override
-    public void onDataNotAvailable() {
+    public void onUsersNotAvailable() {
         if (mFirstEnter){
             fetchUsers();
         }else {

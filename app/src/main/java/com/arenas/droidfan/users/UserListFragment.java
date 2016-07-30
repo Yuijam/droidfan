@@ -100,6 +100,7 @@ public class UserListFragment extends Fragment implements UserContract.View
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
     }
 
 
