@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private TextView mFollowMe;
     private TextView mDescription;
     private SwipeRefreshLayout mSwipeRefresh;
+    private ImageView mLock;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -98,6 +100,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mSwipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
         mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+
+        mLock = (ImageView)findViewById(R.id.lock);
     }
 
     @Override
@@ -211,4 +215,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mDescription.setText(text);
     }
 
+    @Override
+    public void showLock() {
+        mLock.setVisibility(View.VISIBLE);
+    }
 }

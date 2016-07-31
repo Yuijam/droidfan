@@ -25,6 +25,7 @@ public class ProfileContract {
         void showFoButton();
         void showIsFollowing(String text);
         void showDescription(String text);
+        void showLock();
     }
 
     interface Presenter extends BasePresenter {

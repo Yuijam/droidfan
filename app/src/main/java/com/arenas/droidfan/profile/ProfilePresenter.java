@@ -90,6 +90,9 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
             mView.showFollowState(getFollowState());
             mView.showFoButton();
             mView.showIsFollowing(followText());
+            if (!isStatusAvailable()){
+                mView.showLock();
+            }
         }
     }
 
