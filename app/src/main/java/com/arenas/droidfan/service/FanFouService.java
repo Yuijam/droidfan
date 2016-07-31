@@ -254,7 +254,7 @@ public class FanFouService extends IntentService {
                     Log.d(TAG , "getPublicStatus------->");
                     break;
                 case PROFILE_TIMELINE:
-                    mFilterAction = FILTER_PROFILE_STATUS;
+                    mFilterAction = FILTER_PROFILE_FAVORITES;
                     if (mApi.getUserTimeline(userId , p).size() == 0 ){
                         Log.d(TAG , "mHasNewData = false--------->");
                         mHasNewData = false;
@@ -285,6 +285,7 @@ public class FanFouService extends IntentService {
                     break;
                 case IS_FRIEND:
                     mIsFriend = mApi.isFriends(mId , userId);
+                    mFilterAction = FILTER_PROFILE;
                     break;
                 case FOLLOW:
                     saveUser(mApi.follow(userId) , 0);

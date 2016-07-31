@@ -373,6 +373,7 @@ public class FanFouDB implements DataSource{
         db.replace(UserColumns.TABLE_NAME , null , cv);
     }
 
+
     @Override
     public String getProfileSinceId(String owner) {
         return getSinceId(ProfileColumns.TABLE_NAME , owner);
@@ -475,12 +476,44 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public String getMaxId(){
+    public String getNoticeMaxId() {
+        Cursor cursor = db.rawQuery("select * from " + NoticeColumns.TABLE_NAME + " order by rawid " , null);
+        return getMaxId(cursor);
+    }
+
+    @Override
+    public String getPhotoMaxId(String userId) {
+        Cursor cursor = db.rawQuery("select * from " + PhotoColumns.TABLE_NAME + " where owner = ? order by rawid " ,
+                new String[]{userId});
+        return getMaxId(cursor);
+    }
+
+    @Override
+    public String getFavoritesMaxid(String userId) {
+        Cursor cursor = db.rawQuery("select * from " + FavoritesColumns.TABLE_NAME + " where owner = ? order by "
+                +" rawid" , new String[]{userId});
+        return getMaxId(cursor);
+    }
+
+    @Override
+    public String getHomeMaxId() {
+        Cursor cursor = db.rawQuery("select * from " + HomeStatusColumns.TABLE_NAME + " order by rawid " ,
+                null);
+        return getMaxId(cursor);
+    }
+
+    @Override
+    public String getProfileMaxId(String userId){
+        Cursor cursor = db.rawQuery("select * from " + ProfileColumns.TABLE_NAME + " where owner = ? order by "
+                + " rawid " , new String[]{userId});
+        return getMaxId(cursor);
+    }
+
+    private String getMaxId(Cursor cursor){
         String maxId = null;
-        Cursor c = db.query(HomeStatusColumns.TABLE_NAME , null ,null ,null , null , null ,null);
-        if (c != null) {
-            c.moveToLast();
-            maxId = DBUtil.parseString(c , HomeStatusColumns.ID);
+//        Cursor c = db.query(HomeStatusColumns.TABLE_NAME , null ,null ,null , null , null ,null);
+        if (cursor.moveToFirst()) {
+            maxId = DBUtil.parseString(cursor , HomeStatusColumns.ID);
         }
         return maxId;
     }
@@ -499,9 +532,9 @@ public class FanFouDB implements DataSource{
         String sinceId = null;
         Cursor c;
         if (owner == null){
-             c = db.query(tableName , null ,null ,null , null , null , null);
+             c = db.rawQuery("select * from " + HomeStatusColumns.TABLE_NAME + " order by rawid desc " , null);
         }else {
-            c = db.rawQuery("select * from " + tableName + " where owner = ?" , new String[]{owner});
+            c = db.rawQuery("select * from " + tableName + " where owner = ? order by rawid desc " , new String[]{owner});
         }
         if (c.moveToFirst()){
             Log.d(TAG , "c.moveToFirst != 0 -----");

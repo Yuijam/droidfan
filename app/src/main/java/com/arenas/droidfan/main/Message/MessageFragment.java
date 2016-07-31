@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.service.FanFouService;
+import com.malinskiy.superrecyclerview.OnMoreListener;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ import java.util.List;
  * Created by Arenas on 2016/6/23.
  */
 public class MessageFragment extends Fragment implements MessageContract.View
-        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
+        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
 
     private String TAG = MessageFragment.class.getSimpleName();
 
@@ -51,6 +54,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
     private ConversationListAdapter mAdapter;
 
     private SwipeRefreshLayout mSwipeRefresh;
+    private SuperRecyclerView recyclerView;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -102,9 +106,10 @@ public class MessageFragment extends Fragment implements MessageContract.View
     }
 
     private void initView(View view){
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        recyclerView = (SuperRecyclerView)view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mAdapter);
+//        recyclerView.setupMoreListener(this , 3);
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
         mSwipeRefresh.setOnRefreshListener(this);
@@ -123,6 +128,11 @@ public class MessageFragment extends Fragment implements MessageContract.View
         }
     }
 
+//    @Override
+//    public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+//        mPresenter.getMore(overallItemsCount , itemsBeforeMore ,maxLastVisiblePosition);
+//    }
+
     @Override
     public void onRefresh() {
         mPresenter.refresh();
@@ -136,6 +146,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
     @Override
     public void hideProgressbar() {
         mSwipeRefresh.setRefreshing(false);
+        recyclerView.setRefreshing(false);
     }
 
     class LocalReceiver extends BroadcastReceiver {

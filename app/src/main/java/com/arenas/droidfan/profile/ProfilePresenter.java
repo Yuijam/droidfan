@@ -176,7 +176,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         if (!isStatusAvailable()){
             mView.showError("只向关注TA的人公开");
         }else {
-            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 2);
+            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 1);
         }
     }
 

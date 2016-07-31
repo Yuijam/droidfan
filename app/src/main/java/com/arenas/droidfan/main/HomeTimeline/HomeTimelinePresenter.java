@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.Util.NetworkUtils;
-import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.message.MessageContract;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
@@ -29,7 +26,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected  FanFouDB mFanFouDB;
     protected  Api mApi;
     protected  Context mContext;
-
+    protected boolean mIsAllowRefresh;
     protected Paging p;
 
     public HomeTimelinePresenter(){
@@ -47,6 +44,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void start() {
+        mIsAllowRefresh = true;
         loadStatus();
     }
 
@@ -64,14 +62,16 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void refresh() {
+        mIsAllowRefresh = true;
         mView.showRefreshBar();
-        initPaging();
+        initSinceId();
         startService();
     }
 
-    protected void initPaging(){
+    protected void initSinceId(){
         p = new Paging();
         p.sinceId = mFanFouDB.getHomeTLSinceId();
+        p.count = 10;
     }
 
     protected void startService(){
@@ -84,18 +84,34 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     }
 
     public void onDataNotAvailable() {
-        refresh();
+        if (mIsAllowRefresh){
+            refresh();
+        }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        boolean hasNewData = intent.getBooleanExtra(FanFouService.EXTRA_HAS_NEW , false);
-        if (hasNewData){
-            loadStatus();
-        }else {
-            Log.d(TAG , "hasNewData is false--------");
-            mView.showError(context.getString(R.string.no_new_status));
-        }
+//        boolean hasNewData = intent.getBooleanExtra(FanFouService.EXTRA_HAS_NEW , false);
+//        if (hasNewData){
+        mIsAllowRefresh = false;
         mView.hideRefreshBar();
+            loadStatus();
+//        }else {
+//            Log.d(TAG , "hasNewData is false--------");
+//            mView.showError(context.getString(R.string.no_new_status));
+//        }
+
+    }
+
+    @Override
+    public void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+        initMaxId();
+        startService();
+    }
+
+    protected void initMaxId(){
+        p = new Paging();
+        p.count = 10;
+        p.maxId = mFanFouDB.getHomeMaxId();
     }
 }

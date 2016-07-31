@@ -28,5 +28,6 @@ public interface HomeTimelineContract {
         void onReceive(Context context, Intent intent);
         void newStatus();
         void refresh();
+        void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition);
     }
 }

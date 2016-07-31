@@ -21,7 +21,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/js"
             />
 
 
@@ -122,7 +121,6 @@
                     android:id="@+id/fo_and_unfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="正在关注"
                     android:layout_span="2"
                     android:visibility="gone"
                     />
@@ -132,7 +130,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="2"
-                    android:text="没有关注我"
                     android:visibility="gone"
                     />
 
@@ -146,7 +143,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="一个工程师"
             android:layout_below="@id/table_layout"
             />
     </RelativeLayout>

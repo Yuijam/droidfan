@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     private ImageView mFavorite;
     private ImageView mDelete;
     private ImageView mReply;
+
+    private LinearLayout mUserlayout;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -95,6 +98,9 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         mDelete = (ImageView)view.findViewById(R.id.delete);
         mDelete.setOnClickListener(this);
 
+        mUserlayout = (LinearLayout)view.findViewById(R.id.layout_user);
+        mUserlayout.setOnClickListener(this);
+
         setHasOptionsMenu(true);
     }
 
@@ -125,6 +131,9 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 break;
             case R.id.message:
                 mPresenter.sendMessage();
+                break;
+            case R.id.layout_user:
+                mPresenter.openUser();
                 break;
 
         }

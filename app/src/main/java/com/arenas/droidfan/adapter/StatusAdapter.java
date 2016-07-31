@@ -15,6 +15,7 @@ import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.data.model.Photo;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.photo.PhotoActivity;
+import com.arenas.droidfan.profile.ProfileActivity;
 import com.bm.library.Info;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
@@ -54,6 +55,12 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         StatusUtils.setItemStatus(holder.mStatusText , model.getSimpleText());
         String avatarUrl = model.getUserProfileImageUrl();
         Picasso.with(mContext).load(avatarUrl).into(holder.mAvatar);
+        holder.mAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProfileActivity.start(mContext , model.getUserId());
+            }
+        });
         holder.mTime.setText(DateTimeUtils.getInterval(model.getTime()));
         final String photoImageUrl = model.getPhotoLargeUrl();
 

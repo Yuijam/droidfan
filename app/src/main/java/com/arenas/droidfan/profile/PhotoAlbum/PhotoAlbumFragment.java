@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;
+import com.malinskiy.superrecyclerview.OnMoreListener;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +44,25 @@ public class PhotoAlbumFragment extends HomeTimelineFragment {
     }
 
     @Override
-    public void init(View view) {
+    public void initAdapter() {
+        mAdapter = new PhotoAlbumAdapter(getContext() , new ArrayList<StatusModel>() , listener);
+    }
+
+    public void addAction(){
+        mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
+    }
+
+    public void init(View view){
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
-        RecyclerView mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        mRecyclerView = (SuperRecyclerView)view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext() , 3));
         mRecyclerView.setAdapter(mAdapter);
 
         FloatingActionButton mFAB = (FloatingActionButton)view.findViewById(R.id.fab);
         mFAB.setOnClickListener(this);
-    }
-
-    public void addAction(){
-        mIntentFilter.addAction(FanFouService.FILTER_PHOTOTIMELINE);
     }
 
     @Override
@@ -73,9 +81,4 @@ public class PhotoAlbumFragment extends HomeTimelineFragment {
 
         }
     };
-
-    @Override
-    public void initAdapter() {
-        mAdapter = new PhotoAlbumAdapter(getContext() , new ArrayList<StatusModel>() , listener);
-    }
 }

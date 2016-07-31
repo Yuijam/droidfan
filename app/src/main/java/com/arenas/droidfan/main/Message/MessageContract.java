@@ -23,6 +23,7 @@ public interface MessageContract {
     interface Presenter extends BasePresenter{
         void refresh();
         void onReceive(Context context , Intent intent);
+        void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition);
 //        void openConversation( )
     }
 }

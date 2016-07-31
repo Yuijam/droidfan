@@ -35,7 +35,7 @@ public class FavoritePresenter extends ProfileStatusPresenter {
     }
 
     @Override
-    protected void initPaging() {
+    protected void initSinceId() {
         p = new Paging();
         p.sinceId = mFanFouDB.getFavoritesSinceId(mUserId);
         p.count = 20;
@@ -49,5 +49,12 @@ public class FavoritePresenter extends ProfileStatusPresenter {
     @Override
     public void loadStatus() {
         mFanFouDB.getFavoritesList(mUserId , this);
+    }
+
+    @Override
+    protected void initMaxId() {
+        p = new Paging();
+        p.maxId = mFanFouDB.getFavoritesMaxid(mUserId);
+        p.count = 20;
     }
 }

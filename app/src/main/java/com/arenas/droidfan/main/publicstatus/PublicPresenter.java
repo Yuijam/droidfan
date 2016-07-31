@@ -28,7 +28,7 @@ public class PublicPresenter extends HomeTimelinePresenter {
     }
 
     @Override
-    protected void initPaging() {
+    protected void initSinceId() {
 
     }
 

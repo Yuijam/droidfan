@@ -32,5 +32,6 @@ public interface DetailContract {
         void favorite();
         void delete();
         void sendMessage();
+        void openUser();
     }
 }

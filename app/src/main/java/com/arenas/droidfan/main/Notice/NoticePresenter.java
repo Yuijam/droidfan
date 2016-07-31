@@ -20,6 +20,7 @@ public class NoticePresenter extends HomeTimelinePresenter {
         mView = view;
         mFanFouDB = FanFouDB.getInstance(context);
         mContext = context;
+
         mApi = AppContext.getApi();
         mView.setPresenter(this);
     }
@@ -30,13 +31,21 @@ public class NoticePresenter extends HomeTimelinePresenter {
     }
 
     @Override
-    protected void initPaging() {
+    protected void initSinceId() {
         p = new Paging();
+        p.count = 10;
         p.sinceId = mFanFouDB.getNoticeSinceId();
     }
 
     @Override
     protected void startService() {
         FanFouService.getMentions(mContext , p);
+    }
+
+    @Override
+    protected void initMaxId() {
+        p = new Paging();
+        p.count = 10;
+        p.maxId = mFanFouDB.getNoticeMaxId();
     }
 }

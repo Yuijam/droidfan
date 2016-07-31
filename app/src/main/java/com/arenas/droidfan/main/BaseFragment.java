@@ -23,6 +23,8 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.update.UpdateActivity;
+import com.malinskiy.superrecyclerview.OnMoreListener;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.List;
 
@@ -50,6 +52,8 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     protected StatusAdapter mAdapter;
 
     protected SwipeRefreshLayout mSwipeRefreshLayout;
+
+    protected SuperRecyclerView mRecyclerView;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -92,9 +96,16 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
-        RecyclerView mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        mRecyclerView = (SuperRecyclerView)view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.setupMoreListener(new OnMoreListener() {
+            @Override
+            public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+                mPresenter.getMore(overallItemsCount , itemsBeforeMore , maxLastVisiblePosition);
+            }
+        } , 3);
 
         FloatingActionButton mFAB = (FloatingActionButton)view.findViewById(R.id.fab);
         mFAB.setOnClickListener(this);
@@ -148,6 +159,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     public void hideRefreshBar() {
         if (mSwipeRefreshLayout.isRefreshing())
             mSwipeRefreshLayout.setRefreshing(false);
+        mRecyclerView.setRefreshing(false);
     }
 
     @Override

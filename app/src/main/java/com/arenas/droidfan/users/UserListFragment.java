@@ -23,6 +23,7 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.UsersAdapter;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class UserListFragment extends Fragment implements UserContract.View
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view , int position) {
-            // TODO: 2016/7/24
+            ProfileActivity.start(getContext() , mAdapter.getUser(position).getId());
         }
 
         @Override

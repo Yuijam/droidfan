@@ -57,7 +57,15 @@ public interface DataSource {
 
     String getNoticeSinceId();
 
-    String getMaxId();
+    String getProfileMaxId(String userId);
+
+    String getHomeMaxId();
+
+    String getNoticeMaxId();
+
+    String getPhotoMaxId(String userId);
+
+    String getFavoritesMaxid(String userId);
 
     void getHomeTLStatus(int _id , GetStatusCallback callback);
 

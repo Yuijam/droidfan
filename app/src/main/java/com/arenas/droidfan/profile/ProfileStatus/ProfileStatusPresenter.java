@@ -1,6 +1,8 @@
 package com.arenas.droidfan.profile.profilestatus;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
@@ -15,6 +17,8 @@ import com.arenas.droidfan.service.FanFouService;
  * Created by Arenas on 2016/7/20.
  */
 public class ProfileStatusPresenter extends HomeTimelinePresenter {
+
+    private static final String TAG = ProfileStatusPresenter.class.getSimpleName();
 
     protected String mUserId;
     protected UserModel mUser;
@@ -33,24 +37,27 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     }
 
     @Override
-    public void start() {
-        loadStatus();
-    }
-
-    @Override
     public void loadStatus() {
         mFanFouDB.getProfileStatusList(mUserId , this);
     }
 
     @Override
-    protected void initPaging() {
+    protected void initSinceId() {
         p = new Paging();
-        p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
         p.count = 20;
+        p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
     }
 
     @Override
     protected void startService() {
         FanFouService.getProfileTimeline(mContext , p , mUserId);
+    }
+
+    @Override
+    protected void initMaxId() {
+        p = new Paging();
+        p.count = 20;
+        p.maxId = mFanFouDB.getProfileMaxId(mUserId);
+        Log.d(TAG , "maxId = " + p.maxId);
     }
 }

@@ -14,6 +14,7 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.message.MessageContract;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.service.FanFouService;
 import com.arenas.droidfan.update.UpdateActivity;
 
@@ -131,5 +132,10 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     @Override
     public void sendMessage() {
         ChatActivity.start(mContext , mStatusModel.getUserId() , mStatusModel.getUserScreenName());
+    }
+
+    @Override
+    public void openUser() {
+        ProfileActivity.start(mContext , mStatusModel.getUserId());
     }
 }

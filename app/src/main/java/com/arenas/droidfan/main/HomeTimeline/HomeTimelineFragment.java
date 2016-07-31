@@ -2,6 +2,10 @@ package com.arenas.droidfan.main.hometimeline;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,8 @@ import com.arenas.droidfan.main.BaseFragment;
 import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.service.FanFouService;
+import com.malinskiy.superrecyclerview.OnMoreListener;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 

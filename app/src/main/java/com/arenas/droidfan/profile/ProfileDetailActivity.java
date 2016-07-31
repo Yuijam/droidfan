@@ -59,13 +59,13 @@ public class ProfileDetailActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         List<String> tabList = new ArrayList<>();
         tabList.add(getString(R.string.tab_status));
-        tabList.add(getString(R.string.photo_album));
         tabList.add(getString(R.string.favorite));
+        tabList.add(getString(R.string.photo_album));
 
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new ProfileStatusFragment());
-        fragments.add(new PhotoAlbumFragment());
         fragments.add(new FavoriteFragment());
+        fragments.add(new PhotoAlbumFragment());
 
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(0)));//添加tab
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(1)));
@@ -78,8 +78,8 @@ public class ProfileDetailActivity extends AppCompatActivity {
         viewPager.setCurrentItem(page , true);
 
         new ProfileStatusPresenter(this , (ProfileStatusFragment)fragmentAdapter.getItem(0) , userId);
-        new PhotoAlbumPresenter(this , (PhotoAlbumFragment)fragmentAdapter.getItem(1) , userId);
-        new FavoritePresenter(this , (FavoriteFragment)fragmentAdapter.getItem(2) , userId);
+        new FavoritePresenter(this , (FavoriteFragment)fragmentAdapter.getItem(1) , userId);
+        new PhotoAlbumPresenter(this , (PhotoAlbumFragment)fragmentAdapter.getItem(2) , userId);
 
     }
 

@@ -76,4 +76,11 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
         mIsFirstFetch = false;
         loadConversationList();
     }
+
+    @Override
+    public void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+
+    }
+
+
 }
