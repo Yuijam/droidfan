@@ -89,8 +89,10 @@
         <activity
             android:name=".profile.ProfileDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".setting.SettingsActivity"/>
+        <receiver android:name=".notify.AlarmReceiver"/>
+        <service android:name=".notify.PushService"/>
     </application>
 
 </manifest>

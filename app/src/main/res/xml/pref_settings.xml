@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:title="消息提醒"
+        android:summary="当有新私信和@消息时提醒"
+        android:defaultValue="true"
+        android:key="notification"
+        />
+
+    <SwitchPreference
+        android:title="夜间免打扰"
+        android:summary="23点~7点时间段不提醒"
+        android:dependency="notification"
+        android:defaultValue="true"
+        android:key="do_not_notify_at_night"
+        />
+
+    <ListPreference
+        android:defaultValue="5"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="sync_frequency"
+        android:dependency="notification"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_frequency" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="notification"
+        android:key="notifications_new_message"
+        android:title="@string/pref_title_new_message_notifications" />
+
+    <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
+        android:dependency="notifications_new_message"
+        android:key="notifications_new_message_ringtone"
+        android:ringtoneType="notification"
+        android:title="@string/pref_title_ringtone" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="notifications_new_message"
+        android:key="notifications_new_message_vibrate"
+        android:title="@string/pref_title_vibrate" />
+
+    <Preference
+        android:title="@string/feedback"
+        android:summary="发私信给@卓小饭"
+        >
+    </Preference>
+
+    <Preference
+        android:title="@string/about"
+        >
+    </Preference>
+
+</PreferenceScreen>

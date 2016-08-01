@@ -1,5 +1,8 @@
 package com.arenas.droidfan.main;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -18,7 +21,6 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 import com.arenas.droidfan.main.message.MessageFragment;
@@ -26,7 +28,9 @@ import com.arenas.droidfan.main.message.MessagePresenter;
 import com.arenas.droidfan.main.notice.NoticeFragment;
 import com.arenas.droidfan.main.notice.NoticePresenter;
 import com.arenas.droidfan.main.publicstatus.PublicActivity;
+import com.arenas.droidfan.notify.PushService;
 import com.arenas.droidfan.profile.ProfileActivity;
+import com.arenas.droidfan.setting.SettingsActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -76,6 +80,13 @@ public class MainActivity extends AppCompatActivity
         new HomeTimelinePresenter(this , (HomeTimelineFragment)fragmentAdapter.getItem(0));
         new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
         new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
+
+        Intent intent = new Intent(this , PushService.class);
+        startService(intent);
+
+        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(1);
+        manager.cancel(2);
     }
 
     private void initNavHeader(View view){
@@ -124,8 +135,9 @@ public class MainActivity extends AppCompatActivity
             ProfileActivity.start(this , AppContext.getAccount());
         } else if (id == R.id.nav_public_timeline) {
             PublicActivity.start(this);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_setting) {
+            Intent intent = new Intent(this , SettingsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

@@ -118,6 +118,8 @@ public interface DataSource {
 
     void saveConversationList(List<DirectMessageModel> dms);
 
+    String getDMSinceId();
+
     //photo
     void savePhotoTimeline(List<StatusModel> statusModels);
 

@@ -81,6 +81,16 @@ public class FanFouDB implements DataSource{
 
     //dm
     @Override
+    public String getDMSinceId() {
+        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " order by id" , null);
+        String sinceId = null;
+        if (cursor.moveToLast()){
+            sinceId = DBUtil.parseString(cursor , DirectMessageColumns.ID);
+        }
+        return sinceId;
+    }
+
+    @Override
     public void saveConversationList(List<DirectMessageModel> dms) {
         db.execSQL("delete from " + DirectMessageColumns.TABLE_NAME + " where "
         + DirectMessageColumns.TYPE + " = " + DirectMessageModel.TYPE_CONVERSATION_LIST);
@@ -520,7 +530,12 @@ public class FanFouDB implements DataSource{
 
     @Override
     public String getNoticeSinceId() {
-        return getSinceId(NoticeColumns.TABLE_NAME , null);
+        Cursor cursor = db.rawQuery("select * from " + NoticeColumns.TABLE_NAME + " order by rawid " , null);
+        String sinceId = null;
+        if (cursor.moveToLast()){
+            sinceId = DBUtil.parseString(cursor , NoticeColumns.ID);
+        }
+        return sinceId;
     }
 
     @Override
