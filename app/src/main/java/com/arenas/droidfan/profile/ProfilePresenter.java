@@ -86,6 +86,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         mView.showStatusCount(user.getStatusesCount());
         mView.showTitle(user.getScreenName());
         mView.showDescription(user.getDescription());
+        mView.showLocation(getLocation());
+        mView.showBirthday(getBirthday());
         if (!isMe()){
             mView.showFollowState(getFollowState());
             mView.showFoButton();
@@ -184,16 +186,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     @Override
-    public void openPhotoAlbum() {
-        if (!isStatusAvailable()){
-            mView.showError("只向关注TA的人公开");
-        }else {
-            ProfileDetailActivity.start(mContext , mUserId , mUser.getScreenName() , 1);
-        }
-    }
-
-    @Override
     public void refresh() {
+        testFriend();
         fetchUser();
     }
 }

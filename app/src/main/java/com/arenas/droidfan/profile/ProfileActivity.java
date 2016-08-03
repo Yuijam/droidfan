@@ -44,6 +44,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private TextView mDescription;
     private SwipeRefreshLayout mSwipeRefresh;
     private ImageView mLock;
+    private TextView mBirthday;
+    private TextView mLocation;
 
     private IntentFilter mIntentFilter;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -102,6 +104,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         mLock = (ImageView)findViewById(R.id.lock);
+
+        mBirthday = (TextView)findViewById(R.id.birthday);
+        mLocation = (TextView)findViewById(R.id.location);
     }
 
     @Override
@@ -218,5 +223,15 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     @Override
     public void showLock() {
         mLock.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showBirthday(String text) {
+        mBirthday.setText(text);
+    }
+
+    @Override
+    public void showLocation(String text) {
+        mLocation.setText(text);
     }
 }

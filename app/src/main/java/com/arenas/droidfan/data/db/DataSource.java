@@ -129,4 +129,7 @@ public interface DataSource {
 
     String getPhotoSinceId(String owner);
 
+
+    //delete
+    void deleteAll();
 }

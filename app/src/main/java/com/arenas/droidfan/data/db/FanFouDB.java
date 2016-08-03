@@ -46,6 +46,18 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void deleteAll() {
+        db.execSQL("delete from " + HomeStatusColumns.TABLE_NAME);
+        db.execSQL("delete from " + NoticeColumns.TABLE_NAME);
+        db.execSQL("delete from " + DirectMessageColumns.TABLE_NAME);
+        db.execSQL("delete from " + PublicStatusColumns.TABLE_NAME);
+        db.execSQL("delete from " + UserColumns.TABLE_NAME);
+        db.execSQL("delete from " + ProfileColumns.TABLE_NAME);
+        db.execSQL("delete from " + PhotoColumns.TABLE_NAME);
+        db.execSQL("delete from " + FavoritesColumns.TABLE_NAME);
+    }
+
+    @Override
     public String getPhotoSinceId(String owner) {
         return getSinceId(PhotoColumns.TABLE_NAME , owner);
     }
@@ -274,7 +286,8 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getUserById(String id , GetUserCallback callback) {
-        Cursor c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ?" , new String[]{id});
+        Cursor c = db.rawQuery("select * from " + UserColumns.TABLE_NAME + " where id = ? and type = ? "
+                , new String[]{id , String.valueOf(0)});
         UserModel user = getUser(c);
         if (user != null){
             callback.onUserLoaded(user);

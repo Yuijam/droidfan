@@ -16,6 +16,8 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
@@ -61,5 +63,11 @@ public class Utils {
 
     public static void showToast(Context context , String text){
         Toast.makeText(context , text , Toast.LENGTH_SHORT).show();
+    }
+
+    public static void hideKeyboard(final Context context, final EditText input) {
+        InputMethodManager imm = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
     }
 }

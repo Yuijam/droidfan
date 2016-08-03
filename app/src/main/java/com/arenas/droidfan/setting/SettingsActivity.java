@@ -1,6 +1,8 @@
 package com.arenas.droidfan.setting;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -14,7 +16,10 @@ import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.login.LoginActivity;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -79,7 +84,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    public static class SettingsFragment extends PreferenceFragment{
+    public static class SettingsFragment extends PreferenceFragment implements
+            Preference.OnPreferenceClickListener{
+
+        private Preference loginout;
+        private FanFouDB mFanFouDB;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +96,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_settings);
             bindPreferenceSummaryToValue(findPreference("sync_frequency"));
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+
+            mFanFouDB = FanFouDB.getInstance(getActivity());
+
+            loginout = findPreference("login_out");
+            loginout.setOnPreferenceClickListener(this);
+
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            if (preference == loginout){
+                mFanFouDB.deleteAll();
+                AppContext.clearAccountInfo(getActivity());
+                Intent intent = new Intent(getActivity() , LoginActivity.class);
+                startActivity(intent);
+            }
+            return false;
         }
     }
 

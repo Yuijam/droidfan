@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -24,11 +24,13 @@
 
 
     <LinearLayout
+        android:id="@+id/edit_message_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="8dp"
         android:gravity="center_vertical"
+        android:visibility="gone"
         >
         <EditText
             android:id="@+id/input_text"
@@ -42,8 +44,20 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_send_black"
+            android:src="@drawable/ic_menu_send"
             />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/invalid_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_large"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="@string/only_friends_can_send_message"
+        />
 
 </LinearLayout>

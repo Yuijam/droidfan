@@ -71,6 +71,7 @@ public class FanFouService extends IntentService {
     public static final int CONVERSATION = 21;
     public static final int SEND_DM = 22;
     public static final int PHOTO_TIMELINE = 23;
+    public static final int CHAT_AVAILABLE = 24;
 
     //filter
     public static final String FILTER_USERS = "com.arenas.droidfan.USERS";
@@ -91,6 +92,18 @@ public class FanFouService extends IntentService {
 
     public FanFouService(){
         super("FanFouService");
+    }
+
+    public static void testChatAvailable(Context context , String userId){
+        start(context , CHAT_AVAILABLE , null , null , userId , null);
+    }
+
+    public static void uploadPhoto(Context context , File photo , String text){
+        Intent intent = new Intent(context , FanFouService.class);
+        intent.putExtra(FanFouService.EXTRA_REQUEST , UPLOAD_PHOTO);
+        intent.putExtra(FanFouService.EXTRA_STATUS_TEXT , text);
+        intent.putExtra(FanFouService.EXTRA_PHOTO , photo);
+        context.startService(intent);
     }
 
     public static void getPhotoTimeline(Context context , String owner , Paging paging){
@@ -322,6 +335,11 @@ public class FanFouService extends IntentService {
                     mFanFouDB.savePhotoTimeline(mApi.getPhotosTimeline(userId , p));
                     mFilterAction = FILTER_PHOTOTIMELINE;
                     break;
+                case CHAT_AVAILABLE:
+                    mIsFriend = mApi.isFriends(userId , AppContext.getAccount());
+                    Log.d(TAG , "is a follower = " + mIsFriend);
+                    mFilterAction = FILTER_CONVERSATION;
+                    break;
             }
         }catch (ApiException e){
             e.toString();
@@ -375,6 +393,7 @@ public class FanFouService extends IntentService {
         intent.putExtra(EXTRA_HAS_NEW , mHasNewData);
         intent.putExtra(EXTRA_IS_FRIEND , mIsFriend);
         intent.putExtra(EXTRA_SUCCESS , mSuccess);
+        Log.d(TAG , "is a follower = " + mIsFriend);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

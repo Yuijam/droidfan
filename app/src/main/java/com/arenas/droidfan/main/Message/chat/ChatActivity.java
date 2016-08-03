@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
@@ -13,6 +14,8 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.detail.DetailFragment;
 
 public class ChatActivity extends AppCompatActivity {
+
+    private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static final String EXTRA_USERID = "extra_userid";
     public static final String EXTRA_USERNAME = "extra_username";
@@ -31,7 +34,7 @@ public class ChatActivity extends AppCompatActivity {
 
         String userId = getIntent().getStringExtra(EXTRA_USERID);
         String username = getIntent().getStringExtra(EXTRA_USERNAME);
-
+        Log.d(TAG , "userId = " + userId + " , username = " + username);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         toolbar.setTitle(username);
 

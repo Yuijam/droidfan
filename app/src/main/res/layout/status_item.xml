@@ -57,7 +57,6 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             />
-        <include layout="@layout/divider"/>
     </LinearLayout>
 
 </LinearLayout>

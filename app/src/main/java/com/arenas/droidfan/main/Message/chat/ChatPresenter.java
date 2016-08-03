@@ -2,15 +2,19 @@ package com.arenas.droidfan.main.message.chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
@@ -29,8 +33,11 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     private String mUserId;
     private DirectMessageModel model;
     private String mUsername;
+    private boolean mIsAFollower;
 
-    private boolean mIsFirstFetch;
+
+
+//    private boolean mIsFirstFetch;
 
     public ChatPresenter(String userId , String username , ChatContract.View mView, Context mContext) {
         this.mFanFouDB = FanFouDB.getInstance(mContext);
@@ -40,18 +47,28 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         mUsername = username;
         Log.d(TAG , "userId = " + userId);
 
-        mIsFirstFetch = true;
+//        mIsFirstFetch = true;
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        loadDM();
+        fetchData();
+        testFollower();
+    }
+
+    private void testFollower(){
+        FanFouService.testChatAvailable(mContext , mUserId);
     }
 
     private void loadDM(){
         mView.showProgressbar();
         mFanFouDB.getConversation(mUsername , this);
+        if (mIsAFollower){
+            mView.showEditMessageLayout();
+        }else {
+            mView.showEditInvalidNotice();
+        }
     }
 
     @Override
@@ -63,20 +80,24 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
 
     @Override
     public void onDataNotAvailable() {
-        if (mIsFirstFetch){
-            fetchData();
-        }
+//        if (mIsFirstFetch){
+//            fetchData();
+//        }
+        mView.showError("Oops ~ 未获取到数据");
     }
 
     private void fetchData(){
-        FanFouService.getConversation(mContext , new Paging() , mUserId);
+        mView.showProgressbar();
+        Paging paging = new Paging();
+        paging.count = 60;
+        FanFouService.getConversation(mContext , paging , mUserId);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mIsFirstFetch = false;
+//        mIsFirstFetch = false;
+        mIsAFollower = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
         loadDM();
-        mView.emptyInput();
     }
 
     @Override
@@ -95,6 +116,6 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
             return;
         }
         FanFouService.sendDM(mContext , mUserId , null , text);
+        mView.emptyInput();
     }
-
 }

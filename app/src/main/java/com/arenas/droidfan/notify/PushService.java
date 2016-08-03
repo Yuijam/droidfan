@@ -57,7 +57,7 @@ public class PushService extends IntentService {
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        String time = sharedPref.getString("sync_frequency" , "");
+        String time = sharedPref.getString("sync_frequency" , "5");
         long triggerAtTime = SystemClock.elapsedRealtime() + Integer.parseInt(time)*60*1000;
 //        long triggerAtTime = SystemClock.elapsedRealtime() + 60*1000;
         Intent i = new Intent(this, AlarmReceiver.class);
@@ -113,11 +113,11 @@ public class PushService extends IntentService {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         notification.defaults |= Notification.DEFAULT_LIGHTS;
-        if (sharedPref.getBoolean("notifications_new_message" , false)){
-            notification.sound = Uri.parse(sharedPref.getString("notifications_new_message_ringtone" , ""));
+        if (sharedPref.getBoolean("notifications_new_message" , true)){
+            notification.sound = Uri.parse(sharedPref.getString("notifications_new_message_ringtone" , "content://settings/system/notification_sound"));
 //            notification.defaults |= Notification.DEFAULT_SOUND;
         }
-        if(sharedPref.getBoolean("notifications_new_message_vibrate" , false)){
+        if(sharedPref.getBoolean("notifications_new_message_vibrate" , true)){
             notification.defaults |= Notification.DEFAULT_VIBRATE;
         }
 

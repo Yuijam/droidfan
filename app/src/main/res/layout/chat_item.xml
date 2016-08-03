@@ -25,11 +25,11 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:padding="8dp"
             android:layout_margin="10dp"
             android:textColor="#fff"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/bg_chat_recipient"
             android:text="hello!!!"
             />
     </LinearLayout>
@@ -47,9 +47,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:padding="8dp"
-            android:background="@color/divider"
+            android:background="@drawable/bg_chat_sender"
             android:text="hey!"
             />
 

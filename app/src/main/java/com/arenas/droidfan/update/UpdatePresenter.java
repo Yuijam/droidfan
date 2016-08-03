@@ -68,10 +68,10 @@ public class UpdatePresenter implements UpdateContract.Presenter
     @Override
     public void update(Context context , String text ) {
         if (TextUtils.isEmpty(text) || text.length() >140){
-            mView.showError();
             return;
         }
         startService(text , mPhoto);
+        mView.showHome();
     }
 
     private void loadFollowing(){
@@ -110,14 +110,10 @@ public class UpdatePresenter implements UpdateContract.Presenter
                     FanFouService.newStatus(mContext , text);
                     break;
             }
-            mView.showHome();
-        }else {
-//            intent.putExtra(FanFouService.EXTRA_REQUEST , FanFouService.UPLOAD_PHOTO);
-//            intent.putExtra(FanFouService.EXTRA_STATUS_TEXT , text);
-//            intent.putExtra(FanFouService.EXTRA_PHOTO , mPhoto);
-//            context.startService(intent);
-        }
 
+        }else {
+            FanFouService.uploadPhoto(mContext , photo , text);
+        }
     }
 
     private void populateStatusText(){
@@ -136,6 +132,11 @@ public class UpdatePresenter implements UpdateContract.Presenter
                 break;
             case DetailActivity.TYPE_FAVORITES:
                 mFanFouDB.getFavorite(m_Id , this);
+                break;
+            default:
+                String text = "@放學後茶會 ";
+                mView.setStatusText(text);
+                mView.setSelection(text);
                 break;
         }
     }

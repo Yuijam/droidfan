@@ -26,6 +26,8 @@ public class ProfileContract {
         void showIsFollowing(String text);
         void showDescription(String text);
         void showLock();
+        void showBirthday(String text);
+        void showLocation(String text);
     }
 
     interface Presenter extends BasePresenter {
@@ -35,7 +37,6 @@ public class ProfileContract {
         void openFollowing();
         void openStatus();
         void openFavorites();
-        void openPhotoAlbum();
         void refresh();
     }
 }

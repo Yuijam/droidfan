@@ -442,6 +442,7 @@ final class FanFouApi implements Api {
         builder.param("user", id);
         builder.param("text", text);
         builder.param("in_reply_to_id", replyId);
+        Log.d(TAG , "userid = " + id + " , text = " + text);
         String response = fetch(builder);
         return mParser.directMessage(response, DirectMessageModel.TYPE_OUTBOX);
     }
@@ -1015,6 +1016,7 @@ final class FanFouApi implements Api {
                 Log.d(TAG , "body = " + body);
                 return body;
             }
+            Log.d(TAG , "body = " + body);
             throw new ApiException(statusCode, FanFouParser.error(body));
         } catch (IOException e) {
             if (DEBUG) {

@@ -90,7 +90,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         mView.showSource("通过"+statusModel.getSource());
         mView.showPhoto(statusModel.getPhotoLargeUrl());
         if (mIsFavorite){
-            mView.showFavorite(R.drawable.ic_favorite_black);
+            mView.showFavorite(R.drawable.ic_favorite_red);
         }
         if (mStatusModel.getUserId().equals(AppContext.getAccount())){
             mView.showDelete();
@@ -122,7 +122,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
             mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
             mIsFavorite = false;
         }else {
-            mView.showFavorite(R.drawable.ic_favorite_black);
+            mView.showFavorite(R.drawable.ic_favorite_red);
             mFanFouDB.updateFavorite(m_id , 1);
             FanFouService.favorite(mContext , mStatusModel.getId());
             mIsFavorite = true;

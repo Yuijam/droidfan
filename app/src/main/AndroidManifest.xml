@@ -45,7 +45,15 @@
             android:name=".update.UpdateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+
+            <intent-filter>
+                <action android:name="com.arenas.droidfan.main.update.UpdateActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".detail.DetailActivity"
             android:screenOrientation="portrait"
@@ -81,7 +89,16 @@
         <activity
             android:name=".main.message.chat.ChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            >
+
+            <intent-filter>
+                <action android:name="com.arenas.droidfan.main.message.chat.ChatActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".photo.PhotoActivity"
             android:screenOrientation="portrait"

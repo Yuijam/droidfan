@@ -19,6 +19,8 @@ public class UpdateActivity extends AppCompatActivity {
 
     public static final int TYPE_REPLY = 1;
     public static final int TYPE_RETWEET = 2;
+    public static final int TYPE_FEEDBACK = 3;
+
 
     public static void start(Context context , int _id , int actionType , int statusType){
         Intent intent = new Intent(context , UpdateActivity.class);

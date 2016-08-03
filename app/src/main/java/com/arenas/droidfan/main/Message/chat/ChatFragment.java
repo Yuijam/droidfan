@@ -11,16 +11,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
@@ -29,7 +27,6 @@ import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.service.FanFouService;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +52,9 @@ public class ChatFragment extends Fragment implements ChatContract.View
     private EditText mInputText;
     private ImageView mSend;
     private CharSequence temp;
+
+    private LinearLayout mEditLayout;
+    private TextView mEditInvalidNotice;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -107,6 +107,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mRecyclerView.setAdapter(mAdapter);
 
         mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
+        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         mSwipeRefresh.setOnRefreshListener(this);
 
         mInputText = (EditText)view.findViewById(R.id.input_text);
@@ -115,8 +116,20 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mSend = (ImageView)view.findViewById(R.id.send);
         mSend.setOnClickListener(this);
 
+        mEditInvalidNotice = (TextView)view.findViewById(R.id.invalid_notice);
+        mEditLayout = (LinearLayout)view.findViewById(R.id.edit_message_layout);
+
         setHasOptionsMenu(true);
     }
+
+//    @Override
+//    public void onFocusChange(View view, boolean b) {
+//        if (b){
+//            Log.d(TAG , "onFocus~~~");
+//        }else {
+//            Log.d(TAG , "not onFocus~~~");
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -201,5 +214,25 @@ public class ChatFragment extends Fragment implements ChatContract.View
     @Override
     public void emptyInput() {
         mInputText.setText("");
+    }
+
+    @Override
+    public void showEditMessageLayout() {
+        mEditLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showEditInvalidNotice() {
+        mEditInvalidNotice.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void disableSend() {
+
+    }
+
+    @Override
+    public void enableSend() {
+
     }
 }

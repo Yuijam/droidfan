@@ -63,6 +63,8 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
     private void fetchData(){
         mView.showProgressbar();
+        Paging paging = new Paging();
+        paging.count = 60;
         FanFouService.getConversationList(mContext , new Paging());
     }
 

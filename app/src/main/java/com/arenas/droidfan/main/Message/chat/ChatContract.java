@@ -24,6 +24,14 @@ public interface ChatContract {
         void hideProgressbar();
 
         void emptyInput();
+
+        void showEditMessageLayout();
+
+        void showEditInvalidNotice();
+
+        void disableSend();
+
+        void enableSend();
     }
 
     interface Presenter extends BasePresenter{

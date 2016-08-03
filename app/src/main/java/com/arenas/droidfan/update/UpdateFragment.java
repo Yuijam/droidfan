@@ -36,8 +36,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     private static final String TAG = UpdateFragment.class.getSimpleName();
     private static final int MAX_TEXT_LENGTH = 140;
     public static final int REQUEST_SELECT_PHOTO = 1;
-    private static final String[] cities=new String[]
-            {"@FuZhou", "@XiaMen", "@NiDe", "PuTian","QuanZhou", "ZhangZhou", "LongYan", "SanMing","NanPing"};
     public static final int REQUEST_TAKE_PHOTO = 2;
 
     private UpdateContract.Presenter mPresenter;
@@ -147,7 +145,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     public void afterTextChanged(Editable editable) {
         int rest = MAX_TEXT_LENGTH - temp.length();
         mTextCount.setText(""+rest);
-        if (rest < 0){
+        if (rest < 0 || rest == MAX_TEXT_LENGTH){
             invalidSend();
         }else {
             activateSend();
@@ -155,7 +153,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     }
 
     private void activateSend(){
-        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
+        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_send));
     }
     private void invalidSend(){
         mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
@@ -168,12 +166,14 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                 mPresenter.update(getContext() , mStatusText.getText().toString());
                 break;
             case R.id.add_photo:
+                Utils.hideKeyboard(getContext() , mStatusText);
                 mPresenter.selectPhoto();
                 break;
             case R.id.iv_photo:
                 mPresenter.deletePhoto();
                 break;
             case R.id.take_photo:
+                Utils.hideKeyboard(getContext() , mStatusText);
                 mPresenter.takePhoto(this , REQUEST_TAKE_PHOTO);
                 break;
         }

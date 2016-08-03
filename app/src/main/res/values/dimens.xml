@@ -11,4 +11,8 @@
     <dimen name="app_bar_height">280dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="profile_text_size">15sp</dimen>
+
+    <dimen name="iv_location_size">18dp</dimen>
+
+
 </resources>

@@ -38,7 +38,7 @@ public class StatusUtils {
             return url.substring(1, url.length() - 1);
         }
     };
-    private static final String SCHEME_SEARCH = "droidfan://search/";
+    private static final String SCHEME_SEARCH = "";
     private static final int LINK_COLOR = 0xff28a5c0;
     /**
      * 从消息中获取全部提到的人，将它们按先后顺序放入一个列表
