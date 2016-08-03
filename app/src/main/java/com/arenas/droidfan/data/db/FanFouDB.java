@@ -17,6 +17,9 @@ import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.main.message.MessageFragment;
+import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.main.message.chat.ChatFragment;
 import com.arenas.droidfan.users.UserListActivity;
 
 import java.util.ArrayList;
@@ -93,13 +96,36 @@ public class FanFouDB implements DataSource{
 
     //dm
     @Override
-    public String getDMSinceId() {
-        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " order by id" , null);
+    public String getDMSinceId(String username) {
+        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME
+                + " where type = " + DirectMessageModel.TYPE_OUTBOX + " and "
+                + " conversation_id = ? order by id" , new String[]{username});
         String sinceId = null;
         if (cursor.moveToLast()){
             sinceId = DBUtil.parseString(cursor , DirectMessageColumns.ID);
         }
+        Log.d(TAG , "dm sinceId = " + sinceId);
         return sinceId;
+    }
+
+    @Override
+    public String getDMSinceId() {
+        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME
+                + " order by id " , null);
+        String sinceId = null;
+        if (cursor.moveToLast()){
+            sinceId = DBUtil.parseString(cursor , DirectMessageColumns.ID);
+        }
+        Log.d(TAG , "dm sinceId = " + sinceId);
+        return sinceId;
+    }
+
+    @Override
+    public String getDMMaxId(String username) {
+        Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME
+                + " where type = " + DirectMessageModel.TYPE_OUTBOX + " and "
+                + " conversation_id = ? order by id" , new String[]{username});
+        return getMaxId(cursor);
     }
 
     @Override
@@ -169,6 +195,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void saveDirectMessages(List<DirectMessageModel> dms) {
+        Log.d(TAG , "dms size = " + dms.size());
         for (DirectMessageModel dm : dms){
             saveDirectMessage(dm);
         }

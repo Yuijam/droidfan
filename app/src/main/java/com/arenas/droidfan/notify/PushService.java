@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
@@ -21,6 +22,7 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.MainActivity;
+import com.arenas.droidfan.main.TabFragmentAdapter;
 
 import java.util.Calendar;
 import java.util.List;
@@ -29,6 +31,8 @@ import java.util.List;
  * Created by Arenas on 2016/8/1.
  */
 public class PushService extends IntentService {
+
+    private static final String TAG = PushService.class.getSimpleName();
 
     public PushService(){
         super("PushService");
@@ -39,6 +43,18 @@ public class PushService extends IntentService {
     private FanFouDB mFanFouDB;
     private Api mApi;
     private Calendar mCalendar;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG , "onCreate>>>>");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG , "onStartCommand>>");
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -54,15 +70,26 @@ public class PushService extends IntentService {
             checkMentions();
             checkMessage();
         }
+    }
 
-        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        String time = sharedPref.getString("sync_frequency" , "5");
-        long triggerAtTime = SystemClock.elapsedRealtime() + Integer.parseInt(time)*60*1000;
+    public static boolean isServiceAlarmOn(Context context){
+        Intent i = new Intent(context , PushService.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context , 0 , i , 0);
+        return pi != null;
+    }
+
+    public static void setServiceAlarm(Context context , boolean isOn){
+        Intent i = new Intent(context , AlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context , 0 , i , 0);
+
+        AlarmManager manager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        if (!isOn){
+            String time = PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency" , "5");
+            long triggerAtTime = SystemClock.elapsedRealtime() + Integer.parseInt(time)*60*1000;
 //        long triggerAtTime = SystemClock.elapsedRealtime() + 60*1000;
-        Intent i = new Intent(this, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+        }
     }
 
     private void checkMentions(){

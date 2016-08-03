@@ -58,7 +58,6 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
             fetchData();
         }
         mView.hideProgressbar();
-        mView.showError("data not available!");
     }
 
     private void fetchData(){
@@ -83,6 +82,4 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
     public void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
 
     }
-
-
 }

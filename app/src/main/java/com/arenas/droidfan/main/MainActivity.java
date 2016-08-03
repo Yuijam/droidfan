@@ -82,12 +82,14 @@ public class MainActivity extends AppCompatActivity
         new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
         new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
 
-        Intent intent = new Intent(this , PushService.class);
-        startService(intent);
+        boolean shouldStartAlarm = !PushService.isServiceAlarmOn(this);
+        PushService.setServiceAlarm(this , shouldStartAlarm);
 
         NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(1);
         manager.cancel(2);
+
+        getResources().getColor(R.color.colorPrimary);
     }
 
     private void initNavHeader(View view){

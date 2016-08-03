@@ -1,7 +1,9 @@
 package com.arenas.droidfan.profile;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -112,6 +114,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         return isFollowing() ? "正在关注" : "添加关注";
     }
 
+
+
     private boolean isFollowing(){
         return mUser.getFollowing() == 1;
     }
@@ -134,9 +138,9 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     @Override
     public void follow() {
         if (isFollowing()){
-            FanFouService.unfollow(mContext , mUserId);
+            showDialog("取消关注？");
         }else {
-            FanFouService.follow(mContext , mUserId);
+            executeFoAndUnfo();
         }
     }
 
@@ -189,5 +193,26 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     public void refresh() {
         testFriend();
         fetchUser();
+    }
+
+    private void showDialog(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        AlertDialog dialog = builder.setMessage(message).setNegativeButton(mContext.getString(R.string.cancel)
+                , null).setPositiveButton(mContext.getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                executeFoAndUnfo();
+            }
+        }).create();
+        dialog.show();
+    }
+
+    private void executeFoAndUnfo(){
+        if (isFollowing()){
+            FanFouService.unfollow(mContext , mUserId);
+        }else {
+            FanFouService.follow(mContext , mUserId);
+        }
+        refresh();
     }
 }

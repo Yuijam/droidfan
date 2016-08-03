@@ -40,6 +40,8 @@ public class AppContext extends Application {
     private static Api api;
     private static AppContext instance;
 
+    private static Context context;
+
     private static boolean firstLoad;
 
     public static void doLogin(Context context) {
@@ -173,6 +175,11 @@ public class AppContext extends Application {
         initAppInfo();
 //        initialize();
         initAccountInfo();
+        context = getApplicationContext();
+    }
+
+    public static Context getContext() {
+        return context;
     }
 
 //    private void initialize() {
@@ -215,6 +222,8 @@ public class AppContext extends Application {
         }
 
     }
+
+
 
 //    private DisplayImageOptions getDefaultDisplayImageOptions() {
 //        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();

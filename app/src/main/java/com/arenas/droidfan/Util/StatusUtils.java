@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import java.util.regex.Pattern;
 public class StatusUtils {
 
     private static final String TAG = StatusUtils.class.getSimpleName();
-    private static final int COLOR_HIGHLIGHT = 0xFFFF6666;
     private static final Pattern PATTERN_HIGHLIGHT = Pattern.compile("<b>(\\w+?)</b>");
     private static final Pattern PATTERN_USER = Pattern.compile("(@.+?)\\s+", Pattern.MULTILINE);
     private static final String SCHEME_USER = "droidfan://profile/";
@@ -39,7 +39,6 @@ public class StatusUtils {
         }
     };
     private static final String SCHEME_SEARCH = "";
-    private static final int LINK_COLOR = 0xff28a5c0;
     /**
      * 从消息中获取全部提到的人，将它们按先后顺序放入一个列表
      *
@@ -128,7 +127,7 @@ public class StatusUtils {
             int start = m.start(1);
             int end = m.end(1);
             if (start >= 0 && start < end) {
-                spannable.setSpan(new ForegroundColorSpan(LINK_COLOR), start, end,
+                spannable.setSpan(new ForegroundColorSpan(AppContext.getContext().getResources().getColor(R.color.colorPrimary)), start, end,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
@@ -162,7 +161,7 @@ public class StatusUtils {
                 if (m.find()) {
                     int start = m.start();
                     int end = m.end();
-                    span.setSpan(new ForegroundColorSpan(COLOR_HIGHLIGHT), start,
+                    span.setSpan(new ForegroundColorSpan(AppContext.getContext().getResources().getColor(R.color.colorPrimary)), start,
                             end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     span.setSpan(new StyleSpan(Typeface.BOLD), start, end,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -198,7 +197,7 @@ public class StatusUtils {
         public void updateDrawState(TextPaint tp) {
             super.updateDrawState(tp);
             tp.setUnderlineText(false);
-            tp.setColor(LINK_COLOR);
+            tp.setColor(AppContext.getContext().getResources().getColor(R.color.colorPrimary));
         }
     }
 

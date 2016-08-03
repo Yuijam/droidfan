@@ -34,8 +34,8 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     private DirectMessageModel model;
     private String mUsername;
     private boolean mIsAFollower;
-
-
+    private boolean mTestAvailable;
+    private boolean mIsRefresh;
 
 //    private boolean mIsFirstFetch;
 
@@ -46,7 +46,7 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         mUserId = userId;
         mUsername = username;
         Log.d(TAG , "userId = " + userId);
-
+        mTestAvailable = true;
 //        mIsFirstFetch = true;
         mView.setPresenter(this);
     }
@@ -64,11 +64,6 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     private void loadDM(){
         mView.showProgressbar();
         mFanFouDB.getConversation(mUsername , this);
-        if (mIsAFollower){
-            mView.showEditMessageLayout();
-        }else {
-            mView.showEditInvalidNotice();
-        }
     }
 
     @Override
@@ -76,6 +71,9 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         model = messageModels.get(0);
         mView.hideProgressbar();
         mView.showChatItems(messageModels);
+        if (!mIsRefresh){
+            mView.scrollTo(messageModels.size());
+        }
     }
 
     @Override
@@ -90,19 +88,35 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         mView.showProgressbar();
         Paging paging = new Paging();
         paging.count = 60;
+        paging.sinceId = mFanFouDB.getDMSinceId(mUsername);
         FanFouService.getConversation(mContext , paging , mUserId);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
 //        mIsFirstFetch = false;
-        mIsAFollower = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
+        if (mTestAvailable){
+            mIsAFollower = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
+            if (mIsAFollower){
+                mView.showEditMessageLayout();
+            }else {
+                mView.showEditInvalidNotice();
+            }
+            mTestAvailable = false;
+        }
         loadDM();
     }
 
     @Override
     public void refresh() {
-        fetchData();
+        mIsRefresh = true;
+        getMore();
+    }
+
+    private void getMore(){
+        Paging paging = new Paging();
+        paging.maxId = mFanFouDB.getDMMaxId(mUsername);
+        FanFouService.getConversation(mContext , paging , mUserId);
     }
 
     @Override

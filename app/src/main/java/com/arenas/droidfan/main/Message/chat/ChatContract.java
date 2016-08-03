@@ -32,6 +32,8 @@ public interface ChatContract {
         void disableSend();
 
         void enableSend();
+
+        void scrollTo(int position);
     }
 
     interface Presenter extends BasePresenter{

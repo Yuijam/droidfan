@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
@@ -70,4 +71,5 @@ public class Utils {
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
     }
+
 }

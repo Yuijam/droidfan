@@ -29,6 +29,7 @@ import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.DirectMessageModel;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.notify.PushService;
 import com.arenas.droidfan.profile.favorite.FavoritePresenter;
 import com.arenas.droidfan.service.FanFouService;
 import com.malinskiy.superrecyclerview.OnMoreListener;

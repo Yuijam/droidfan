@@ -150,27 +150,6 @@
 
         </TableLayout>
 
-        <ImageView
-            android:id="@+id/iv_birthday"
-            android:layout_width="@dimen/iv_location_size"
-            android:layout_height="@dimen/iv_location_size"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_cake"
-            android:layout_below="@id/table_layout"
-            android:layout_marginLeft="16dp"
-            />
-
-        <TextView
-            android:id="@+id/birthday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/table_layout"
-            android:layout_marginTop="16dp"
-            android:textSize="@dimen/text_size_large"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@id/iv_birthday"
-            />
-
         <TextView
             android:id="@+id/location"
             android:layout_width="wrap_content"
@@ -193,6 +172,27 @@
             android:src="@drawable/ic_location"
             />
 
+        <TextView
+            android:id="@+id/birthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/table_layout"
+            android:layout_marginTop="16dp"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/iv_location"
+            />
+
+        <ImageView
+            android:id="@+id/iv_birthday"
+            android:layout_width="@dimen/iv_location_size"
+            android:layout_height="@dimen/iv_location_size"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_cake"
+            android:layout_below="@id/table_layout"
+            android:layout_toLeftOf="@id/birthday"
+            android:layout_marginRight="8dp"
+            />
 
         <TextView
             android:id="@+id/description"

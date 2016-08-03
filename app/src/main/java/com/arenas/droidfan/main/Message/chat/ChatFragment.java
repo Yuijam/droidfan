@@ -11,6 +11,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +36,7 @@ import java.util.List;
  * Created by Arenas on 2016/7/26.
  */
 public class ChatFragment extends Fragment implements ChatContract.View
-        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
+        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener , TextWatcher {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
 
@@ -111,7 +113,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
         mSwipeRefresh.setOnRefreshListener(this);
 
         mInputText = (EditText)view.findViewById(R.id.input_text);
-//        mInputText.addTextChangedListener(this);
+        mInputText.addTextChangedListener(this);
 
         mSend = (ImageView)view.findViewById(R.id.send);
         mSend.setOnClickListener(this);
@@ -153,7 +155,11 @@ public class ChatFragment extends Fragment implements ChatContract.View
     @Override
     public void showChatItems(List<DirectMessageModel> models) {
         mAdapter.replaceData(models);
-        mRecyclerView.smoothScrollToPosition(models.size());
+    }
+
+    @Override
+    public void scrollTo(int position) {
+        mRecyclerView.smoothScrollToPosition(position);
     }
 
     @Override
@@ -184,32 +190,32 @@ public class ChatFragment extends Fragment implements ChatContract.View
     }
 
     //TextWatch
-//    @Override
-//    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//        temp = charSequence;
-//    }
-//
-//    @Override
-//    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//    }
-//
-//    @Override
-//    public void afterTextChanged(Editable editable) {
-//        int rest = MAX_TEXT_LENGTH - temp.length();
-//        if (rest < 0){
-//            invalidSend();
-//        }else {
-//            activateSend();
-//        }
-//    }
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        temp = charSequence;
+    }
 
-//    private void activateSend(){
-//        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
-//    }
-//    private void invalidSend(){
-//        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
-//    }
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        int rest = 140 - temp.length();
+        if (rest < 0 || rest == 140){
+            invalidSend();
+        }else {
+            activateSend();
+        }
+    }
+
+    private void activateSend(){
+        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
+    }
+    private void invalidSend(){
+        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
+    }
 
     @Override
     public void emptyInput() {
@@ -228,7 +234,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     @Override
     public void disableSend() {
-
+//        mSend.set
     }
 
     @Override

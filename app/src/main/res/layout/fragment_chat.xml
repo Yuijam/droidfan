@@ -29,6 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
         android:visibility="gone"
         >
@@ -37,6 +39,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:padding="8dp"
+            android:textSize="16sp"
             android:hint="@string/hint_input_message"
             android:maxLines="5" />
         <ImageView
@@ -44,7 +48,7 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_menu_send"
+            android:src="@drawable/ic_send_grey"
             />
     </LinearLayout>
 

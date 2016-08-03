@@ -53,6 +53,28 @@ public interface DataSource {
 
     void getNoticeStatusList(LoadStatusCallback callback);
 
+    void getHomeTLStatus(int _id , GetStatusCallback callback);
+
+    void getNoticeStatus(int _id , GetStatusCallback callback);
+
+    void updateFavorite(int id , int favorite);
+
+    void getProfileStatusList(String owner , LoadStatusCallback callback);
+
+    void getProfileStatus(int  _id , GetStatusCallback callback);
+
+    void saveProfileStatus(StatusModel status);
+
+    void saveFavorites(StatusModel statusModel);
+
+    void getFavorite(int _id , GetStatusCallback callback);
+
+    void getFavoritesList(String owner , LoadStatusCallback callback);
+
+    void deleteItem(String tableName , String msgId);
+
+
+    //sinceId && maxId
     String getHomeTLSinceId();
 
     String getNoticeSinceId();
@@ -67,30 +89,17 @@ public interface DataSource {
 
     String getFavoritesMaxid(String userId);
 
-    void getHomeTLStatus(int _id , GetStatusCallback callback);
-
-    void getNoticeStatus(int _id , GetStatusCallback callback);
-
-    void updateFavorite(int id , int favorite);
-
-    void getProfileStatusList(String owner , LoadStatusCallback callback);
-
-    void getProfileStatus(int  _id , GetStatusCallback callback);
-
-    void saveProfileStatus(StatusModel status);
-
     String getProfileSinceId(String owner);
-
-    void saveFavorites(StatusModel statusModel);
-
-    void getFavorite(int _id , GetStatusCallback callback);
-
-    void getFavoritesList(String owner , LoadStatusCallback callback);
 
     String getFavoritesSinceId(String owner);
 
-    void deleteItem(String tableName , String msgId);
+    String getDMSinceId(String username);//指定用户的私信SinceId
 
+    String getDMSinceId(); //整个表的SinceId 用于check新私信
+
+    String getDMMaxId(String username);
+
+    String getPhotoSinceId(String owner);
 
     //User
     void saveUser(UserModel user , int type );
@@ -118,7 +127,6 @@ public interface DataSource {
 
     void saveConversationList(List<DirectMessageModel> dms);
 
-    String getDMSinceId();
 
     //photo
     void savePhotoTimeline(List<StatusModel> statusModels);
@@ -126,9 +134,6 @@ public interface DataSource {
     void loadPhotoTimeline(String userId , LoadStatusCallback callback);
 
     void getPhotoStatus(int _id , GetStatusCallback callback);
-
-    String getPhotoSinceId(String owner);
-
 
     //delete
     void deleteAll();
