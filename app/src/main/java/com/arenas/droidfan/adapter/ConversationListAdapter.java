@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -22,12 +23,10 @@ import java.util.List;
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.MessageViewHolder> {
 
     private List<DirectMessageModel> mMessage;
-    private MyOnItemClickListener mListener;
     private Context mContext;
 
-    public ConversationListAdapter(Context context , List<DirectMessageModel> message , MyOnItemClickListener Listener) {
+    public ConversationListAdapter(Context context , List<DirectMessageModel> message) {
         this.mMessage = message;
-        this.mListener = Listener;
         mContext = context;
     }
 
@@ -37,26 +36,30 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     }
 
     @Override
-    public void onBindViewHolder(final MessageViewHolder holder, int position) {
-        holder.username.setText(getConversationUsername(mMessage.get(position)));
-        Picasso.with(mContext).load(getProfileAvatarUrl(mMessage.get(position))).into(holder.avatar);
-        holder.content.setText(getContentToShow(mMessage.get(position)));
+    public void onBindViewHolder(final MessageViewHolder holder, final int position) {
+        final DirectMessageModel model = mMessage.get(position);
+        holder.username.setText(getConversationUsername(model));
+        Picasso.with(mContext).load(getProfileAvatarUrl(model)).into(holder.avatar);
+        holder.content.setText(getContentToShow(model));
 
-        if (mListener != null){
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onItemClick(view , holder.getLayoutPosition());
-                }
-            });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChatActivity.start(mContext ,model.getConversationId() , getChatUsername(model));
+            }
+        });
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    return true;
-                }
-            });
-        }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return true;
+            }
+        });
+    }
+
+    private String getChatUsername(DirectMessageModel model){
+        return model.getSenderScreenName().equals(AppContext.getScreenName()) ?
+                model.getRecipientScreenName() : model.getSenderScreenName();
     }
 
     @Override

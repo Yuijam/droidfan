@@ -40,8 +40,7 @@ public class FavoriteFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int position) {
-            int _id = mAdapter.getStatus(position).get_id();
+        public void onItemClick(View view , int _id) {
             DetailActivity.start(getContext() , DetailActivity.TYPE_FAVORITES , _id);
         }
 
@@ -57,11 +56,6 @@ public class FavoriteFragment extends HomeTimelineFragment {
             PhotoActivity.start(getContext() , _id , FavoritesColumns.TABLE_NAME , null , 0);
         }
     };
-
-    @Override
-    public void addAction() {
-        mIntentFilter.addAction(FanFouService.FILTER_PROFILE_FAVORITES);
-    }
 
     @Override
     public void initAdapter() {

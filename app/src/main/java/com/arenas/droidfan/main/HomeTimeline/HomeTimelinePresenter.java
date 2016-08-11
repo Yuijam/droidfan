@@ -4,16 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.arenas.droidfan.R;
-import com.arenas.droidfan.api.Api;
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.ApiException;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.service.FanFouService;
+import com.arenas.droidfan.photo.PhotoContract;
 
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Arenas on 2016/7/9.
@@ -60,6 +64,12 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         mView.showStatus(status);
     }
 
+    public void onDataNotAvailable() {
+        if (mIsAllowRefresh){
+            refresh();
+        }
+    }
+
     @Override
     public void refresh() {
         mIsAllowRefresh = true;
@@ -71,40 +81,50 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected void initSinceId(){
         p = new Paging();
         p.sinceId = mFanFouDB.getHomeTLSinceId();
-        p.count = 10;
+        p.count = 30;
     }
 
     protected void startService(){
-        FanFouService.getHomeTimeline(mContext , p);
+        Log.d(TAG , "startService~~");
+        rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
+            @Override
+            public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                try{
+                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
+                    List<StatusModel> model = AppContext.getApi().getHomeTimeline(p);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG , "onCompleted~~");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<StatusModel> models) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                mView.hideRefreshBar();
+                if(models.size() > 0){
+                    mFanFouDB.saveHomeTLStatusList(models);
+                    loadStatus();
+                }
+            }
+        });
     }
 
     @Override
-    public void newStatus() {
-        mView.showUpdateStatusUi();
-    }
-
-    public void onDataNotAvailable() {
-        if (mIsAllowRefresh){
-            refresh();
-        }
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-//        boolean hasNewData = intent.getBooleanExtra(FanFouService.EXTRA_HAS_NEW , false);
-//        if (hasNewData){
-        mIsAllowRefresh = false;
-        mView.hideRefreshBar();
-            loadStatus();
-//        }else {
-//            Log.d(TAG , "hasNewData is false--------");
-//            mView.showError(context.getString(R.string.no_new_status));
-//        }
-
-    }
-
-    @Override
-    public void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+    public void getMore() {
+        Log.d(TAG , "getMore");
         initMaxId();
         startService();
     }

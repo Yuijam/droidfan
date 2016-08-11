@@ -38,7 +38,7 @@ public class PushService extends IntentService {
         super("PushService");
     }
 
-    private SharedPreferences sharedPref;
+    private static SharedPreferences sharedPref;
 
     private FanFouDB mFanFouDB;
     private Api mApi;
@@ -51,15 +51,9 @@ public class PushService extends IntentService {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG , "onStartCommand>>");
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
     protected void onHandleIntent(Intent intent) {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean("do_not_notify_at_night" , false)){
+        if (sharedPref.getBoolean("do_not_notify_at_night" , true)){
             mCalendar = Calendar.getInstance();
             int curHour = mCalendar.get(Calendar.HOUR_OF_DAY);
             if ( curHour > 7 && curHour < 23){
@@ -75,21 +69,41 @@ public class PushService extends IntentService {
 
     public static boolean isServiceAlarmOn(Context context){
         Intent i = new Intent(context , PushService.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context , 0 , i , 0);
+        PendingIntent pi = PendingIntent.getService(context , 0 , i , PendingIntent.FLAG_NO_CREATE);
         return pi != null;
     }
 
-    public static void setServiceAlarm(Context context , boolean isOn){
-        Intent i = new Intent(context , AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context , 0 , i , 0);
+    public static void setServiceAlarm(Context context){
+        Intent i = new Intent(context , PushService.class);
+        PendingIntent pi = PendingIntent.getService(context , 0 , i , 0);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         AlarmManager manager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        if (!isOn){
-            String time = PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency" , "5");
-            long triggerAtTime = SystemClock.elapsedRealtime() + Integer.parseInt(time)*60*1000;
-//        long triggerAtTime = SystemClock.elapsedRealtime() + 60*1000;
-            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+
+        String time = PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency" , "5");
+        Log.d(TAG , "time = " + time);
+        int repeatTime = Integer.parseInt(time)* 60 * 1000;
+        manager.setRepeating(AlarmManager.RTC , System.currentTimeMillis() , repeatTime , pi);
+    }
+
+    public static void cancelPushService(Context context){
+        Intent i = new Intent(context , PushService.class);
+        PendingIntent pi = PendingIntent.getService(context , 0 , i , 0);
+
+        if (pi != null){
+            AlarmManager manager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+            manager.cancel(pi);
+            pi.cancel();
+        }else {
+            Log.d(TAG , "pi == null , so how to cancel ?");
         }
+    }
+
+    public static boolean shouldStartAlarm(Context context){
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isNotifyOn = sharedPref.getBoolean("notification" , true);
+        return  !isServiceAlarmOn(context) && isNotifyOn;
     }
 
     private void checkMentions(){

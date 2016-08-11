@@ -3,59 +3,39 @@ package com.arenas.droidfan.main.message;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
-import com.arenas.droidfan.adapter.ChatAdapter;
 import com.arenas.droidfan.adapter.ConversationListAdapter;
-import com.arenas.droidfan.adapter.MyOnItemClickListener;
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.model.DirectMessageModel;
-import com.arenas.droidfan.main.message.chat.ChatActivity;
-import com.arenas.droidfan.notify.PushService;
-import com.arenas.droidfan.profile.favorite.FavoritePresenter;
-import com.arenas.droidfan.service.FanFouService;
-import com.malinskiy.superrecyclerview.OnMoreListener;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Arenas on 2016/6/23.
  */
 public class MessageFragment extends Fragment implements MessageContract.View
-        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
+        , XRecyclerView.LoadingListener {
 
     private String TAG = MessageFragment.class.getSimpleName();
-
-    private IntentFilter mIntentFilter;
-    private LocalBroadcastManager mLocalBroadcastManager;
-    private LocalReceiver mLocalReceiver;
 
     private MessageContract.Presenter mPresenter;
     private ConversationListAdapter mAdapter;
 
-    private SwipeRefreshLayout mSwipeRefresh;
-    private SuperRecyclerView recyclerView;
+    @BindView(R.id.recycler_view)
+    XRecyclerView xRecyclerView;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -67,35 +47,10 @@ public class MessageFragment extends Fragment implements MessageContract.View
         super.onResume();
         mPresenter.start();
     }
-
-    MyOnItemClickListener listener = new MyOnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            DirectMessageModel model = mAdapter.getDM(position);
-
-            ChatActivity.start(getContext() , model.getConversationId() , getChatUsername(model));
-        }
-
-        @Override
-        public void onItemLongClick(int id, int position) {
-
-        }
-    };
-
-    private String getChatUsername(DirectMessageModel model){
-        return model.getSenderScreenName().equals(AppContext.getScreenName()) ?
-                model.getRecipientScreenName() : model.getSenderScreenName();
-    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_CONVERSATION_LIST);
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        mLocalReceiver = new LocalReceiver();
-        mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
-
-        mAdapter = new ConversationListAdapter(getContext() , new ArrayList<DirectMessageModel>() , listener);
+        mAdapter = new ConversationListAdapter(getContext() , new ArrayList<DirectMessageModel>());
     }
 
     @Nullable
@@ -107,32 +62,11 @@ public class MessageFragment extends Fragment implements MessageContract.View
     }
 
     private void initView(View view){
-        recyclerView = (SuperRecyclerView)view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(mAdapter);
-//        recyclerView.setupMoreListener(this , 3);
-
-        mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-        mSwipeRefresh.setOnRefreshListener(this);
-        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-
-        FloatingActionButton mFab = (FloatingActionButton)view.findViewById(R.id.fab);
-        mFab.setOnClickListener(this);
+        ButterKnife.bind(this , view);
+        xRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setAdapter(mAdapter);
     }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.fab:
-                // TODO: 2016/7/30  
-                break;
-        }
-    }
-
-//    @Override
-//    public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
-//        mPresenter.getMore(overallItemsCount , itemsBeforeMore ,maxLastVisiblePosition);
-//    }
 
     @Override
     public void onRefresh() {
@@ -140,14 +74,19 @@ public class MessageFragment extends Fragment implements MessageContract.View
     }
 
     @Override
+    public void onLoadMore() {
+        mPresenter.getMore();
+    }
+
+    @Override
     public void showProgressbar() {
-        mSwipeRefresh.setRefreshing(true);
+
     }
 
     @Override
     public void hideProgressbar() {
-        mSwipeRefresh.setRefreshing(false);
-        recyclerView.setRefreshing(false);
+        xRecyclerView.refreshComplete();
+        xRecyclerView.loadMoreComplete();
     }
 
     class LocalReceiver extends BroadcastReceiver {
@@ -159,7 +98,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
 
     @Override
     public void showError(String text) {
-        Utils.showToast(getContext() , text);
+        Utils.showToast(getActivity() , text);
     }
 
     @Override

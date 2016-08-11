@@ -81,7 +81,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onItemClick(view , holder.getLayoutPosition());
+                    mListener.onItemClick(view , model.get_id());
                 }
             });
 

@@ -5,27 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-        <com.malinskiy.superrecyclerview.SuperRecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_empty="@layout/empty_layout"
-            />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_edit"
-        />
+    <include layout="@layout/status_layout"/>
 
 </FrameLayout>

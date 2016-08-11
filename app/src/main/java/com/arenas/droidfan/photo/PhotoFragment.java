@@ -5,16 +5,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.PhotoPagerAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.main.TabFragmentAdapter;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
 
@@ -24,7 +28,7 @@ import java.util.List;
 /**
  * Created by Arenas on 2016/7/28.
  */
-public class PhotoFragment extends Fragment implements PhotoContract.View{
+public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     private static final String TAG = PhotoFragment.class.getSimpleName();
 
@@ -32,6 +36,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View{
 
     private ViewPager mPager;
     private PhotoPagerAdapter mAdapter;
+
+    private LinearLayout mPhotoContainer;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -47,7 +53,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new PhotoPagerAdapter(getContext() , new ArrayList<StatusModel>());
+        mAdapter = new PhotoPagerAdapter(getContext() , new ArrayList<StatusModel>() , getActivity());
     }
 
     @Nullable
@@ -57,6 +63,9 @@ public class PhotoFragment extends Fragment implements PhotoContract.View{
 
         mPager = (ViewPager)view.findViewById(R.id.view_pager);
         mPager.setAdapter(mAdapter);
+
+        mPhotoContainer = (LinearLayout)view.findViewById(R.id.photo_container);
+
         setHasOptionsMenu(true);
         return view;
     }

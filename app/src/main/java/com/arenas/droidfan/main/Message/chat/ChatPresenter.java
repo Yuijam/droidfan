@@ -14,10 +14,15 @@ import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Arenas on 2016/7/26.
@@ -33,11 +38,9 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     private String mUserId;
     private DirectMessageModel model;
     private String mUsername;
-    private boolean mIsAFollower;
-    private boolean mTestAvailable;
-    private boolean mIsRefresh;
+    private boolean mIsAllowRefresh;
 
-//    private boolean mIsFirstFetch;
+    private Paging paging;
 
     public ChatPresenter(String userId , String username , ChatContract.View mView, Context mContext) {
         this.mFanFouDB = FanFouDB.getInstance(mContext);
@@ -46,77 +49,133 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         mUserId = userId;
         mUsername = username;
         Log.d(TAG , "userId = " + userId);
-        mTestAvailable = true;
-//        mIsFirstFetch = true;
+        mIsAllowRefresh = true;
+
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        fetchData();
+        loadDM();
         testFollower();
     }
 
     private void testFollower(){
-        FanFouService.testChatAvailable(mContext , mUserId);
+        rx.Observable.create(new rx.Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try{
+                    Log.d(TAG , "testFollower thread = " + Thread.currentThread().getId());
+                    boolean isAFollower = AppContext.getApi().isFriends(mUserId , AppContext.getAccount());
+                    subscriber.onNext(isAFollower);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<Boolean>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Boolean isAFollower) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                Log.d(TAG , "isAFollower = " + isAFollower);
+                if (isAFollower){
+                    mView.showEditMessageLayout();
+                }else {
+                    mView.showEditInvalidNotice();
+                }
+            }
+        });
     }
 
     private void loadDM(){
+        Log.d(TAG , "loadDM");
         mView.showProgressbar();
         mFanFouDB.getConversation(mUsername , this);
     }
 
     @Override
     public void onDMLoaded(List<DirectMessageModel> messageModels) {
+        Log.d(TAG , "onDMLoaded");
         model = messageModels.get(0);
         mView.hideProgressbar();
         mView.showChatItems(messageModels);
-        if (!mIsRefresh){
-            mView.scrollTo(messageModels.size());
-        }
+        mView.scrollTo(messageModels.size());
     }
 
     @Override
     public void onDataNotAvailable() {
-//        if (mIsFirstFetch){
-//            fetchData();
-//        }
-        mView.showError("Oops ~ 未获取到数据");
+        Log.d(TAG , "onDataNotAvailable");
+        if (mIsAllowRefresh){
+            refresh();
+        }else {
+            mView.hideProgressbar();
+            mView.showError("Oops ~ 未获取到数据");
+        }
     }
 
     private void fetchData(){
-        mView.showProgressbar();
-        Paging paging = new Paging();
-        paging.count = 60;
-        paging.sinceId = mFanFouDB.getDMSinceId(mUsername);
-        FanFouService.getConversation(mContext , paging , mUserId);
-    }
+        rx.Observable.create(new rx.Observable.OnSubscribe<List<DirectMessageModel>>() {
+            @Override
+            public void call(Subscriber<? super List<DirectMessageModel>> subscriber) {
+                try{
+                    Log.d(TAG , "fetch data observable thread = " + Thread.currentThread().getId());
+                    List<DirectMessageModel> directMessageModels = AppContext.getApi().getConversation(mUserId , paging);
+                    subscriber.onNext(directMessageModels);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-//        mIsFirstFetch = false;
-        if (mTestAvailable){
-            mIsAFollower = intent.getBooleanExtra(FanFouService.EXTRA_IS_FRIEND , false);
-            if (mIsAFollower){
-                mView.showEditMessageLayout();
-            }else {
-                mView.showEditInvalidNotice();
             }
-            mTestAvailable = false;
-        }
-        loadDM();
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<DirectMessageModel>>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG , "onCompleted~~");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<DirectMessageModel> dmms) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                mView.refreshComplete();
+                mView.loadMoreComplete();
+                if (dmms.size() > 0){
+                    mFanFouDB.saveDirectMessages(dmms);
+                    loadDM();
+                }
+                mIsAllowRefresh = false;
+            }
+        });
     }
 
     @Override
     public void refresh() {
-        mIsRefresh = true;
-        getMore();
+        paging = new Paging();
+        paging.maxId = mFanFouDB.getDMMaxId(mUsername);
+        fetchData();
     }
 
-    private void getMore(){
-        Paging paging = new Paging();
-        paging.maxId = mFanFouDB.getDMMaxId(mUsername);
-        FanFouService.getConversation(mContext , paging , mUserId);
+    @Override
+    public void getMore() {
+        paging = new Paging();
+        paging.count = 60;
+        paging.sinceId = mFanFouDB.getDMSinceId(mUsername);
+        fetchData();
     }
 
     @Override

@@ -18,16 +18,13 @@ public interface HomeTimelineContract {
     interface View extends BaseView{
         void showStatus(List<StatusModel> status);
         void showError(String error);
-        void showUpdateStatusUi();
         void hideRefreshBar();
         void showRefreshBar();
     }
 
     interface Presenter extends BasePresenter{
         void loadStatus();
-        void onReceive(Context context, Intent intent);
-        void newStatus();
         void refresh();
-        void getMore(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition);
+        void getMore();
     }
 }

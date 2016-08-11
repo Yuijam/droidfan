@@ -41,13 +41,19 @@ public interface DataSource {
 
     void savePublicStatus(StatusModel status);
 
+    void savePublicStatusList(List<StatusModel> statusModels);
+
     void getPublicStatusList(LoadStatusCallback callback);
 
     void getPublicStatus(int _id , GetStatusCallback callback);
 
     void saveHomeTLStatus(StatusModel status);
 
+    void saveHomeTLStatusList(List<StatusModel> modelList);
+
     void saveNoticeStatus(StatusModel status);
+
+    void saveNoticeStatusList(List<StatusModel> modelList);
 
     void getHomeTLStatusList(LoadStatusCallback callback);
 
@@ -59,11 +65,17 @@ public interface DataSource {
 
     void updateFavorite(int id , int favorite);
 
+    //profile status
+    void saveProfileStatusList(List<StatusModel> statusModels);
+
     void getProfileStatusList(String owner , LoadStatusCallback callback);
 
     void getProfileStatus(int  _id , GetStatusCallback callback);
 
     void saveProfileStatus(StatusModel status);
+
+    //favorites
+    void saveFavoritesList(List<StatusModel> statusModels);
 
     void saveFavorites(StatusModel statusModel);
 

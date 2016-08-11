@@ -23,6 +23,10 @@ public interface ChatContract {
 
         void hideProgressbar();
 
+        void refreshComplete();
+
+        void loadMoreComplete();
+
         void emptyInput();
 
         void showEditMessageLayout();
@@ -38,9 +42,9 @@ public interface ChatContract {
 
     interface Presenter extends BasePresenter{
 
-        void onReceive(Context context , Intent intent);
-
         void refresh();
+
+        void getMore();
 
         void send(String text);
     }

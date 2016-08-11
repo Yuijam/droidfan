@@ -1,16 +1,9 @@
 package com.arenas.droidfan.main.message.chat;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,43 +13,47 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.ChatAdapter;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.data.model.DirectMessageModel;
-import com.arenas.droidfan.service.FanFouService;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Arenas on 2016/7/26.
  */
 public class ChatFragment extends Fragment implements ChatContract.View
-        , SwipeRefreshLayout.OnRefreshListener , View.OnClickListener , TextWatcher {
+        , View.OnClickListener , TextWatcher , XRecyclerView.LoadingListener {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
 
     private ChatContract.Presenter mPresenter;
 
-    private SwipeRefreshLayout mSwipeRefresh;
-
     private ChatAdapter mAdapter;
 
-    private IntentFilter mIntentFilter;
-    private LocalBroadcastManager mLocalBroadcastManager;
-    private LocalReceiver mLocalReceiver;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.recycler_view)
+    XRecyclerView xRecyclerView;
+    @BindView(R.id.input_text)
+    EditText inputText;
+    @BindView(R.id.send)
+    ImageView send;
+    @BindView(R.id.invalid_notice)
+    TextView editInvalidNotice;
+    @BindView(R.id.edit_message_layout)
+    LinearLayout editLayout;
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
 
-    private EditText mInputText;
-    private ImageView mSend;
     private CharSequence temp;
-
-    private LinearLayout mEditLayout;
-    private TextView mEditInvalidNotice;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -78,18 +75,13 @@ public class ChatFragment extends Fragment implements ChatContract.View
         @Override
         public void onItemLongClick(int id, int position) {
             // TODO: 2016/7/26
-            Utils.showToast(getContext() , "long click !! ");
+//            Utils.showToast(getContext() , "long click !! ");
         }
     };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_CONVERSATION);
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        mLocalReceiver = new LocalReceiver();
-        mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
 
         mAdapter = new ChatAdapter(getContext() , new ArrayList<DirectMessageModel>() , listener);
     }
@@ -103,28 +95,30 @@ public class ChatFragment extends Fragment implements ChatContract.View
     }
 
     private void init(View view){
+        ButterKnife.bind(this , view);
 
-        mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mAdapter);
+        xRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setAdapter(mAdapter);
 
-        mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        mSwipeRefresh.setOnRefreshListener(this);
+        inputText.addTextChangedListener(this);
 
-        mInputText = (EditText)view.findViewById(R.id.input_text);
-        mInputText.addTextChangedListener(this);
-
-        mSend = (ImageView)view.findViewById(R.id.send);
-        mSend.setOnClickListener(this);
-
-        mEditInvalidNotice = (TextView)view.findViewById(R.id.invalid_notice);
-        mEditLayout = (LinearLayout)view.findViewById(R.id.edit_message_layout);
+        send.setOnClickListener(this);
 
         setHasOptionsMenu(true);
     }
 
-//    @Override
+    @Override
+    public void onRefresh() {
+        mPresenter.refresh();
+    }
+
+    @Override
+    public void onLoadMore() {
+        mPresenter.getMore();
+    }
+
+    //    @Override
 //    public void onFocusChange(View view, boolean b) {
 //        if (b){
 //            Log.d(TAG , "onFocus~~~");
@@ -137,7 +131,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.send:
-                mPresenter.send(mInputText.getText().toString());
+                mPresenter.send(inputText.getText().toString());
                 break;
         }
     }
@@ -159,7 +153,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     @Override
     public void scrollTo(int position) {
-        mRecyclerView.smoothScrollToPosition(position);
+        xRecyclerView.smoothScrollToPosition(position);
     }
 
     @Override
@@ -169,24 +163,22 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     @Override
     public void showProgressbar() {
-        mSwipeRefresh.setRefreshing(true);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
-        mSwipeRefresh.setRefreshing(false);
-    }
-
-    class LocalReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mPresenter.onReceive(context , intent);
-        }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void onRefresh() {
-        mPresenter.refresh();
+    public void refreshComplete() {
+        xRecyclerView.refreshComplete();
+    }
+
+    @Override
+    public void loadMoreComplete() {
+        xRecyclerView.loadMoreComplete();
     }
 
     //TextWatch
@@ -211,30 +203,30 @@ public class ChatFragment extends Fragment implements ChatContract.View
     }
 
     private void activateSend(){
-        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
+        send.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
     }
     private void invalidSend(){
-        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
+        send.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
     }
 
     @Override
     public void emptyInput() {
-        mInputText.setText("");
+        inputText.setText("");
     }
 
     @Override
     public void showEditMessageLayout() {
-        mEditLayout.setVisibility(View.VISIBLE);
+        editLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showEditInvalidNotice() {
-        mEditInvalidNotice.setVisibility(View.VISIBLE);
+        editInvalidNotice.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void disableSend() {
-//        mSend.set
+
     }
 
     @Override

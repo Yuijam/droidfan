@@ -57,10 +57,11 @@
         <Preference
             android:title="版本"
             android:summary="1.0.0"
+            android:key="version_code"
             />
 
         <Preference
-            android:title="作者：放學後茶會"
+            android:title="放學後茶會"
             android:summary="arenas1101@gmail.com"/>
 
     </PreferenceCategory>

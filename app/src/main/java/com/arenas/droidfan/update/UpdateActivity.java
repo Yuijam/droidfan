@@ -11,6 +11,9 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.FanFouDB;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class UpdateActivity extends AppCompatActivity {
 
     public static final String EXTRA_ID = "extra_id";
@@ -22,6 +25,11 @@ public class UpdateActivity extends AppCompatActivity {
     public static final int TYPE_FEEDBACK = 3;
 
 
+    public static void start(Context context){
+        Intent intent = new Intent(context , UpdateActivity.class);
+        context.startActivity(intent);
+    }
+
     public static void start(Context context , int _id , int actionType , int statusType){
         Intent intent = new Intent(context , UpdateActivity.class);
         intent.putExtra(EXTRA_ID , _id);
@@ -30,12 +38,15 @@ public class UpdateActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

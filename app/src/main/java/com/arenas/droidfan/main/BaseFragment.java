@@ -1,59 +1,46 @@
 package com.arenas.droidfan.main;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.StatusAdapter;
-import com.arenas.droidfan.api.Paging;
-import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
-import com.arenas.droidfan.update.UpdateActivity;
-import com.malinskiy.superrecyclerview.OnMoreListener;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Arenas on 2016/7/18.
  */
 public abstract class BaseFragment extends Fragment implements HomeTimelineContract.View ,
-        View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
+         XRecyclerView.LoadingListener{
 
     public static final String TAG = BaseFragment.class.getSimpleName();
 
     public static final String FILTER_HOMETIMELINE = "com.arenas.droidfan.HOMETIMELINE";
     public static final String FILTER_PUBLICTIMELINE = "com.arenas.droidfan.PUBLICTIMELINE";
     public static final String FILTER_PROFILETIMELINE = "com.arenas.droidfan.PROFILETIMELINE";
-    public static final String FILTER_FAVORITES = "com.arenas.droidfan.FAVORITES";
-    public static final String FILTER_USER = "com.arenas.droidfan.USER";
 
     protected HomeTimelineContract.Presenter mPresenter;
 
-    //broadcast
-    protected IntentFilter mIntentFilter;
-    private LocalBroadcastManager mLocalBroadcastManager;
-    private LocalReceiver mLocalReceiver;
-
     protected StatusAdapter mAdapter;
 
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
-
-    protected SuperRecyclerView mRecyclerView;
+    public @BindView(R.id.recycler_view)
+    XRecyclerView recyclerView;
+    public @BindView(R.id.progressbar)
+    ProgressBar progressBar;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -69,16 +56,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIntentFilter = new IntentFilter();
-        addAction();
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        mLocalReceiver = new LocalReceiver();
-        mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
         initAdapter();
-    }
-
-    public void addAction(){
-        mIntentFilter.addAction(FILTER_HOMETIMELINE);
     }
 
     public abstract void initAdapter();
@@ -92,50 +70,32 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     public void init(View view){
-        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        ButterKnife.bind(this , view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerView = (SuperRecyclerView)view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mAdapter);
+//        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+//        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SemiCircleSpin);
+//        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
 
-        mRecyclerView.setupMoreListener(new OnMoreListener() {
-            @Override
-            public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
-                mPresenter.getMore(overallItemsCount , itemsBeforeMore , maxLastVisiblePosition);
-            }
-        } , 3);
-
-        FloatingActionButton mFAB = (FloatingActionButton)view.findViewById(R.id.fab);
-        mFAB.setOnClickListener(this);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setAdapter(mAdapter);
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.fab:
-                mPresenter.newStatus();
-                break;
-        }
+    public void onRefresh() {
+        mPresenter.refresh();
     }
 
     @Override
-    public void showUpdateStatusUi() {
-        Intent intent = new Intent(getContext() , UpdateActivity.class);
-        startActivity(intent);
+    public void onLoadMore() {
+        mPresenter.getMore();
     }
 
     @Override
     public void showStatus(List<StatusModel> status) {
         mAdapter.replaceData(status);
-    }
-
-    class LocalReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mPresenter.onReceive(context , intent);
-        }
     }
 
     @Override
@@ -144,28 +104,14 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mLocalBroadcastManager.unregisterReceiver(mLocalReceiver);
-    }
-
-    @Override
-    public void onRefresh() {
-        mPresenter.refresh();
-    }
-
-
-    @Override
     public void hideRefreshBar() {
-        if (mSwipeRefreshLayout.isRefreshing())
-            mSwipeRefreshLayout.setRefreshing(false);
-        mRecyclerView.setRefreshing(false);
+        recyclerView.refreshComplete();
+        recyclerView.loadMoreComplete();
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void showRefreshBar() {
-        if (!mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.setRefreshing(true);
-        }
+        progressBar.setVisibility(View.VISIBLE);
     }
 }

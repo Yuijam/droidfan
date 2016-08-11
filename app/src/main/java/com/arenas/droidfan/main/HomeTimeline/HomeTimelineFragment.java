@@ -2,27 +2,19 @@ package com.arenas.droidfan.main.hometimeline;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.OnStatusImageClickListener;
-import com.arenas.droidfan.api.Paging;
-import com.arenas.droidfan.R;
+import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.BaseFragment;
-import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.photo.PhotoActivity;
-import com.arenas.droidfan.service.FanFouService;
-import com.malinskiy.superrecyclerview.OnMoreListener;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 
@@ -44,8 +36,7 @@ public class HomeTimelineFragment extends BaseFragment{
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int position) {
-            int _id = mAdapter.getStatus(position).get_id();
+        public void onItemClick(View view , int _id) {
             DetailActivity.start(getContext() , DetailActivity.TYPE_HOME , _id);
         }
 

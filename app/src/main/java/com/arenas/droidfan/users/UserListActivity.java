@@ -34,7 +34,6 @@ public class UserListActivity extends AppCompatActivity {
 
         int type = getIntent().getIntExtra(EXTRA_TYPE , -1);
 
-        // TODO: 2016/7/24  new presenter()
         switch (type){
             case TYPE_FOLLOWERS:
                 toolbar.setTitle("关注者");

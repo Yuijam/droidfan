@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.AppContext;
@@ -126,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+            Utils.hideKeyboard(LoginActivity.this , mPasswordView);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute();
         }

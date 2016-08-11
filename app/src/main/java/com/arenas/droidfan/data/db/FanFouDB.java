@@ -285,6 +285,13 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void saveFavoritesList(List<StatusModel> statusModels) {
+        for (StatusModel s : statusModels){
+            saveFavorites(s);
+        }
+    }
+
+    @Override
     public void saveFavorites(StatusModel statusModel) {
         saveStatus(FavoritesColumns.TABLE_NAME , statusModel);
     }
@@ -430,6 +437,13 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void saveProfileStatusList(List<StatusModel> statusModels) {
+        for (StatusModel s : statusModels){
+            saveProfileStatus(s);
+        }
+    }
+
+    @Override
     public void saveProfileStatus(StatusModel status) {
         saveStatus(ProfileColumns.TABLE_NAME , status);
     }
@@ -457,6 +471,13 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void savePublicStatusList(List<StatusModel> statusModels) {
+        for (StatusModel s : statusModels){
+            savePublicStatus(s);
+        }
+    }
+
+    @Override
     public void savePublicStatus(StatusModel status) {
         saveStatus(PublicStatusColumns.TABLE_NAME , status);
     }
@@ -479,6 +500,13 @@ public class FanFouDB implements DataSource{
             callback.onStatusLoaded(status);
         }else {
             callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
+    public void saveNoticeStatusList(List<StatusModel> modelList) {
+        for (StatusModel s : modelList){
+            saveNoticeStatus(s);
         }
     }
 
@@ -575,6 +603,7 @@ public class FanFouDB implements DataSource{
         if (cursor.moveToLast()){
             sinceId = DBUtil.parseString(cursor , NoticeColumns.ID);
         }
+        Log.d(TAG , "Notice SinceId = " + sinceId);
         return sinceId;
     }
 
@@ -598,6 +627,13 @@ public class FanFouDB implements DataSource{
         Log.d(TAG , "sinceId = " + sinceId);
         c.close();
         return sinceId;
+    }
+
+    @Override
+    public void saveHomeTLStatusList(List<StatusModel> modelList) {
+        for (StatusModel s : modelList){
+            saveHomeTLStatus(s);
+        }
     }
 
     @Override

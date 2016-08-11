@@ -37,8 +37,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ChatViewHolder holder, final int position) {
-        final DirectMessageModel model = mDatas.get(position);
+    public void onBindViewHolder(ChatViewHolder holder, int position) {
+        DirectMessageModel model = mDatas.get(position);
         String senderName = model.getSenderScreenName();
         if (senderName.equals(AppContext.getScreenName())){
             holder.leftLayout.setVisibility(View.GONE);
@@ -56,7 +56,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.leftText.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    mListener.onItemLongClick(0 , position);
+//                    mListener.onItemLongClick(0 , holder.getAdapterPosition());
                     return false;
                 }
             });
@@ -64,7 +64,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.rightText.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    mListener.onItemLongClick(0 , position);
+//                    mListener.onItemLongClick(0 , position);
                     return false;
                 }
             });

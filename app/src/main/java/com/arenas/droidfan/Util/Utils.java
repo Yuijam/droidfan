@@ -3,6 +3,8 @@ package com.arenas.droidfan.Util;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -71,5 +73,20 @@ public class Utils {
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
     }
+
+    public static String getVersionCode(){
+        String version = "";
+        try {
+            // 获取packagemanager的实例
+            PackageManager packageManager = AppContext.getContext().getPackageManager();
+            // getPackageName()是你当前类的包名，0代表是获取版本信息
+            PackageInfo packInfo = packageManager.getPackageInfo(AppContext.getContext().getPackageName(),0);
+            version = packInfo.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return version;
+    }
+
 
 }

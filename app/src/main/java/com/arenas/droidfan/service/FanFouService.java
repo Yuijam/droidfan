@@ -342,7 +342,7 @@ public class FanFouService extends IntentService {
                     break;
             }
         }catch (ApiException e){
-            e.toString();
+            e.printStackTrace();
         }
 
     }
@@ -393,7 +393,6 @@ public class FanFouService extends IntentService {
         intent.putExtra(EXTRA_HAS_NEW , mHasNewData);
         intent.putExtra(EXTRA_IS_FRIEND , mIsFriend);
         intent.putExtra(EXTRA_SUCCESS , mSuccess);
-        Log.d(TAG , "is a follower = " + mIsFriend);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

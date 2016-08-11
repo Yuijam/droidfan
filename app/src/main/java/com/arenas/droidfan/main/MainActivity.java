@@ -3,7 +3,9 @@ package com.arenas.droidfan.main;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -31,35 +33,49 @@ import com.arenas.droidfan.main.publicstatus.PublicActivity;
 import com.arenas.droidfan.notify.PushService;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.setting.SettingsActivity;
+import com.arenas.droidfan.update.UpdateActivity;
+import com.arenas.droidfan.update.UpdatePresenter;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.drawer_layout) DrawerLayout drawer;
+    @BindView(R.id.nav_view) NavigationView navigationView;
+    @BindView(R.id.view_pager) ViewPager viewPager;
+    @BindView(R.id.tab_layout) TabLayout tabLayout;
+
+    @OnClick(R.id.fab) void onFabClick(){
+        UpdateActivity.start(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        ViewPager viewPager = (ViewPager)findViewById(R.id.view_pager);
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+
         List<String> tabList = new ArrayList<>();
         tabList.add(getString(R.string.home_page));
         tabList.add(getString(R.string.notice));
@@ -82,8 +98,9 @@ public class MainActivity extends AppCompatActivity
         new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
         new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
 
-        boolean shouldStartAlarm = !PushService.isServiceAlarmOn(this);
-        PushService.setServiceAlarm(this , shouldStartAlarm);
+        if (PushService.shouldStartAlarm(this)){
+            PushService.setServiceAlarm(this);
+        }
 
         NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(1);
@@ -113,12 +130,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -139,30 +150,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_public_timeline) {
             PublicActivity.start(this);
         } else if (id == R.id.nav_setting) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(this , SettingsActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG , "onResume--------->");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG , "onDestroy()----------->");
     }
 }
