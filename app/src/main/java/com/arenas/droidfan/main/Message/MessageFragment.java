@@ -65,6 +65,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
         ButterKnife.bind(this , view);
         xRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setLoadingMoreEnabled(false);
         xRecyclerView.setAdapter(mAdapter);
     }
 

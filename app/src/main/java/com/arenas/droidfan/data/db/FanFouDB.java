@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.arenas.droidfan.adapter.ConversationListAdapter;
+import com.arenas.droidfan.data.DraftColumns;
 import com.arenas.droidfan.data.FavoritesColumns;
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.HomeStatusColumns;
@@ -14,11 +16,13 @@ import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
 import com.arenas.droidfan.data.model.DirectMessageColumns;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.data.model.Draft;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.message.MessageFragment;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.main.message.chat.ChatContract;
 import com.arenas.droidfan.main.message.chat.ChatFragment;
 import com.arenas.droidfan.users.UserListActivity;
 
@@ -48,6 +52,59 @@ public class FanFouDB implements DataSource{
         return INSTANCE;
     }
 
+    //draft
+    @Override
+    public void saveDraft(Draft draft) {
+        ContentValues values = new ContentValues();
+        values.put(DraftColumns.TYPE , draft.type);
+        values.put(DraftColumns.REPLY , draft.reply);
+        values.put(DraftColumns.REPOST , draft.repost);
+        values.put(DraftColumns.TEXT , draft.text);
+        values.put(DraftColumns.FILE , draft.fileName);
+        db.replaceOrThrow(DraftColumns.TABLE_NAME , null , values);
+    }
+
+    @Override
+    public void loadDrafts(LoadDraftCallback callback) {
+        Cursor cursor = db.rawQuery("select * from " + DraftColumns.TABLE_NAME , null);
+        List<Draft> drafts = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do {
+                Draft draft = new Draft();
+                draft.id = DBUtil.parseInt(cursor , DraftColumns.ID);
+                draft.text = DBUtil.parseString(cursor , DraftColumns.TEXT);
+                draft.type = DBUtil.parseInt(cursor , DraftColumns.TYPE);
+                draft.reply = DBUtil.parseString(cursor , DraftColumns.REPLY);
+                draft.repost = DBUtil.parseString(cursor , DraftColumns.REPOST);
+                draft.fileName = DBUtil.parseString(cursor , DraftColumns.FILE);
+                drafts.add(draft);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (drafts.isEmpty()){
+            callback.onDataNotAvailable();
+        }else {
+            callback.onDraftLoaded(drafts);
+        }
+    }
+
+    @Override
+    public void updateDraft(Draft draft) {
+        ContentValues values = new ContentValues();
+        values.put(DraftColumns.TYPE , draft.type);
+        values.put(DraftColumns.REPLY , draft.reply);
+        values.put(DraftColumns.REPOST , draft.repost);
+        values.put(DraftColumns.TEXT , draft.text);
+        values.put(DraftColumns.FILE , draft.fileName);
+        db.update(DraftColumns.TABLE_NAME , values , "id = ?" , new String[]{String.valueOf(draft.id)});
+    }
+
+    @Override
+    public void deleteDraft(int id) {
+        db.delete(DraftColumns.TABLE_NAME , "id = ?" , new String[]{String.valueOf(id)});
+    }
+
+    //delete
     @Override
     public void deleteAll() {
         db.execSQL("delete from " + HomeStatusColumns.TABLE_NAME);
@@ -62,7 +119,13 @@ public class FanFouDB implements DataSource{
 
     @Override
     public String getPhotoSinceId(String owner) {
-        return getSinceId(PhotoColumns.TABLE_NAME , owner);
+        String sinceId = null;
+        Cursor cursor = db.rawQuery("select * from " + PhotoColumns.TABLE_NAME + " where "
+                + PhotoColumns.USER_ID + " = ? order by rawid" , new String[]{owner} );
+        if (cursor.moveToLast()){
+            sinceId = DBUtil.parseString(cursor , PhotoColumns.ID);
+        }
+        return sinceId;
     }
 
     @Override
@@ -142,6 +205,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void getConversation(String username, LoadDMCallback callback) {
+        Log.d(TAG , "username = " + username);
         Cursor cursor = db.rawQuery("select * from " + DirectMessageColumns.TABLE_NAME + " where "
         + DirectMessageColumns.TYPE + " = ? and " + DirectMessageColumns.CONVERSATION_ID + " = ? "
         + " order by rawid " , new String[]{String.valueOf(DirectMessageModel.TYPE_OUTBOX) , username} );
@@ -240,9 +304,19 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void saveFollowers(List<UserModel> users , String owner){
+    public void deleteFollowers(String owner) {
         db.delete(UserColumns.TABLE_NAME , "owner = ? and type = ?",
                 new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWERS)});
+    }
+
+    @Override
+    public void deleteFollowing(String owner) {
+        db.delete(UserColumns.TABLE_NAME , "owner = ? and type = ?",
+                new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWING)});
+    }
+
+    @Override
+    public void saveFollowers(List<UserModel> users , String owner){
         for (UserModel u : users){
             saveUser(u , UserListActivity.TYPE_FOLLOWERS);
         }
@@ -250,10 +324,6 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void saveFollowing(List<UserModel> users , String owner){
-        db.delete(UserColumns.TABLE_NAME , "owner = ? and type = ?",
-                new String[]{owner , String.valueOf(UserListActivity.TYPE_FOLLOWING)});
-        if (users.isEmpty())
-            return;
         for (UserModel u : users){
             saveUser(u , UserListActivity.TYPE_FOLLOWING);
         }
@@ -289,6 +359,11 @@ public class FanFouDB implements DataSource{
         for (StatusModel s : statusModels){
             saveFavorites(s);
         }
+    }
+
+    @Override
+    public void deleteFavorites(String owner) {
+        db.delete(FavoritesColumns.TABLE_NAME , "owner = ?",new String[]{owner});
     }
 
     @Override
@@ -472,6 +547,7 @@ public class FanFouDB implements DataSource{
 
     @Override
     public void savePublicStatusList(List<StatusModel> statusModels) {
+        db.delete(PublicStatusColumns.TABLE_NAME , null , null);
         for (StatusModel s : statusModels){
             savePublicStatus(s);
         }
@@ -537,10 +613,11 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
-    public void updateFavorite(int _id , int favorite) {
+    public void updateFavorite(String table , int _id , int favorite) {
+        Log.d(TAG , "table = " + table + " , _id = " + _id + " , favorite = " + favorite);
         ContentValues values = new ContentValues();
         values.put(HomeStatusColumns.FAVORITED, favorite);
-        db.update(HomeStatusColumns.TABLE_NAME, values, "_id = ?", new String[]{String.valueOf(_id)});
+        db.update(table, values, "_id = ?", new String[]{String.valueOf(_id)});
     }
 
     @Override

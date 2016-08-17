@@ -37,10 +37,8 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
 
     protected StatusAdapter mAdapter;
 
-    public @BindView(R.id.recycler_view)
-    XRecyclerView recyclerView;
-    public @BindView(R.id.progressbar)
-    ProgressBar progressBar;
+    public @BindView(R.id.recycler_view) XRecyclerView recyclerView;
+    public @BindView(R.id.progressbar) ProgressBar progressBar;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -104,14 +102,14 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     @Override
-    public void hideRefreshBar() {
+    public void hideProgressBar() {
         recyclerView.refreshComplete();
         recyclerView.loadMoreComplete();
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void showRefreshBar() {
+    public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 }

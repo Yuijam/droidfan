@@ -1,10 +1,12 @@
 package com.arenas.droidfan.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -26,6 +28,7 @@ import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.notify.PushService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,11 +54,11 @@ public class Utils {
         return curTime;
     }
 
-    public static void selectImage(Fragment fragment , int requestCode){
+    public static void selectImage(Activity activity , int requestCode){
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        fragment.startActivityForResult(intent , requestCode);
+        activity.startActivityForResult(intent , requestCode);
     }
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
                                              @NonNull Fragment fragment , int frameId){
@@ -88,5 +91,20 @@ public class Utils {
         return version;
     }
 
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
+        return toolbarHeight;
+    }
+
+    public static String handleDescription(String text){
+        String str;
+        Pattern pattern = Pattern.compile("\\n|\\r|\\t");
+        Matcher matcher = pattern.matcher(text);
+        str = matcher.replaceAll(" ");
+        return str;
+    }
 }

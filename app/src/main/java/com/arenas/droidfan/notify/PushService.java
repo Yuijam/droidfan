@@ -47,7 +47,7 @@ public class PushService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG , "onCreate>>>>");
+        Log.d(TAG , "onCreate>>>");
     }
 
     @Override
@@ -74,6 +74,7 @@ public class PushService extends IntentService {
     }
 
     public static void setServiceAlarm(Context context){
+        Log.d(TAG , "setServiceAlarm----------->");
         Intent i = new Intent(context , PushService.class);
         PendingIntent pi = PendingIntent.getService(context , 0 , i , 0);
 
@@ -81,9 +82,9 @@ public class PushService extends IntentService {
 
         AlarmManager manager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
-        String time = PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency" , "5");
-        Log.d(TAG , "time = " + time);
-        int repeatTime = Integer.parseInt(time)* 60 * 1000;
+//        String time = PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency" , "5");
+//        Log.d(TAG , "time = " + time);
+        int repeatTime = 5 * 60 * 1000;
         manager.setRepeating(AlarmManager.RTC , System.currentTimeMillis() , repeatTime , pi);
     }
 
@@ -93,6 +94,7 @@ public class PushService extends IntentService {
 
         if (pi != null){
             AlarmManager manager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+            Log.d(TAG , "cancel alarm~");
             manager.cancel(pi);
             pi.cancel();
         }else {

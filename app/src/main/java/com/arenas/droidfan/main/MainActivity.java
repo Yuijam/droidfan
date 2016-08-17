@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.detail.DetailActivity;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
 import com.arenas.droidfan.main.message.MessageFragment;
@@ -60,11 +62,13 @@ public class MainActivity extends AppCompatActivity
         UpdateActivity.start(this);
     }
 
+    TabFragmentAdapter fragmentAdapter;
+    private HomeTimelineContract.View homeTimelineView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -84,16 +88,20 @@ public class MainActivity extends AppCompatActivity
         fragments.add(new HomeTimelineFragment());
         fragments.add(new NoticeFragment());
         fragments.add(new MessageFragment());
+        viewPager.setOffscreenPageLimit(2);
 
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(0)));//添加tab
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(1)));
         tabLayout.addTab(tabLayout.newTab().setText(tabList.get(2)));
-        TabFragmentAdapter fragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), tabList , fragments);
+        fragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), tabList , fragments);
         viewPager.setAdapter(fragmentAdapter);//给ViewPager设置适配器
         tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         initNavHeader(navigationView.getHeaderView(0));
+
+        homeTimelineView = (HomeTimelineFragment)fragmentAdapter.getItem(0);
+
         new HomeTimelinePresenter(this , (HomeTimelineFragment)fragmentAdapter.getItem(0));
         new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
         new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
@@ -159,5 +167,19 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG , "onActivityResult --- > resultCode = " + resultCode + " , requestCode = " + requestCode);
+        if (requestCode == DetailActivity.REQUEST_DETAIL){
+            if (resultCode == DetailActivity.RESULT_DELETE){
+                int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
+                int type = data.getIntExtra(DetailActivity.EXTRA_STATUS_TYPE , -1);
+                if (type == DetailActivity.TYPE_HOME){
+                    homeTimelineView.removeStatusItem(position);
+                }
+            }
+        }
     }
 }

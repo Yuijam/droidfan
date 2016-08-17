@@ -35,8 +35,8 @@ public class PublicFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id) {
-            DetailActivity.start(getContext() , DetailActivity.TYPE_PUBLIC , _id);
+        public void onItemClick(View view , int _id , int position) {
+            DetailActivity.start(getActivity() , DetailActivity.TYPE_PUBLIC , _id , position);
         }
 
         @Override
@@ -44,6 +44,12 @@ public class PublicFragment extends HomeTimelineFragment {
 
         }
     };
+
+    @Override
+    public void init(View view) {
+        super.init(view);
+        recyclerView.setLoadingMoreEnabled(false);
+    }
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override

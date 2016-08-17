@@ -24,6 +24,7 @@ public interface DetailContract {
         void showFavorite(int resId);
         void showDelete();
         void finish();
+        void setResult(int resultCode , int postion , int type);
     }
 
     interface Presenter extends BasePresenter{

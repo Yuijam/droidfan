@@ -1,18 +1,18 @@
 package com.arenas.droidfan.profile.photoalbum;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.TabFragmentAdapter;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
-import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
 
@@ -42,6 +42,7 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
         p = new Paging();
         p.sinceId = mFanFouDB.getPhotoSinceId(mUserId);
         p.count = 20;
+        Log.d(TAG , "photo sinceId = " + p.sinceId);
     }
 
     @Override
@@ -49,6 +50,10 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getPhotosTimeline(mUserId , p);
@@ -73,10 +78,11 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
                 if(models.size() > 0){
                     mFanFouDB.savePhotoTimeline(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });

@@ -1,74 +1,49 @@
 package com.arenas.droidfan.users;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.UsersAdapter;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.profile.ProfileActivity;
-import com.arenas.droidfan.service.FanFouService;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class UserListFragment extends Fragment implements UserContract.View
-        , SwipeRefreshLayout.OnRefreshListener{
+        , XRecyclerView.LoadingListener{
 
     private UserContract.Presenter mPresenter;
 
-    protected IntentFilter mIntentFilter;
-    private LocalBroadcastManager mLocalBroadcastManager;
-    private LocalReceiver mLocalReceiver;
-
     private UsersAdapter mAdapter;
 
-    private SwipeRefreshLayout mSwipeRefresh;
-
+    @BindView(R.id.recycler_view)
+    XRecyclerView recyclerView;
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
     public UserListFragment() {
 
     }
 
-    MyOnItemClickListener Listener = new MyOnItemClickListener() {
-        @Override
-        public void onItemClick(View view , int position) {
-            ProfileActivity.start(getContext() , mAdapter.getUser(position).getId());
-        }
-
-        @Override
-        public void onItemLongClick(int id, int position) {
-
-        }
-    };
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_USERS);
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        mLocalReceiver = new LocalReceiver();
-        mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
-
-        mAdapter = new UsersAdapter(getContext() , new ArrayList<UserModel>(0) , Listener);
-
+        mAdapter = new UsersAdapter(getContext() , new ArrayList<UserModel>(0));
         setHasOptionsMenu(true);
     }
 
@@ -95,16 +70,16 @@ public class UserListFragment extends Fragment implements UserContract.View
     }
 
     private void initView(View view){
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        ButterKnife.bind(this , view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mAdapter);
-
-        mSwipeRefresh = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-        mSwipeRefresh.setOnRefreshListener(this);
-        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        recyclerView.setLoadingListener(this);
     }
 
-
+    @Override
+    public void onLoadMore() {
+        mPresenter.getMore();
+    }
 
     @Override
     public void onRefresh() {
@@ -118,12 +93,14 @@ public class UserListFragment extends Fragment implements UserContract.View
 
     @Override
     public void showProgressbar() {
-        mSwipeRefresh.setRefreshing(true);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
-        mSwipeRefresh.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
+        recyclerView.loadMoreComplete();
+        recyclerView.refreshComplete();
     }
 
     @Override
@@ -136,12 +113,5 @@ public class UserListFragment extends Fragment implements UserContract.View
 //        Toast.makeText(getContext() , errorText , Toast.LENGTH_SHORT).show();
 //        Utils.showToast(getContext() , errorText);
         //// TODO: 2016/7/25 怎么会有bug？？？
-    }
-
-    class LocalReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mPresenter.onReceive(context , intent);
-        }
     }
 }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,18 +41,12 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     private ChatAdapter mAdapter;
 
-    @BindView(R.id.recycler_view)
-    XRecyclerView xRecyclerView;
-    @BindView(R.id.input_text)
-    EditText inputText;
-    @BindView(R.id.send)
-    ImageView send;
-    @BindView(R.id.invalid_notice)
-    TextView editInvalidNotice;
-    @BindView(R.id.edit_message_layout)
-    LinearLayout editLayout;
-    @BindView(R.id.progressbar)
-    ProgressBar progressBar;
+    @BindView(R.id.recycler_view) XRecyclerView xRecyclerView;
+    @BindView(R.id.input_text) EditText inputText;
+    @BindView(R.id.send) Button send;
+    @BindView(R.id.invalid_notice) TextView editInvalidNotice;
+    @BindView(R.id.edit_message_layout) LinearLayout editLayout;
+    @BindView(R.id.progressbar) ProgressBar progressBar;
 
     private CharSequence temp;
 
@@ -68,7 +63,7 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view, int position) {
+        public void onItemClick(View view, int position , int i) {
 
         }
 
@@ -203,10 +198,10 @@ public class ChatFragment extends Fragment implements ChatContract.View
     }
 
     private void activateSend(){
-        send.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black));
+        send.setBackground(getResources().getDrawable(R.drawable.bg_send_button_activate));
     }
     private void invalidSend(){
-        send.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
+        send.setBackground(getResources().getDrawable(R.drawable.bg_send_button_invalid));
     }
 
     @Override

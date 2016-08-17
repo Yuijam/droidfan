@@ -1,7 +1,6 @@
 package com.arenas.droidfan.main.publicstatus;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
@@ -10,7 +9,6 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
-import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
 
@@ -73,14 +71,14 @@ public class PublicPresenter extends HomeTimelinePresenter {
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
                 if(models.size() > 0){
                     mFanFouDB.savePublicStatusList(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });
-//        FanFouService.getPublicTimeline(mContext);
     }
 
     @Override

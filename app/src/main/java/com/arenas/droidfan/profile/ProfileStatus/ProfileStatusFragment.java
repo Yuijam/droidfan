@@ -1,6 +1,9 @@
 package com.arenas.droidfan.profile.profilestatus;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,12 @@ import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.photo.PhotoActivity;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
+
+import butterknife.ButterKnife;
 
 public class ProfileStatusFragment extends HomeTimelineFragment {
 
@@ -31,10 +39,21 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
         return view;
     }
 
+    @Override
+    public void init(View view) {
+        ButterKnife.bind(this , view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setPullRefreshEnabled(false);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setAdapter(mAdapter);
+    }
+
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id) {
-            DetailActivity.start(getContext() , DetailActivity.TYPE_PROFILE , _id);
+        public void onItemClick(View view , int _id , int position) {
+            DetailActivity.start(getActivity() , DetailActivity.TYPE_PROFILE , _id , position);
         }
 
         @Override
@@ -53,5 +72,14 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
     @Override
     public void initAdapter() {
         mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener , imageClickListener);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        Log.d(TAG , "hideProgressBar");
+        progressBar.setVisibility(View.GONE);
+        recyclerView.loadMoreComplete();
+//        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swipe_container);
+//        refreshLayout.setRefreshing(false);
     }
 }

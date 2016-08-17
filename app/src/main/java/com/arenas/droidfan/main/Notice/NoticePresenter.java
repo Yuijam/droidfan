@@ -3,15 +3,16 @@ package com.arenas.droidfan.main.notice;
 import android.content.Context;
 import android.util.Log;
 
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.TabFragmentAdapter;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
-import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
 
@@ -55,6 +56,10 @@ public class NoticePresenter extends HomeTimelinePresenter {
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getMentions(p);
@@ -80,10 +85,11 @@ public class NoticePresenter extends HomeTimelinePresenter {
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
                 if (models.size() > 0 ){
                     mFanFouDB.saveNoticeStatusList(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });

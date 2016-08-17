@@ -5,9 +5,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +22,12 @@ import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DetailFragment extends Fragment implements DetailContract.View , View.OnClickListener{
 
@@ -28,19 +35,21 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     private DetailContract.Presenter mPresenter;
 
-    private ImageView mAvatar;
-    private TextView mUsername;
-    private TextView mUserId;
-    private TextView mStatusDetail;
-    private ImageView mPhoto;
-    private TextView mDate;
-    private TextView mSource;
+    @BindView(R.id.tv_username) TextView mUsername;
+    @BindView(R.id.user_id) TextView mUserId;
+    @BindView(R.id.status_detail) TextView mStatusDetail;
+    @BindView(R.id.source) TextView mSource;
+    @BindView(R.id.date) TextView mDate;
+    @BindView(R.id.photo) ImageView mPhoto;
+    @BindView(R.id.iv_avatar) ImageView mAvatar;
+    @BindView(R.id.reply) ImageView mReply;
+    @BindView(R.id.delete) ImageView mDelete;
+    @BindView(R.id.favorite) ImageView mFavorite;
+    @BindView(R.id.layout_user) LinearLayout mUserlayout;
+    @BindView(R.id.retweet) ImageView retweet;
+    @BindView(R.id.message) ImageView message;
 
-    private ImageView mFavorite;
-    private ImageView mDelete;
-    private ImageView mReply;
-
-    private LinearLayout mUserlayout;
+    @BindView(R.id.share) ImageView share;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -70,9 +79,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     }
 
     private void init(View view){
-        mUsername = (TextView)view.findViewById(R.id.tv_username);
-        mUserId = (TextView)view.findViewById(R.id.user_id);
-        mStatusDetail = (TextView)view.findViewById(R.id.status_detail);
+        ButterKnife.bind(this , view);
+
         mStatusDetail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -80,25 +88,13 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 return true;
             }
         });
-        mDate = (TextView)view.findViewById(R.id.date);
-        mSource = (TextView)view.findViewById(R.id.source);
-        mAvatar = (ImageView)view.findViewById(R.id.iv_avatar);
-        mPhoto = (ImageView)view.findViewById(R.id.photo);
 
-        mReply = (ImageView)view.findViewById(R.id.reply);
         mReply.setOnClickListener(this);
-        ImageView retweet = (ImageView) view.findViewById(R.id.retweet);
         retweet.setOnClickListener(this);
-        mFavorite = (ImageView)view.findViewById(R.id.favorite);
         mFavorite.setOnClickListener(this);
-        ImageView message = (ImageView)view.findViewById(R.id.message);
         message.setOnClickListener(this);
-        ImageView share = (ImageView)view.findViewById(R.id.share);
         share.setOnClickListener(this);
-        mDelete = (ImageView)view.findViewById(R.id.delete);
         mDelete.setOnClickListener(this);
-
-        mUserlayout = (LinearLayout)view.findViewById(R.id.layout_user);
         mUserlayout.setOnClickListener(this);
 
         setHasOptionsMenu(true);
@@ -135,6 +131,9 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
             case R.id.layout_user:
                 mPresenter.openUser();
                 break;
+            case R.id.share:
+                Utils.showToast(getContext() , "不要戳我，我还没完成");
+                break;
 
         }
     }
@@ -142,6 +141,14 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     @Override
     public void finish() {
         getActivity().finish();
+    }
+
+    @Override
+    public void setResult(int resultCode , int position , int type) {
+        Intent intent = new Intent();
+        intent.putExtra(DetailActivity.EXTRA_POSITION , position);
+        intent.putExtra(DetailActivity.EXTRA_STATUS_TYPE , type);
+        getActivity().setResult(resultCode , intent);
     }
 
     private void copyToClipBoard(Context context, String content) {

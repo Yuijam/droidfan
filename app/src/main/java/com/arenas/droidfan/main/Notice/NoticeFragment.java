@@ -36,8 +36,8 @@ public class NoticeFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id) {
-            DetailActivity.start(getContext() , DetailActivity.TYPE_MENTIONS , _id);
+        public void onItemClick(View view , int _id , int position) {
+            DetailActivity.start(getActivity() , DetailActivity.TYPE_MENTIONS , _id , position);
         }
 
         @Override

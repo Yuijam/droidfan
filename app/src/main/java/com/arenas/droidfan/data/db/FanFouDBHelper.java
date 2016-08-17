@@ -10,6 +10,7 @@ import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.PhotoColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
+import com.arenas.droidfan.data.DraftColumns;
 import com.arenas.droidfan.data.model.DirectMessageColumns;
 import com.arenas.droidfan.data.model.UserColumns;
 
@@ -33,7 +34,7 @@ public class FanFouDBHelper extends SQLiteOpenHelper {
         db.execSQL(FavoritesColumns.CREATE_TABLE);
         db.execSQL(DirectMessageColumns.CREATE_TABLE);
         db.execSQL(PhotoColumns.CREATE_TABLE);
-//        db.execSQL(StatusUpdateInfoColumns.CREATE_TABLE);
+        db.execSQL(DraftColumns.CREATE_TABLE);
     }
 
     @Override

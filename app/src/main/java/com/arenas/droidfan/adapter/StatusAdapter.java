@@ -49,7 +49,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     }
 
     @Override
-    public void onBindViewHolder(final StatusViewHolder holder, int position) {
+    public void onBindViewHolder(final StatusViewHolder holder, final int position) {
         final StatusModel model = mStatusList.get(position);
         holder.mUsername.setText(model.getUserScreenName());
         StatusUtils.setItemStatus(holder.mStatusText , model.getSimpleText());
@@ -81,7 +81,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onItemClick(view , model.get_id());
+                    mListener.onItemClick(view , model.get_id() , position);
                 }
             });
 
@@ -105,6 +105,11 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     public void replaceData(List<StatusModel> data){
         setData(data);
+        notifyDataSetChanged();
+    }
+
+    public void removeData(int position){
+        mStatusList.remove(position);
         notifyDataSetChanged();
     }
 

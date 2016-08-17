@@ -30,46 +30,62 @@
 
     </LinearLayout>
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="29dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         >
+
+        <ImageView
+            android:id="@+id/topic"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/update_iv_size"
+            android:layout_weight="1"
+            android:src="@drawable/ic_topic_48dp"
+            />
+
+        <ImageView
+            android:id="@+id/draft"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/update_iv_size"
+            android:layout_weight="1"
+            android:src="@drawable/ic_drafts_white_48dp"
+            />
 
         <ImageView
             android:id="@+id/add_photo"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_menu_gallery"
+            android:layout_height="@dimen/update_iv_size"
+            android:src="@drawable/ic_image_grey600_48dp"
             />
 
         <ImageView
             android:id="@+id/take_photo"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_height="@dimen/update_iv_size"
             android:src="@drawable/ic_menu_camera"
             />
 
         <TextView
             android:id="@+id/text_count"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/black"
             android:layout_weight="1"
-            android:background="@drawable/ic_check_box_outline_blank_black_48dp"
+            android:layout_height="@dimen/update_iv_size"
+            android:gravity="center"
+            android:textColor="@color/update_gray"
             android:text="140"
             />
 
-        <ImageView
+        <Button
             android:id="@+id/send"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_send_grey"
+            android:layout_height="@dimen/update_iv_size"
+            android:background="@drawable/bg_send_button_invalid"
+            android:textColor="@color/white"
+            android:text="@string/send"
             />
 
     </LinearLayout>

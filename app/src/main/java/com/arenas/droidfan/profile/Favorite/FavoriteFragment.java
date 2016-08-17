@@ -20,11 +20,12 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
+import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
 
-public class FavoriteFragment extends HomeTimelineFragment {
+public class FavoriteFragment extends ProfileStatusFragment {
 
     public FavoriteFragment(){
 
@@ -40,8 +41,8 @@ public class FavoriteFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id) {
-            DetailActivity.start(getContext() , DetailActivity.TYPE_FAVORITES , _id);
+        public void onItemClick(View view , int _id , int position) {
+            DetailActivity.start(getActivity() , DetailActivity.TYPE_FAVORITES , _id , position);
         }
 
         @Override
@@ -62,8 +63,4 @@ public class FavoriteFragment extends HomeTimelineFragment {
         mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener , imageClickListener);
     }
 
-    @Override
-    public void showError(String error) {
-        Utils.showToast(getContext() , error);
-    }
 }

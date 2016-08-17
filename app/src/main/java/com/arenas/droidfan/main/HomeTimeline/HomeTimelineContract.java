@@ -1,9 +1,5 @@
 package com.arenas.droidfan.main.hometimeline;
 
-import android.content.Context;
-import android.content.Intent;
-
-import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -18,8 +14,9 @@ public interface HomeTimelineContract {
     interface View extends BaseView{
         void showStatus(List<StatusModel> status);
         void showError(String error);
-        void hideRefreshBar();
-        void showRefreshBar();
+        void hideProgressBar();
+        void showProgressBar();
+        void removeStatusItem(int position);
     }
 
     interface Presenter extends BasePresenter{

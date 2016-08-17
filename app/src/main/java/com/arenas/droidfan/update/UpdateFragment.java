@@ -1,31 +1,37 @@
 package com.arenas.droidfan.update;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
-import com.arenas.droidfan.service.FanFouService;
+import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.detail.DetailActivity;
+import com.arenas.droidfan.draft.DraftActivity;
+
+import java.io.FileInputStream;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Arenas on 2016/7/11.
@@ -37,26 +43,24 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     private static final int MAX_TEXT_LENGTH = 140;
     public static final int REQUEST_SELECT_PHOTO = 1;
     public static final int REQUEST_TAKE_PHOTO = 2;
+    public static final int REQUEST_DRAFT = 3;
 
     private UpdateContract.Presenter mPresenter;
 
-    private AutoCompleteTextView mStatusText;
-    private ImageView mSend;
-    private TextView mTextCount;
-
-    private ImageView mSelectImage;
-    private ImageView mPhoto;
-    private ImageView mTakePhoto;
+    @BindView(R.id.et_status_text) AutoCompleteTextView mStatusText;
+    @BindView(R.id.send) Button mSend;
+    @BindView(R.id.text_count) TextView mTextCount;
+    @BindView(R.id.add_photo) ImageView addPhoto;
+    @BindView(R.id.take_photo) ImageView takePhoto;
+    @BindView(R.id.iv_photo) ImageView photo;
+    @BindView(R.id.draft) ImageView draft;
+    @BindView(R.id.topic) ImageView topic;
 
     private CharSequence temp;
 
     public UpdateFragment() {
 
     }
-
-    protected IntentFilter mIntentFilter;
-    private LocalBroadcastManager mLocalBroadcastManager;
-    private LocalReceiver mLocalReceiver;
 
     @Override
     public void onResume() {
@@ -74,16 +78,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
         mPresenter = (UpdateContract.Presenter)presenter;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(FanFouService.FILTER_USERS);
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        mLocalReceiver = new LocalReceiver();
-        mLocalBroadcastManager.registerReceiver(mLocalReceiver, mIntentFilter);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,20 +87,17 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     }
 
     private void init(View view){
-        mStatusText = (AutoCompleteTextView) view.findViewById(R.id.et_status_text);
+        ButterKnife.bind(this , view);
+
         mStatusText.addTextChangedListener(this);
-
-        mSend = (ImageView) view.findViewById(R.id.send);
         mSend.setOnClickListener(this);
+        addPhoto.setOnClickListener(this);
+        photo.setOnClickListener(this);
+        takePhoto.setOnClickListener(this);
+        mTextCount.setOnClickListener(this);
 
-        mTextCount = (TextView)view.findViewById(R.id.text_count);
-        mSelectImage = (ImageView)view.findViewById(R.id.add_photo);
-        mSelectImage.setOnClickListener(this);
-        mPhoto = (ImageView)view.findViewById(R.id.iv_photo);
-        mPhoto.setOnClickListener(this);
-
-        mTakePhoto = (ImageView)view.findViewById(R.id.take_photo);
-        mTakePhoto.setOnClickListener(this);
+        topic.setOnClickListener(this);
+        draft.setOnClickListener(this);
 
         setHasOptionsMenu(true);
     }
@@ -135,10 +126,42 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                getActivity().finish();
+                onBackPressed();
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void finish() {
+        getActivity().finish();
+    }
+
+    public void onBackPressed(){
+        if (mStatusText.getText().toString().length()>0){
+            showSaveDraftDialog();
+        }else {
+            finish();
+        }
+    }
+
+    private void showSaveDraftDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog alertDialog = builder.setMessage(getContext().getString(R.string.save_draft_message))
+                .setNegativeButton(getContext().getString(R.string.do_not_save), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setPositiveButton(getContext().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.saveDraft(mStatusText.getText().toString());
+                        finish();
+                    }
+                }).create();
+        alertDialog.show();
     }
 
     @Override
@@ -153,10 +176,10 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     }
 
     private void activateSend(){
-        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_send));
+        mSend.setBackground(getResources().getDrawable(R.drawable.bg_send_button_activate));
     }
     private void invalidSend(){
-        mSend.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_grey));
+        mSend.setBackground(getResources().getDrawable(R.drawable.bg_send_button_invalid));
     }
 
     @Override
@@ -167,44 +190,53 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                 break;
             case R.id.add_photo:
                 Utils.hideKeyboard(getContext() , mStatusText);
-                mPresenter.selectPhoto();
+                showPhotoAlbum();
                 break;
             case R.id.iv_photo:
                 mPresenter.deletePhoto();
                 break;
             case R.id.take_photo:
                 Utils.hideKeyboard(getContext() , mStatusText);
-                mPresenter.takePhoto(this , REQUEST_TAKE_PHOTO);
+                mPresenter.takePhoto(getActivity() , REQUEST_TAKE_PHOTO);
+                break;
+            case R.id.text_count:
+                Utils.showToast(getActivity() , getResources().getString(R.string.do_not_click_me));
+                break;
+            case R.id.draft:
+                DraftActivity.start(getActivity() , REQUEST_DRAFT);
+                break;
+            case R.id.topic:
+                addTopic();
                 break;
         }
     }
 
+    private void addTopic(){
+        mStatusText.getText().append("##");
+        Selection.setSelection(mStatusText.getText() , mStatusText.getText().length()-1);
+    }
+
     @Override
     public void showPhotoAlbum() {
-        Utils.selectImage(this , REQUEST_SELECT_PHOTO);
+        Utils.selectImage(getActivity() , REQUEST_SELECT_PHOTO);
     }
 
     @Override
     public void showPhoto(Bitmap bitmap) {
         if (bitmap != null){
-            mPhoto.setVisibility(View.VISIBLE);
-            mPhoto.setImageBitmap(bitmap);
+            photo.setVisibility(View.VISIBLE);
+            photo.setImageBitmap(bitmap);
         }
     }
 
     @Override
     public void hidePhoto() {
-        mPhoto.setVisibility(View.GONE);
+        photo.setVisibility(View.GONE);
     }
 
     @Override
     public void showHome() {
         getActivity().finish();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.onResult(getContext() , requestCode , resultCode , data);
     }
 
     @Override
@@ -220,12 +252,5 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     @Override
     public void setSelection(String text) {
         Selection.setSelection(mStatusText.getText() , text.length());
-    }
-
-    class LocalReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mPresenter.onReceive(context , intent);
-        }
     }
 }

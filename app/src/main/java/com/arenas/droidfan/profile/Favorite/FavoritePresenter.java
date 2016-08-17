@@ -4,17 +4,15 @@ import android.content.Context;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
-import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
-import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
-import com.arenas.droidfan.profile.ProfilePresenter;
 import com.arenas.droidfan.profile.profilestatus.ProfileStatusPresenter;
-import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
 
@@ -29,8 +27,10 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
     private static final String TAG = FavoritePresenter.class.getSimpleName();
 
-    public FavoritePresenter(){
+    private int page;
+    private boolean isRefresh;
 
+    public FavoritePresenter(){
     }
 
     public FavoritePresenter(Context context, HomeTimelineContract.View view , String userId){
@@ -40,14 +40,14 @@ public class FavoritePresenter extends ProfileStatusPresenter {
         mApi = AppContext.getApi();
         mUserId = userId;
 
+        page = 1;
+        p = new Paging();
         mView.setPresenter(this);
     }
 
     @Override
-    protected void initSinceId() {
-        p = new Paging();
-        p.sinceId = mFanFouDB.getFavoritesSinceId(mUserId);
-        p.count = 20;
+    protected void initSinceId() {//这个api不能用sinceId
+        isRefresh = true;
     }
 
     @Override
@@ -55,8 +55,13 @@ public class FavoritePresenter extends ProfileStatusPresenter {
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
+                    Log.d(TAG , "p.maxid = " + p.maxId);
                     List<StatusModel> model = AppContext.getApi().getFavorites(mUserId , p);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -79,14 +84,18 @@ public class FavoritePresenter extends ProfileStatusPresenter {
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
+                Log.d(TAG , "favorite model.size = " + models.size());
                 if(models.size() > 0){
+                    if (isRefresh){
+                        mFanFouDB.deleteFavorites(mUserId);
+                    }
                     mFanFouDB.saveFavoritesList(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });
-//        FanFouService.getFavoritesList(mContext , mUserId , p);
     }
 
     @Override
@@ -96,8 +105,7 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
     @Override
     protected void initMaxId() {
-        p = new Paging();
-        p.maxId = mFanFouDB.getFavoritesMaxid(mUserId);
-        p.count = 20;
+        page++;
+        p.page = page;
     }
 }

@@ -16,6 +16,7 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
@@ -80,6 +81,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
@@ -98,15 +100,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private Preference loginout;
         private SwitchPreference switchNotify;
         private Preference versionCode;
-
+        private Preference clearData;
         private FanFouDB mFanFouDB;
         private Context mContext;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             addPreferencesFromResource(R.xml.pref_settings);
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"));
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
 
             mContext = getActivity();
@@ -121,6 +123,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             versionCode = findPreference("version_code");
             versionCode.setSummary(Utils.getVersionCode());
+
+            clearData = findPreference("clear_data");
+            clearData.setOnPreferenceClickListener(this);
         }
 
         @Override
@@ -137,6 +142,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }else {
                     PushService.setServiceAlarm(mContext);
                 }
+            }
+            if (preference == clearData){
+                mFanFouDB.deleteAll();
+                Utils.showToast(mContext , "已清除");
             }
             return false;
         }

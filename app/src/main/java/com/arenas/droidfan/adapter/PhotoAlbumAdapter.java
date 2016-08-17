@@ -50,7 +50,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
             holder.photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onItemClick(view , position);
+                    mListener.onItemClick(view , position , 0);
                 }
             });
         }

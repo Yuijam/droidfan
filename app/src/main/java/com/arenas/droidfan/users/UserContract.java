@@ -1,11 +1,7 @@
 package com.arenas.droidfan.users;
 
-import android.content.Context;
-import android.content.Intent;
-
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
-import com.arenas.droidfan.api.rest.UsersMethods;
 import com.arenas.droidfan.data.model.UserModel;
 
 import java.util.List;
@@ -16,8 +12,8 @@ import java.util.List;
 public interface UserContract {
 
     interface Presenter extends BasePresenter{
-        void onReceive(Context context , Intent intent);
         void refresh();
+        void getMore();
     }
 
     interface View extends BaseView{

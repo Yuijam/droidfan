@@ -18,7 +18,7 @@
     <application
         android:name=".AppContext"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -45,15 +45,13 @@
             android:name=".update.UpdateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-
+            android:windowSoftInputMode="stateVisible|adjustResize">
             <intent-filter>
                 <action android:name="com.arenas.droidfan.main.update.UpdateActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".detail.DetailActivity"
             android:screenOrientation="portrait"
@@ -90,9 +88,7 @@
             android:name=".main.message.chat.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            >
-
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="com.arenas.droidfan.main.message.chat.ChatActivity" />
 
@@ -107,9 +103,19 @@
             android:name=".profile.ProfileDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".setting.SettingsActivity"/>
-        <receiver android:name=".notify.AlarmReceiver"/>
-        <service android:name=".notify.PushService"/>
+        <activity android:name=".setting.SettingsActivity"
+            android:label="@string/setting"
+            />
+
+        <receiver android:name=".notify.AlarmReceiver" />
+
+        <service android:name=".notify.PushService" />
+
+        <activity
+            android:name=".draft.DraftActivity"
+            android:label="@string/draft_box"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>

@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.model.UserModel;
+import com.arenas.droidfan.profile.ProfileActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -21,12 +23,10 @@ import java.util.List;
  */
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder>{
     private List<UserModel> mUsersList;
-    private MyOnItemClickListener mListener;
     private Context mContext;
 
-    public UsersAdapter(Context context , List<UserModel> usersList , MyOnItemClickListener Listener) {
+    public UsersAdapter(Context context , List<UserModel> usersList) {
         this.mUsersList = usersList;
-        this.mListener = Listener;
         mContext = context;
     }
 
@@ -37,32 +37,31 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public void onBindViewHolder(final UserViewHolder holder, int position) {
-        holder.username.setText(mUsersList.get(position).getScreenName());
-        holder.userId.setText(mUsersList.get(position).getId());
-        String text = mUsersList.get(position).getDescription();
-//        if (TextUtils.isEmpty(text)){
-//            holder.description.setVisibility(View.GONE);
-//        }else {
+        final UserModel model = mUsersList.get(position);
+        holder.username.setText(model.getScreenName());
+        holder.userId.setText("@"+model.getId());
+        String text = Utils.handleDescription(model.getDescription());
+        if (TextUtils.isEmpty(text.trim())){
+            holder.description.setVisibility(View.GONE);
+        }else {
             holder.description.setText(text);
-//        }
+        }
         String avatarUrl = mUsersList.get(position).getProfileImageUrlLarge();
         Picasso.with(mContext).load(avatarUrl).into(holder.avatar);
 
-        if (mListener != null){
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onItemClick(view , holder.getLayoutPosition());
-                }
-            });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProfileActivity.start(mContext , model.getId());
+            }
+        });
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    return true;
-                }
-            });
-        }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return true;
+            }
+        });
     }
 
     @Override

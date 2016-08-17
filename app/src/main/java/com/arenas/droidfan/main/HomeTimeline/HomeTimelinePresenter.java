@@ -1,17 +1,18 @@
 package com.arenas.droidfan.main.hometimeline;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.photo.PhotoContract;
 
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected  FanFouDB mFanFouDB;
     protected  Api mApi;
     protected  Context mContext;
-    protected boolean mIsAllowRefresh;
     protected Paging p;
+    protected boolean startComplete;
 
     public HomeTimelinePresenter(){
 
@@ -48,8 +49,10 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void start() {
-        mIsAllowRefresh = true;
-        loadStatus();
+        if (!startComplete){
+            loadStatus();
+            startComplete = true;
+        }
     }
 
     @Override
@@ -61,19 +64,17 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     @Override
     public void onStatusLoaded(List<StatusModel> status) {
         Log.d(TAG , "status size = " + status.size());
+        mView.hideProgressBar();
         mView.showStatus(status);
     }
 
     public void onDataNotAvailable() {
-        if (mIsAllowRefresh){
-            refresh();
-        }
+        refresh();
     }
 
     @Override
     public void refresh() {
-        mIsAllowRefresh = true;
-        mView.showRefreshBar();
+        mView.showProgressBar();
         initSinceId();
         startService();
     }
@@ -89,6 +90,10 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getHomeTimeline(p);
@@ -113,10 +118,11 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
                 if(models.size() > 0){
                     mFanFouDB.saveHomeTLStatusList(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });

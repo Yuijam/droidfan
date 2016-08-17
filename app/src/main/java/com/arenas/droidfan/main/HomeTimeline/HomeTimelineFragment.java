@@ -2,6 +2,7 @@ package com.arenas.droidfan.main.hometimeline;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,8 @@ public class HomeTimelineFragment extends BaseFragment{
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id) {
-            DetailActivity.start(getContext() , DetailActivity.TYPE_HOME , _id);
+        public void onItemClick(View view , int _id , int position) {
+            DetailActivity.start(getActivity() , DetailActivity.TYPE_HOME , _id , position);
         }
 
         @Override
@@ -56,5 +57,10 @@ public class HomeTimelineFragment extends BaseFragment{
     @Override
     public void initAdapter() {
         mAdapter = new StatusAdapter(getContext() , new ArrayList<StatusModel>(0) , Listener , imageClickListener);
+    }
+
+    @Override
+    public void removeStatusItem(int position) {
+        mAdapter.removeData(position);
     }
 }

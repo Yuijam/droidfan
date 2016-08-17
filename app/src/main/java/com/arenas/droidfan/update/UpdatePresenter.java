@@ -6,25 +6,34 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.CompatUtils;
 import com.arenas.droidfan.Util.ImageUtils;
+import com.arenas.droidfan.Util.NetworkUtils;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.api.Api;
+import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.data.model.Draft;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.detail.DetailActivity;
-import com.arenas.droidfan.main.message.MessageContract;
-import com.arenas.droidfan.service.FanFouService;
+import com.arenas.droidfan.draft.DraftActivity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Arenas on 2016/7/11.
@@ -44,6 +53,9 @@ public class UpdatePresenter implements UpdateContract.Presenter
     private int mActionType;
     private int mStatusType;
     private Context mContext;
+    private String text;
+    private Api api;
+    private String id;//reply or retweet id
 
     public UpdatePresenter(int _id ,int type , int statusType , Context context , UpdateContract.View mView) {
         this.mFanFouDB = FanFouDB.getInstance(context);
@@ -54,6 +66,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
         mStatusType = statusType;
         mContext = context;
 
+        api = AppContext.getApi();
         mView.setPresenter(this);
     }
 
@@ -62,7 +75,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
         if (!isNewStatus()){
             populateStatusText();
         }
-        loadFollowing();
+        loadFollowing();//为了获取@的列表
     }
 
     @Override
@@ -70,7 +83,8 @@ public class UpdatePresenter implements UpdateContract.Presenter
         if (TextUtils.isEmpty(text) || text.length() >140){
             return;
         }
-        startService(text , mPhoto);
+        this.text = text;
+        updateStatus();
         mView.showHome();
     }
 
@@ -93,27 +107,102 @@ public class UpdatePresenter implements UpdateContract.Presenter
         mView.showError();
     }
 
-    private void fetchUsers(){
-        FanFouService.getFollowing(mContext , AppContext.getAccount());
-    }
+    private void getFollowing(){
+        rx.Observable.create(new rx.Observable.OnSubscribe<List<UserModel>>() {
+            @Override
+            public void call(Subscriber<? super List<UserModel>> subscriber) {
 
-    private void startService(String text , File photo) {
-        if (photo == null){
-            switch (mActionType){
-                case UpdateActivity.TYPE_REPLY:
-                    FanFouService.reply(mContext , mStatusModel.getId() , text);
-                    break;
-                case UpdateActivity.TYPE_RETWEET:
-                    FanFouService.retweet(mContext , mStatusModel.getId() , text);
-                    break;
-                default:
-                    FanFouService.newStatus(mContext , text);
-                    break;
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
+
+                try{
+                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
+                    List<UserModel> models = api.getFriends(AppContext.getAccount() , null);
+                    subscriber.onNext(models);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<UserModel>>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG , "onCompleted~~");
             }
 
-        }else {
-            FanFouService.uploadPhoto(mContext , photo , text);
-        }
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<UserModel> models) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                if (models.isEmpty()){
+                    Log.d(TAG , "failed to fetch following list ~~~!!!!!");
+                }else {
+                    loadFollowing();
+                }
+            }
+        });
+    }
+
+    private void updateStatus() {
+        Observable.create(new Observable.OnSubscribe<StatusModel>() {
+            @Override
+            public void call(Subscriber<? super StatusModel> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
+                StatusModel model;
+                try{
+                    if (mPhoto == null){
+                        switch (mActionType){
+                            case UpdateActivity.TYPE_REPLY:
+                                model = api.updateStatus(text , id , "" , "");
+                                break;
+                            case UpdateActivity.TYPE_RETWEET:
+                                model = api.updateStatus(text , "" , id , "");
+                                break;
+                            default:
+                                model = api.updateStatus(text, "" , "" , "");
+                                break;
+                        }
+                    }else {
+                        model = api.uploadPhoto(mPhoto , text , "");
+                    }
+                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<StatusModel>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG , "onCompleted~~");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(StatusModel models) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                if(models == null){
+                    saveDraft(text);
+                    Utils.showToast(mContext , "发送失败，已保存到草稿箱");
+                }
+            }
+        });
     }
 
     private void populateStatusText(){
@@ -144,6 +233,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
     @Override
     public void onStatusLoaded(StatusModel statusModel) {
         mStatusModel = statusModel;
+        id = statusModel.getId();
         StringBuilder sb = new StringBuilder();
         switch (mActionType){
             case UpdateActivity.TYPE_REPLY:
@@ -164,7 +254,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     @Override
     public void onUsersNotAvailable() {
-        fetchUsers();
+        getFollowing();
     }
 
     private boolean isNewStatus(){
@@ -172,22 +262,37 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     @Override
-    public void selectPhoto() {
-        mView.showPhotoAlbum();
-    }
-
-    @Override
     public void onResult(Context context , int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK){
+        Log.d(TAG , "onResult requstCode = " + requestCode + " , resultCode = " + resultCode);
+        if (resultCode == Activity.RESULT_OK ){
             switch (requestCode){
                 case UpdateFragment.REQUEST_SELECT_PHOTO:
-                    String path = CompatUtils.getPath(context , data.getData());
-                    mPhoto = new File(path);
-                    mView.showPhoto(ImageUtils.scalePic(context , path , 90));
+                    mPhotoPath = CompatUtils.getPath(context , data.getData());
+                    mPhoto = new File(mPhotoPath);
+                    mView.showPhoto(ImageUtils.scalePic(context , mPhotoPath , 90));
                     break;
                 case UpdateFragment.REQUEST_TAKE_PHOTO:
                     mPhoto = new File(mPhotoPath);
                     mView.showPhoto(ImageUtils.scalePic(context , mPhotoPath , 90 ));
+                    break;
+                case UpdateFragment.REQUEST_DRAFT:
+                    Draft draft = data.getParcelableExtra(DraftActivity.EXTRA_DRAFT);
+                    mView.setStatusText(draft.text);
+                    mPhotoPath = draft.fileName;
+                    switch (draft.type){
+                        case Draft.TYPE_REPLY:
+                            mActionType = UpdateActivity.TYPE_REPLY;
+                            id = draft.reply;
+                            break;
+                        case Draft.TYPE_REPOST:
+                            mActionType = UpdateActivity.TYPE_RETWEET;
+                            id = draft.repost;
+                            break;
+                        default://避免在转发的时候又打开草稿 总之就是害怕出错啦
+                            mActionType = 0;
+                            id = null;
+                            break;
+                    }
                     break;
             }
         }
@@ -200,15 +305,55 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     @Override
-    public void takePhoto(Fragment fragment , int requestCode){
+    public void takePhoto(Activity activity , int requestCode){
         mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + Utils.getCurTimeStr() + ".png";
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
-        fragment.startActivityForResult(intent, requestCode);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        loadFollowing();
+    public void saveDraft(String text) {
+        Draft draft = new Draft();
+        draft.text = text;
+        if (mActionType == UpdateActivity.TYPE_REPLY){
+            draft.type = Draft.TYPE_REPLY;
+            draft.reply = mStatusModel.getId();
+        }else if (mActionType == UpdateActivity.TYPE_RETWEET){
+            draft.type = Draft.TYPE_REPOST;
+            draft.repost = mStatusModel.getId();
+        }else {
+            draft.type = Draft.TYPE_NONE;
+        }
+        if (mPhotoPath != null){
+            draft.fileName = mPhotoPath;
+        }
+        mFanFouDB.saveDraft(draft);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode != UpdateFragment.REQUEST_DRAFT)
+//            return;
+//
+//        if(resultCode == Activity.RESULT_OK){
+//            Draft draft = data.getParcelableExtra(DraftActivity.EXTRA_DRAFT);
+//            mView.setStatusText(draft.text);
+//            mPhotoPath = draft.fileName;
+//            switch (draft.type){
+//                case Draft.TYPE_REPLY:
+//                    mActionType = UpdateActivity.TYPE_REPLY;
+//                    id = draft.reply;
+//                    break;
+//                case Draft.TYPE_REPOST:
+//                    mActionType = UpdateActivity.TYPE_RETWEET;
+//                    id = draft.repost;
+//                    break;
+//                default://避免在转发的时候又打开草稿 总之就是害怕出错啦
+//                    mActionType = 0;
+//                    id = null;
+//                    break;
+//            }
+//        }
     }
 }

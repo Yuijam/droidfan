@@ -12,13 +12,15 @@ import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.PhotoAlbumAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
+import com.arenas.droidfan.photo.PhotoActivity;
+import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 
-public class PhotoAlbumFragment extends HomeTimelineFragment {
+public class PhotoAlbumFragment extends ProfileStatusFragment {
 
     private static final String TAG = PhotoAlbumFragment.class.getSimpleName();
 
@@ -44,6 +46,7 @@ public class PhotoAlbumFragment extends HomeTimelineFragment {
         ButterKnife.bind(this , view);
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext() , 3));
+        recyclerView.setPullRefreshEnabled(false);
         recyclerView.setLoadingListener(this);
         recyclerView.setAdapter(mAdapter);
     }
@@ -55,9 +58,9 @@ public class PhotoAlbumFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view, int position) {
-            // TODO: 2016/8/10
-//            PhotoActivity.start(getContext() , 0 , null , mAdapter.getStatus(position).getUserId() , position);
+        public void onItemClick(View view, int position , int i) {
+            // TODO: 2016/8/10 诶？居然没有问题？
+            PhotoActivity.start(getContext() , 0 , null , mAdapter.getStatus(position).getUserId() , position);
         }
 
         @Override

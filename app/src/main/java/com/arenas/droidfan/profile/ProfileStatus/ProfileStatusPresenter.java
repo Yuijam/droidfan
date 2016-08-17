@@ -1,19 +1,22 @@
 package com.arenas.droidfan.profile.profilestatus;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.AppContext;
-import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelinePresenter;
-import com.arenas.droidfan.service.FanFouService;
+import com.arenas.droidfan.profile.ProfileEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -29,7 +32,6 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     private static final String TAG = ProfileStatusPresenter.class.getSimpleName();
 
     protected String mUserId;
-    protected UserModel mUser;
 
     public ProfileStatusPresenter() {
     }
@@ -39,14 +41,51 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
         mFanFouDB = FanFouDB.getInstance(context);
         mApi = AppContext.getApi();
         mContext = context;
-
         mUserId = userId;
+
         mView.setPresenter(this);
+    }
+
+    @Override
+    public void start() {
+        if (!startComplete){
+            Log.d(TAG , "start ~");
+            mView.showProgressBar();
+            EventBus.getDefault().register(this);
+            startComplete = true;
+        }
+    }
+
+    @Subscribe(sticky = true)
+    public void onLoadDataEvent(ProfileEvent event){
+        Log.d(TAG , "even.isLoad = " + event.isLoad() + "event.isRefresh" + event.isRefresh());
+        if (event.isLoad()){
+            loadStatus();
+        }else if (!event.isRefresh()){
+            mView.hideProgressBar();
+        }
+
+        if (event.isRefresh()){
+            refresh();
+        }
+    }
+
+    @Override
+    public void refresh() {
+        Log.d(TAG , "refresh");
+        initSinceId();
+        startService();
     }
 
     @Override
     public void loadStatus() {
         mFanFouDB.getProfileStatusList(mUserId , this);
+    }
+
+    @Override
+    public void onStatusLoaded(List<StatusModel> status) {
+        mView.hideProgressBar();
+        mView.showStatus(status);
     }
 
     @Override
@@ -58,9 +97,14 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     protected void startService() {
+        Log.d(TAG , "startService~");
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getUserTimeline(mUserId , p);
@@ -74,7 +118,6 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -85,10 +128,11 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                mView.hideRefreshBar();
                 if(models.size() > 0){
                     mFanFouDB.saveProfileStatusList(models);
                     loadStatus();
+                }else {
+                    mView.hideProgressBar();
                 }
             }
         });

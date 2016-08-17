@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
@@ -38,8 +41,9 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     private String mUserId;
     private DirectMessageModel model;
     private String mUsername;
-    private boolean mIsAllowRefresh;
+    private Api api;
 
+    private String text;
     private Paging paging;
 
     public ChatPresenter(String userId , String username , ChatContract.View mView, Context mContext) {
@@ -48,14 +52,15 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         this.mContext = mContext;
         mUserId = userId;
         mUsername = username;
-        Log.d(TAG , "userId = " + userId);
-        mIsAllowRefresh = true;
 
+        paging = new Paging();
+        api = AppContext.getApi();
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
+        mView.showProgressbar();
         loadDM();
         testFollower();
     }
@@ -64,9 +69,13 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
         rx.Observable.create(new rx.Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "testFollower thread = " + Thread.currentThread().getId());
-                    boolean isAFollower = AppContext.getApi().isFriends(mUserId , AppContext.getAccount());
+                    boolean isAFollower = api.isFriends(mUserId , AppContext.getAccount());
                     subscriber.onNext(isAFollower);
                     subscriber.onCompleted();
                 }catch (ApiException e){
@@ -99,8 +108,6 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     }
 
     private void loadDM(){
-        Log.d(TAG , "loadDM");
-        mView.showProgressbar();
         mFanFouDB.getConversation(mUsername , this);
     }
 
@@ -116,21 +123,20 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
     @Override
     public void onDataNotAvailable() {
         Log.d(TAG , "onDataNotAvailable");
-        if (mIsAllowRefresh){
-            refresh();
-        }else {
-            mView.hideProgressbar();
-            mView.showError("Oops ~ 未获取到数据");
-        }
+        getMore();
     }
 
     private void fetchData(){
         rx.Observable.create(new rx.Observable.OnSubscribe<List<DirectMessageModel>>() {
             @Override
             public void call(Subscriber<? super List<DirectMessageModel>> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
                 try{
                     Log.d(TAG , "fetch data observable thread = " + Thread.currentThread().getId());
-                    List<DirectMessageModel> directMessageModels = AppContext.getApi().getConversation(mUserId , paging);
+                    List<DirectMessageModel> directMessageModels = api.getConversation(mUserId , paging);
                     subscriber.onNext(directMessageModels);
                     subscriber.onCompleted();
                 }catch (ApiException e){
@@ -157,24 +163,25 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
                 if (dmms.size() > 0){
                     mFanFouDB.saveDirectMessages(dmms);
                     loadDM();
+                }else {
+                    mView.hideProgressbar();
                 }
-                mIsAllowRefresh = false;
             }
         });
     }
 
     @Override
     public void refresh() {
-        paging = new Paging();
         paging.maxId = mFanFouDB.getDMMaxId(mUsername);
+        paging.sinceId = null;
         fetchData();
     }
 
     @Override
     public void getMore() {
-        paging = new Paging();
         paging.count = 60;
         paging.sinceId = mFanFouDB.getDMSinceId(mUsername);
+        paging.maxId = null;
         fetchData();
     }
 
@@ -188,7 +195,54 @@ public class ChatPresenter implements ChatContract.Presenter , DataSource.LoadDM
             mView.showError(mContext.getString(R.string.text_too_more));
             return;
         }
-        FanFouService.sendDM(mContext , mUserId , null , text);
+        this.text = text;
+        sendDM();
         mView.emptyInput();
+    }
+
+    private void sendDM(){
+        rx.Observable.create(new rx.Observable.OnSubscribe<DirectMessageModel>() {
+            @Override
+            public void call(Subscriber<? super DirectMessageModel> subscriber) {
+                if (!NetworkUtils.isNetworkConnected(mContext)){
+                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+                    return;
+                }
+                try{
+                    Log.d(TAG , "fetch data observable thread = " + Thread.currentThread().getId());
+                    DirectMessageModel model = api.createDirectmessage(mUserId , text , null);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<DirectMessageModel>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG , "onCompleted~~");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(DirectMessageModel model) {
+                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                mView.refreshComplete();
+                mView.loadMoreComplete();
+                if (model != null){
+                    model.setConversationId(mUsername);
+                    mFanFouDB.saveDirectMessage(model);
+                    loadDM();
+                }else {
+                    Utils.showToast(mContext , "发送失败");
+                    mView.hideProgressbar();
+                }
+            }
+        });
     }
 }

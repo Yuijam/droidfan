@@ -242,11 +242,11 @@ final class FanFouParser implements ApiParser {
                 DirectMessageModel dm = directMessage(o,
                         BaseModel.TYPE_NONE);
                 if (dm != null) {
-                    if (account.equals(dm.getRecipientId())) {
-                        dm.setType(DirectMessageModel.TYPE_INBOX);
-                    } else {
+//                    if (account.equals(dm.getRecipientId())) {
+//                        dm.setType(DirectMessageModel.TYPE_INBOX);
+//                    } else {
                         dm.setType(DirectMessageModel.TYPE_OUTBOX);
-                    }
+//                    }
 //                    dm.setConversationId(userId);
                     if (dm.getSenderScreenName().equals(AppContext.getScreenName())) {
                         dm.setConversationId(dm.getRecipientScreenName());
@@ -299,7 +299,7 @@ final class FanFouParser implements ApiParser {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 DirectMessageModel dm = directMessage(o,
-                        DirectMessageModel.TYPE_INBOX);
+                        DirectMessageModel.TYPE_OUTBOX);
                 dm.setConversationId(dm.getSenderScreenName());
                 dm.setIncoming(1);
                 dms.add(dm);

@@ -12,7 +12,7 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="profile_text_size">15sp</dimen>
 
-    <dimen name="iv_location_size">18dp</dimen>
+    <dimen name="update_iv_size">28dp</dimen>
 
 
 </resources>

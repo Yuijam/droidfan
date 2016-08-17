@@ -1,10 +1,8 @@
 package com.arenas.droidfan.data.db;
 
-import android.database.Cursor;
-
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.data.model.Draft;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.UserColumns;
 import com.arenas.droidfan.data.model.UserModel;
 
 import java.util.List;
@@ -39,6 +37,11 @@ public interface DataSource {
         void onDataNotAvailable();
     }
 
+    interface LoadDraftCallback{
+        void onDraftLoaded(List<Draft> drafts);
+        void onDataNotAvailable();
+    }
+
     void savePublicStatus(StatusModel status);
 
     void savePublicStatusList(List<StatusModel> statusModels);
@@ -63,7 +66,7 @@ public interface DataSource {
 
     void getNoticeStatus(int _id , GetStatusCallback callback);
 
-    void updateFavorite(int id , int favorite);
+    void updateFavorite(String table , int id , int favorite);
 
     //profile status
     void saveProfileStatusList(List<StatusModel> statusModels);
@@ -85,7 +88,7 @@ public interface DataSource {
 
     void deleteItem(String tableName , String msgId);
 
-
+    void deleteFavorites(String owner);
     //sinceId && maxId
     String getHomeTLSinceId();
 
@@ -126,6 +129,10 @@ public interface DataSource {
 
     void saveFollowing(List<UserModel> users , String owner);
 
+    void deleteFollowers(String owner);
+
+    void deleteFollowing(String owner);
+
     //DM
     void saveDirectMessage(DirectMessageModel dm);
 
@@ -149,4 +156,13 @@ public interface DataSource {
 
     //delete
     void deleteAll();
+
+    //draft
+    void saveDraft(Draft draft);
+
+    void loadDrafts(LoadDraftCallback callback);
+
+    void updateDraft(Draft draft);
+
+    void deleteDraft(int id );
 }

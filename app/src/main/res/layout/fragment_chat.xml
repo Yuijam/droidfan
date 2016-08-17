@@ -42,12 +42,14 @@
             android:textSize="16sp"
             android:hint="@string/hint_input_message"
             android:maxLines="5" />
-        <ImageView
+        <Button
             android:id="@+id/send"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_send_grey"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_send_button_invalid"
+            android:text="@string/send"
+            android:textColor="@color/white"
             />
     </LinearLayout>
 

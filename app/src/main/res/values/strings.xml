@@ -49,9 +49,13 @@
     <string name="push">推送</string>
     <string name="notification">提醒</string>
     <string name="get_more">正在努力加载~(～o￣▽￣)～o</string>
-    <string name="only_friends_can_send_message">客户端只有对方关注了你才可以发送私信</string>
-    <string name="user_id">droidxiaofan</string>
-    <string name="username">卓小饭</string>
+    <string name="only_friends_can_send_message">客户端无法向TA发送私信</string>
+    <string name="update_new_status">发新饭</string>
+    <string name="do_not_click_me">你戳我也没有用(⊙ˍ⊙)</string>
+    <string name="save_draft_message">保存到草稿？</string>
+    <string name="do_not_save">不必</string>
+    <string name="draft_box">草稿箱</string>
+
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
@@ -113,5 +117,6 @@
 
     <string name="pref_title_vibrate">震动</string>
     <string name="about">关于</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 </resources>

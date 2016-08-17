@@ -50,6 +50,7 @@
                         android:id="@+id/user_id"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/update_gray"
                         />
                 </LinearLayout>
             </LinearLayout>
@@ -83,11 +84,13 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/update_gray"
                     />
                 <TextView
                     android:id="@+id/source"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/update_gray"
                     />
             </LinearLayout>
 
@@ -114,7 +117,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_reply"
+                    android:src="@drawable/ic_replygrey"
                     />
 
                 <ImageView
@@ -122,7 +125,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_comment"
+                    android:src="@drawable/ic_retweet"
                     />
 
                 <ImageView
@@ -139,7 +142,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_email"
+                    android:src="@drawable/ic_message_gray"
                     />
 
                 <ImageView
