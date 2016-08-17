@@ -113,10 +113,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             mEmailView.setError(getString(R.string.error));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -131,10 +127,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute();
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
