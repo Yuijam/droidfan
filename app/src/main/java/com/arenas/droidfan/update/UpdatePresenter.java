@@ -120,6 +120,8 @@ public class UpdatePresenter implements UpdateContract.Presenter
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<UserModel> models = api.getFriends(AppContext.getAccount() , null);
+                    mFanFouDB.saveFollowing(models , AppContext.getAccount());
+
                     subscriber.onNext(models);
                     subscriber.onCompleted();
                 }catch (ApiException e){
