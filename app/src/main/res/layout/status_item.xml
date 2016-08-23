@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginBottom="1dp"
     android:background="@color/white"
     >
     <com.makeramen.roundedimageview.RoundedImageView
@@ -39,22 +38,26 @@
                 android:layout_marginRight="8dp"
                 android:layout_alignParentRight="true"
                 />
+
+            <TextView
+                android:id="@+id/tv_status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_username"
+                android:layout_marginTop="4dp"
+                android:lineSpacingExtra="1dp"
+                android:lineSpacingMultiplier="1.2"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                />
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_status_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:lineSpacingExtra="1dp"
-            android:lineSpacingMultiplier="1.2"
-            android:textSize="16sp"
-            android:textColor="@color/text_primary"
-            />
         <ImageView
             android:id="@+id/iv_photo_thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="center_horizontal"
             android:visibility="gone"
             />
     </LinearLayout>

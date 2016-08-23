@@ -62,7 +62,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             }
         });
         holder.mTime.setText(DateTimeUtils.getInterval(model.getTime()));
-        final String photoImageUrl = model.getPhotoLargeUrl();
+        final String photoImageUrl = model.getPhotoImageUrl();
 
         if (photoImageUrl != null){
             showPhotoThumb(photoImageUrl , holder.mPhotoThumb);
@@ -119,8 +119,9 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     public void showPhotoThumb(String url , ImageView imageView){
         imageView.setVisibility(View.VISIBLE);
-//        Picasso.with(mContext).load(url).resize(300 , 300).centerCrop().into(imageView);
-        Glide.with(mContext).load(url).override(300 , 300).centerCrop().crossFade().into(imageView);
+        Picasso.with(mContext).load(url).into(imageView);
+//        Glide.with(mContext).load(url).override(300 , 300).centerCrop().crossFade().into(imageView);
+//        Glide.with(mContext).load(url).into(imageView);
     }
 
     public void hidePhotoThumb(ImageView imageView ){

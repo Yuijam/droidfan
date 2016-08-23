@@ -3,9 +3,12 @@ package com.arenas.droidfan.update;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -43,6 +46,9 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     private static final String TAG = UpdatePresenter.class.getSimpleName();
 
+    public static final int REQUEST_STORAGE_PERMISSION = 4;
+    public static final String STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
+
     private FanFouDB mFanFouDB;
     private final UpdateContract.View mView;
 
@@ -56,6 +62,9 @@ public class UpdatePresenter implements UpdateContract.Presenter
     private String text;
     private Api api;
     private String id;//reply or retweet id
+    private Activity activity;
+
+    private int requestFlag;
 
     public UpdatePresenter(int _id ,int type , int statusType , Context context , UpdateContract.View mView) {
         this.mFanFouDB = FanFouDB.getInstance(context);
@@ -97,7 +106,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
         String[] users = new String[userModelList.size()];
         int i = 0;
         for (UserModel u : userModelList){
-            users[i++] = "@" + u.getScreenName();
+            users[i++] = "@" + u.getScreenName() + " ";
         }
         mView.setAutoTextAdapter(users);
     }
@@ -308,10 +317,46 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     @Override
     public void takePhoto(Activity activity , int requestCode){
-        mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + Utils.getCurTimeStr() + ".png";
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
-        activity.startActivityForResult(intent, requestCode);
+        this.activity = activity;
+        if (isStoragePermissionGranted()){//有权限
+            mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + Utils.getCurTimeStr() + ".png";
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
+            activity.startActivityForResult(intent, requestCode);
+        }else {
+            requestFlag = requestCode;
+            ActivityCompat.requestPermissions(activity , new String[]{STORAGE_PERMISSION}
+                    , REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void selectPhoto(Activity activity, int requestCode) {
+        this.activity = activity;
+        if (isStoragePermissionGranted()){
+            Utils.selectImage(activity , requestCode);
+        }else {
+            requestFlag = requestCode;
+            ActivityCompat.requestPermissions(activity , new String[]{STORAGE_PERMISSION}
+                    , REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onPermissionRequestResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_STORAGE_PERMISSION){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (requestFlag == UpdateFragment.REQUEST_TAKE_PHOTO)
+                    takePhoto(activity , UpdateFragment.REQUEST_TAKE_PHOTO);
+                else
+                    selectPhoto(activity , UpdateFragment.REQUEST_SELECT_PHOTO);
+            }
+        }
+    }
+
+    private boolean isStoragePermissionGranted(){
+        return ContextCompat.checkSelfPermission(mContext , STORAGE_PERMISSION)
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -331,31 +376,5 @@ public class UpdatePresenter implements UpdateContract.Presenter
             draft.fileName = mPhotoPath;
         }
         mFanFouDB.saveDraft(draft);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode != UpdateFragment.REQUEST_DRAFT)
-//            return;
-//
-//        if(resultCode == Activity.RESULT_OK){
-//            Draft draft = data.getParcelableExtra(DraftActivity.EXTRA_DRAFT);
-//            mView.setStatusText(draft.text);
-//            mPhotoPath = draft.fileName;
-//            switch (draft.type){
-//                case Draft.TYPE_REPLY:
-//                    mActionType = UpdateActivity.TYPE_REPLY;
-//                    id = draft.reply;
-//                    break;
-//                case Draft.TYPE_REPOST:
-//                    mActionType = UpdateActivity.TYPE_RETWEET;
-//                    id = draft.repost;
-//                    break;
-//                default://避免在转发的时候又打开草稿 总之就是害怕出错啦
-//                    mActionType = 0;
-//                    id = null;
-//                    break;
-//            }
-//        }
     }
 }

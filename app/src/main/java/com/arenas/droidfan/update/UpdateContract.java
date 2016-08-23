@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.arenas.droidfan.BasePresenter;
@@ -15,7 +16,7 @@ import com.arenas.droidfan.BaseView;
 public interface UpdateContract {
 
     interface View extends BaseView{
-        void showPhotoAlbum();
+//        void showPhotoAlbum();
         void showPhoto(Bitmap bitmap);
         void hidePhoto();
         void showError();
@@ -32,6 +33,7 @@ public interface UpdateContract {
         void deletePhoto();
         void takePhoto(Activity activity , int requestCode);
         void saveDraft(String text);
-        void onActivityResult(int requestCode, int resultCode, Intent data);
+        void selectPhoto(Activity activity , int requestCode);
+        void onPermissionRequestResult(int requestCode, String[] permissions, int[] grantResults);
     }
 }

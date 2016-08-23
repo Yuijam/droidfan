@@ -157,6 +157,8 @@ public interface DataSource {
     //delete
     void deleteAll();
 
+    void deleteHomeTimeline();
+
     //draft
     void saveDraft(Draft draft);
 

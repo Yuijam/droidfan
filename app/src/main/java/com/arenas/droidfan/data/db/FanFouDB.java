@@ -350,6 +350,11 @@ public class FanFouDB implements DataSource{
     }
 
     @Override
+    public void deleteHomeTimeline() {
+        db.execSQL("delete from " + HomeStatusColumns.TABLE_NAME);
+    }
+
+    @Override
     public String getFavoritesSinceId(String owner) {
         return getSinceId(FavoritesColumns.TABLE_NAME , owner);
     }

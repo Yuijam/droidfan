@@ -34,6 +34,8 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected Paging p;
     protected boolean startComplete;
 
+    private static final int RefreshCount = 30;
+
     public HomeTimelinePresenter(){
 
     }
@@ -82,7 +84,7 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     protected void initSinceId(){
         p = new Paging();
         p.sinceId = mFanFouDB.getHomeTLSinceId();
-        p.count = 30;
+        p.count = RefreshCount;
     }
 
     protected void startService(){
@@ -118,7 +120,11 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
             @Override
             public void onNext(List<StatusModel> models) {
                 Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                if(models.size() > 0){
+                if(models.size() == RefreshCount){
+                    mFanFouDB.deleteHomeTimeline();
+                    mFanFouDB.saveHomeTLStatusList(models);
+                    loadStatus();
+                }else if (models.size() > 0){
                     mFanFouDB.saveHomeTLStatusList(models);
                     loadStatus();
                 }else {

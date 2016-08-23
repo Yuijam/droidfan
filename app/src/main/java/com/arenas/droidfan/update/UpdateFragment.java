@@ -2,10 +2,14 @@ package com.arenas.droidfan.update;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Selection;
@@ -29,6 +33,7 @@ import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.draft.DraftActivity;
 
 import java.io.FileInputStream;
+import java.util.jar.Manifest;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,10 +77,15 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
         return new UpdateFragment();
     }
 
-
     @Override
     public void setPresenter(Object presenter) {
         mPresenter = (UpdateContract.Presenter)presenter;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -190,14 +200,16 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                 break;
             case R.id.add_photo:
                 Utils.hideKeyboard(getContext() , mStatusText);
-                showPhotoAlbum();
+//                checkPermission(REQUEST_SELECT_PHOTO);
+                mPresenter.selectPhoto(getActivity() , REQUEST_SELECT_PHOTO);
+                break;
+            case R.id.take_photo:
+//                checkPermission(REQUEST_TAKE_PHOTO);
+                Utils.hideKeyboard(getContext() , mStatusText);
+                mPresenter.takePhoto(getActivity() , REQUEST_TAKE_PHOTO);
                 break;
             case R.id.iv_photo:
                 mPresenter.deletePhoto();
-                break;
-            case R.id.take_photo:
-                Utils.hideKeyboard(getContext() , mStatusText);
-                mPresenter.takePhoto(getActivity() , REQUEST_TAKE_PHOTO);
                 break;
             case R.id.text_count:
                 Utils.showToast(getActivity() , getResources().getString(R.string.do_not_click_me));
@@ -214,11 +226,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     private void addTopic(){
         mStatusText.getText().append("##");
         Selection.setSelection(mStatusText.getText() , mStatusText.getText().length()-1);
-    }
-
-    @Override
-    public void showPhotoAlbum() {
-        Utils.selectImage(getActivity() , REQUEST_SELECT_PHOTO);
     }
 
     @Override
