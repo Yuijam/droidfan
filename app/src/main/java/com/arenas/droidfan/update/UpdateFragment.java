@@ -104,7 +104,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
         addPhoto.setOnClickListener(this);
         photo.setOnClickListener(this);
         takePhoto.setOnClickListener(this);
-        mTextCount.setOnClickListener(this);
 
         topic.setOnClickListener(this);
         draft.setOnClickListener(this);
@@ -210,9 +209,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                 break;
             case R.id.iv_photo:
                 mPresenter.deletePhoto();
-                break;
-            case R.id.text_count:
-                Utils.showToast(getActivity() , getResources().getString(R.string.do_not_click_me));
                 break;
             case R.id.draft:
                 DraftActivity.start(getActivity() , REQUEST_DRAFT);

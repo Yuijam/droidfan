@@ -15,6 +15,7 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.List;
@@ -73,12 +74,10 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        Log.d(TAG , "height = " + recyclerView.getHeight());
 
-
-//        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-//        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SemiCircleSpin);
-//        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SemiCircleSpin);
+        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
 
         recyclerView.setLoadingListener(this);
         recyclerView.setAdapter(mAdapter);

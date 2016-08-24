@@ -30,16 +30,9 @@ public class PhotoPagerAdapter extends PagerAdapter {
     private List<StatusModel> mDatas;
     private Context mContext;
 
-    private Activity activity;
-    private AppBarLayout appBarLayout;
-    private boolean isFull;
-
     public PhotoPagerAdapter(Context context , List<StatusModel> datas , Activity activity){
         mDatas = datas;
         mContext = context;
-
-        this.activity = activity;
-        appBarLayout = (AppBarLayout) activity.findViewById(R.id.app_bar);
     }
 
     @Override
@@ -56,11 +49,11 @@ public class PhotoPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         StatusModel model = mDatas.get(position);
         PhotoView view = new PhotoView(mContext);
-        view.setOnClickListener(new View.OnClickListener() {
+        view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-                full(!isFull);
-//                hide();
+            public boolean onLongClick(View view) {
+                Log.d(TAG , "longClick photo");
+                return true;
             }
         });
         view.enable();
@@ -79,34 +72,4 @@ public class PhotoPagerAdapter extends PagerAdapter {
         mDatas = models;
         notifyDataSetChanged();
     }
-
-    private void full(boolean enable) {
-        Log.d(TAG , "full~~~");
-        if (enable) {
-//            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-//            lp.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-//            activity.getWindow().setAttributes(lp);
-//            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            appBarLayout.setVisibility(View.INVISIBLE);
-            isFull = true;
-        } else {
-//            WindowManager.LayoutParams attr = activity.getWindow().getAttributes();
-//            attr.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//            activity.getWindow().setAttributes(attr);
-//            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            appBarLayout.setVisibility(View.VISIBLE);
-            isFull = false;
-        }
-    }
-
-//    private void hide(){
-//        int i = toolbar.getSystemUiVisibility();
-//        if (i == View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) {//2
-//            toolbar.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-//        } else if (i == View.SYSTEM_UI_FLAG_VISIBLE) {//0
-//            toolbar.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-//        } else if (i == View.SYSTEM_UI_FLAG_LOW_PROFILE) {//1
-//            toolbar.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//        }
-//    }
 }
