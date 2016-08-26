@@ -62,6 +62,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     @BindView(R.id.topic) ImageView topic;
 
     private CharSequence temp;
+    private static final String KEY_STATUS = "key_status";
 
     public UpdateFragment() {
 
@@ -70,6 +71,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG , "onResume```");
         mPresenter.start();
     }
 
@@ -85,7 +87,13 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG , "onCreate``");
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_STATUS , mStatusText.getText().toString());
     }
 
     @Nullable
@@ -93,6 +101,11 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_update , container , false);
         init(view);
+        Log.d(TAG , "onCreateView```");
+        if (savedInstanceState != null){
+            Log.d(TAG , savedInstanceState.getString(KEY_STATUS));
+            mStatusText.setText(savedInstanceState.getString(KEY_STATUS));
+        }
         return view;
     }
 

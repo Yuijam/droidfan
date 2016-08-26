@@ -13,6 +13,7 @@ import com.arenas.droidfan.api.ApiFactory;
 import com.arenas.droidfan.config.AccountInfo;
 import com.arenas.droidfan.config.AccountStore;
 import com.arenas.droidfan.data.model.UserModel;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.oauthsimple.model.OAuthToken;
 
@@ -176,6 +177,8 @@ public class AppContext extends Application {
 //        initialize();
         initAccountInfo();
         context = getApplicationContext();
+
+        PgyCrashManager.register(this);
     }
 
     public static Context getContext() {

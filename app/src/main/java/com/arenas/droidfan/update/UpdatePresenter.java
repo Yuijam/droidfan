@@ -17,6 +17,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.CompatUtils;
 import com.arenas.droidfan.Util.ImageUtils;
 import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.PermissionUtils;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.Api;
@@ -47,7 +48,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
     private static final String TAG = UpdatePresenter.class.getSimpleName();
 
     public static final int REQUEST_STORAGE_PERMISSION = 4;
-    public static final String STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
 
     private FanFouDB mFanFouDB;
     private final UpdateContract.View mView;
@@ -63,6 +63,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
     private Api api;
     private String id;//reply or retweet id
     private Activity activity;
+    private boolean startComplete;
 
     private int requestFlag;
 
@@ -81,10 +82,14 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     @Override
     public void start() {
-        if (!isNewStatus()){
-            populateStatusText();
+        Log.d(TAG , "start()```");
+        if (!startComplete){
+            if (!isNewStatus()){
+                populateStatusText();
+            }
+            loadFollowing();//为了获取@的列表
+            startComplete = true;
         }
-        loadFollowing();//为了获取@的列表
     }
 
     @Override
@@ -318,27 +323,25 @@ public class UpdatePresenter implements UpdateContract.Presenter
     @Override
     public void takePhoto(Activity activity , int requestCode){
         this.activity = activity;
-        if (isStoragePermissionGranted()){//有权限
+        if (PermissionUtils.isStoragePermissionGranted(mContext)){//有权限
             mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + Utils.getCurTimeStr() + ".png";
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
             activity.startActivityForResult(intent, requestCode);
         }else {
             requestFlag = requestCode;
-            ActivityCompat.requestPermissions(activity , new String[]{STORAGE_PERMISSION}
-                    , REQUEST_STORAGE_PERMISSION);
+            PermissionUtils.requestStoragePermission(activity , requestCode);
         }
     }
 
     @Override
     public void selectPhoto(Activity activity, int requestCode) {
         this.activity = activity;
-        if (isStoragePermissionGranted()){
+        if (PermissionUtils.isStoragePermissionGranted(mContext)){
             Utils.selectImage(activity , requestCode);
         }else {
             requestFlag = requestCode;
-            ActivityCompat.requestPermissions(activity , new String[]{STORAGE_PERMISSION}
-                    , REQUEST_STORAGE_PERMISSION);
+            PermissionUtils.requestStoragePermission(activity , requestCode);
         }
     }
 
@@ -352,11 +355,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
                     selectPhoto(activity , UpdateFragment.REQUEST_SELECT_PHOTO);
             }
         }
-    }
-
-    private boolean isStoragePermissionGranted(){
-        return ContextCompat.checkSelfPermission(mContext , STORAGE_PERMISSION)
-                == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override

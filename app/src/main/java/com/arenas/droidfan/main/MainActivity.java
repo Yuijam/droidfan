@@ -2,9 +2,12 @@ package com.arenas.droidfan.main;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,6 +27,7 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.PermissionUtils;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
@@ -36,8 +41,14 @@ import com.arenas.droidfan.notify.PushService;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.setting.SettingsActivity;
 import com.arenas.droidfan.update.UpdateActivity;
+import com.arenas.droidfan.update.UpdateFragment;
 import com.arenas.droidfan.update.UpdatePresenter;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.pgyersdk.Pgy;
+import com.pgyersdk.crash.PgyCrashManager;
+import com.pgyersdk.javabean.AppBean;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,6 +63,8 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    public static final int REQUEST_STORAGE_PERMISSION = 1;
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
@@ -64,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     TabFragmentAdapter fragmentAdapter;
     private HomeTimelineContract.View homeTimelineView;
+    private UpdateListener updateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<String> tabList = new ArrayList<>();
+        final List<String> tabList = new ArrayList<>();
         tabList.add(getString(R.string.home_page));
         tabList.add(getString(R.string.notice));
         tabList.add(getString(R.string.message));
@@ -115,6 +129,12 @@ public class MainActivity extends AppCompatActivity
         manager.cancel(2);
 
         getResources().getColor(R.color.colorPrimary);
+
+        PgyCrashManager.register(this);
+
+        updateListener = new UpdateListener();
+
+        PgyUpdateManager.register(this, updateListener);
     }
 
     private void initNavHeader(View view){
@@ -181,5 +201,66 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+    }
+
+    class UpdateListener extends UpdateManagerListener {
+
+        AppBean appBean;
+        @Override
+        public void onNoUpdateAvailable() {
+            Log.d(TAG , "onNoUpdateAvailable```");
+        }
+
+        @Override
+        public void onUpdateAvailable(String s) {
+            appBean = getAppBeanFromString(s);
+
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("发现新版本")
+                    .setMessage(appBean.getReleaseNote())
+                    .setNegativeButton("取消",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(
+                                        DialogInterface dialog,
+                                        int which) {
+                                }
+                            })
+                    .setPositiveButton(
+                            "更新",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(
+                                        DialogInterface dialog,
+                                        int which) {
+                                    if (PermissionUtils.isStoragePermissionGranted(MainActivity.this)){
+                                        downloadUpdate();
+                                    }else {
+                                        PermissionUtils.requestStoragePermission(MainActivity.this , REQUEST_STORAGE_PERMISSION);
+                                    }
+
+                                }
+                            }).show();
+        }
+
+        public void downloadUpdate(){
+            startDownloadTask(MainActivity.this , appBean.getDownloadURL());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_STORAGE_PERMISSION){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                updateListener.downloadUpdate();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PgyCrashManager.unregister();
     }
 }

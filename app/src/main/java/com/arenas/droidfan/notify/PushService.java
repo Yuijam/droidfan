@@ -149,7 +149,7 @@ public class PushService extends IntentService {
         PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.logo)
+        Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.notification_icon)
                 .setWhen(System.currentTimeMillis()).setContentTitle(getString(R.string.app_name))
                 .setContentText(text).setContentIntent(pi).build();
 

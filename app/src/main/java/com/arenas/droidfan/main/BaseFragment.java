@@ -3,7 +3,9 @@ package com.arenas.droidfan.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
+import com.jcodecraeer.xrecyclerview.ArrowRefreshHeader;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -27,7 +30,7 @@ import butterknife.ButterKnife;
  * Created by Arenas on 2016/7/18.
  */
 public abstract class BaseFragment extends Fragment implements HomeTimelineContract.View ,
-         XRecyclerView.LoadingListener{
+         XRecyclerView.LoadingListener {
 
     public static final String TAG = BaseFragment.class.getSimpleName();
 
@@ -41,6 +44,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
 
     public @BindView(R.id.recycler_view) XRecyclerView recyclerView;
     public @BindView(R.id.progressbar) ProgressBar progressBar;
+//    public @BindView(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -75,10 +79,10 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SemiCircleSpin);
-        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
-
+//        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+//        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SemiCircleSpin);
+//        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefresh());
         recyclerView.setLoadingListener(this);
         recyclerView.setAdapter(mAdapter);
     }
