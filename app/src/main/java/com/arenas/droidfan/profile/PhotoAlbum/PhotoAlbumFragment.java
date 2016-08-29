@@ -60,8 +60,6 @@ public class PhotoAlbumFragment extends ProfileStatusFragment {
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
         public void onItemClick(View view, int position , int i) {
-            // TODO: 2016/8/10 诶？居然没有问题？
-            Log.d(TAG , "position = " + position);
             PhotoActivity.start(getContext() , 0 , null , mAdapter.getStatus(position).getUserId() , position);
         }
 

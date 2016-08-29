@@ -132,14 +132,14 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         RoundedImageView mAvatar;
         TextView mUsername;
         TextView mStatusText;
-        ImageView mPhotoThumb;
+        RoundedImageView mPhotoThumb;
         TextView mTime;
         public StatusViewHolder(View itemView) {
             super(itemView);
             mAvatar = (RoundedImageView)itemView.findViewById(R.id.iv_avatar);
             mUsername = (TextView)itemView.findViewById(R.id.tv_username);
             mStatusText = (TextView)itemView.findViewById(R.id.tv_status_text);
-            mPhotoThumb = (ImageView)itemView.findViewById(R.id.iv_photo_thumbnail);
+            mPhotoThumb = (RoundedImageView)itemView.findViewById(R.id.iv_photo_thumbnail);
             mTime = (TextView)itemView.findViewById(R.id.time);
         }
     }

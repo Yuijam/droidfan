@@ -23,7 +23,9 @@ import android.widget.Toast;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.photo.PhotoActivity;
 import com.bumptech.glide.Glide;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -40,7 +42,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     @BindView(R.id.status_detail) TextView mStatusDetail;
     @BindView(R.id.source) TextView mSource;
     @BindView(R.id.date) TextView mDate;
-    @BindView(R.id.photo) ImageView mPhoto;
+    @BindView(R.id.photo) RoundedImageView mPhoto;
     @BindView(R.id.iv_avatar) ImageView mAvatar;
     @BindView(R.id.reply) ImageView mReply;
     @BindView(R.id.delete) ImageView mDelete;
@@ -96,6 +98,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         share.setOnClickListener(this);
         mDelete.setOnClickListener(this);
         mUserlayout.setOnClickListener(this);
+        mPhoto.setOnClickListener(this);
 
         setHasOptionsMenu(true);
     }
@@ -134,7 +137,9 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
             case R.id.share:
                 Utils.showToast(getContext() , "不要戳我，我还没完成");
                 break;
-
+            case R.id.photo:
+                mPresenter.showLargePhoto();
+                break;
         }
     }
 
@@ -196,8 +201,8 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     @Override
     public void showPhoto(String url) {
-//        Picasso.with(getContext()).load(url).into(mPhoto);
-        Glide.with(getContext()).load(url).into(mPhoto);
+        Picasso.with(getContext()).load(url).into(mPhoto);
+//        Glide.with(getContext()).load(url).into(mPhoto);
     }
 
     @Override

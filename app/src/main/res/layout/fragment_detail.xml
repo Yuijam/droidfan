@@ -66,12 +66,13 @@
                 android:text="333"
                 />
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/photo"
                 android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                app:riv_corner_radius="3dp"
+                android:layout_gravity="center_horizontal"
                 />
 
             <LinearLayout

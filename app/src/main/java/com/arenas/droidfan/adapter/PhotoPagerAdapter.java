@@ -45,7 +45,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
+//这里可以打印position看看 会发现每滑动一次 都会预先加载下一个页面 也就是这个方法会执行两遍甚至三遍
         model = mDatas.get(position);
         PhotoView photoView = new PhotoView(mContext);
         String photoUrl = model.getPhotoLargeUrl();

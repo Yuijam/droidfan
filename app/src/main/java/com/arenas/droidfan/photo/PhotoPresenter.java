@@ -42,7 +42,6 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     private List<StatusModel> mDatas;
     private Activity activity;
     int mPosition;
-    private StatusModel model;
     private String photoUrl;
 
     public PhotoPresenter(Context context , PhotoContract.View view ,

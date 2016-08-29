@@ -20,6 +20,7 @@ import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.TabFragmentAdapter;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
+import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.update.UpdateActivity;
 
@@ -109,7 +110,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         mView.showStatusText(statusModel.getText());
         mView.showDate(DateTimeUtils.formatDate(statusModel.getTime()));
         mView.showSource(" 通过"+statusModel.getSource());
-        mView.showPhoto(statusModel.getPhotoLargeUrl());
+        mView.showPhoto(statusModel.getPhotoImageUrl());
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_red);
         }
@@ -234,5 +235,10 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     @Override
     public void openUser() {
         ProfileActivity.start(mContext , mStatusModel.getUserId());
+    }
+
+    @Override
+    public void showLargePhoto() {
+        PhotoActivity.start(mContext , m_id , tableName , null , -1);
     }
 }
