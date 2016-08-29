@@ -15,6 +15,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.ConversationListAdapter;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.main.BaseFragment;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
         ButterKnife.bind(this , view);
         xRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setDragRate(BaseFragment.DRAG_RATE);
         xRecyclerView.setLoadingMoreEnabled(false);
         xRecyclerView.setAdapter(mAdapter);
     }

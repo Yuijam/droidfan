@@ -9,6 +9,7 @@
     app:layout_collapseParallaxMultiplier="0.7"
     android:background="@color/white"
     app:layout_collapseMode="parallax"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
 
     <com.makeramen.roundedimageview.RoundedImageView

@@ -76,10 +76,7 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     @Override
     public void hideProgressBar() {
-        Log.d(TAG , "hideProgressBar");
         progressBar.setVisibility(View.GONE);
         recyclerView.loadMoreComplete();
-//        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swipe_container);
-//        refreshLayout.setRefreshing(false);
     }
 }
