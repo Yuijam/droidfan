@@ -7,37 +7,22 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.data.model.UserModel;
-import com.arenas.droidfan.notify.PushService;
+import com.arenas.droidfan.myinterface.ListDialogListener;
+import com.arenas.droidfan.myinterface.NomalDialogListener;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.Key;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,5 +91,38 @@ public class Utils {
         Matcher matcher = pattern.matcher(text);
         str = matcher.replaceAll(" ");
         return str;
+    }
+
+    public static void createNomalDialog(Context context , String title , String message , String positiveText
+            , String negativeText , final NomalDialogListener listener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog alertDialog = builder.setMessage(message)
+                .setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        listener.onNegativeButtonClick();
+                    }
+                })
+                .setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        listener.onPositiveButtonClick();
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    public static void createListDialog(Context context , String[] items ,  final ListDialogListener listener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog dialog = builder.setItems(items , new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(listener != null){
+                            listener.onItemClick(which);
+                        }
+                    }
+                }).create();
+        dialog.show();
     }
 }

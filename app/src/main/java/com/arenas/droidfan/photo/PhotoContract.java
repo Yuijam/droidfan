@@ -1,5 +1,7 @@
 package com.arenas.droidfan.photo;
 
+import android.app.Activity;
+
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
 import com.arenas.droidfan.data.model.StatusModel;
@@ -18,6 +20,7 @@ public interface PhotoContract {
     }
 
     interface Presenter extends BasePresenter{
-
+        void savePhoto(Activity activity , StatusModel model);
+        void onRequestResult(int requestCode,String[] permissions, int[] grantResults);
     }
 }

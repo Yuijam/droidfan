@@ -21,6 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/status_layout" />
+    <include layout="@layout/status_layout"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,20 +1,15 @@
 package com.arenas.droidfan.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.message.MessageContract;
+import com.arenas.droidfan.myinterface.ListDialogListener;
+import com.arenas.droidfan.myinterface.SaveImage;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
 
@@ -29,10 +24,13 @@ public class PhotoPagerAdapter extends PagerAdapter {
 
     private List<StatusModel> mDatas;
     private Context mContext;
+    private StatusModel model;
+    private SaveImage saveImage;
 
-    public PhotoPagerAdapter(Context context , List<StatusModel> datas , Activity activity){
+    public PhotoPagerAdapter(Context context , List<StatusModel> datas , SaveImage saveImage){
         mDatas = datas;
         mContext = context;
+        this.saveImage = saveImage;
     }
 
     @Override
@@ -47,20 +45,22 @@ public class PhotoPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        StatusModel model = mDatas.get(position);
-        PhotoView view = new PhotoView(mContext);
-        view.setOnLongClickListener(new View.OnLongClickListener() {
+        model = mDatas.get(position);
+        PhotoView photoView = new PhotoView(mContext);
+        String photoUrl = model.getPhotoLargeUrl();
+        photoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Log.d(TAG , "longClick photo");
+                Utils.createListDialog(mContext , new String[]{"保存图片"} , listDialogListener);
                 return true;
             }
         });
-        view.enable();
-        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        Glide.with(mContext).load(model.getPhotoLargeUrl()).into(view);
-        container.addView(view);
-        return view;
+
+        photoView.enable();
+        photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        Glide.with(mContext).load(photoUrl).into(photoView);
+        container.addView(photoView);
+        return photoView;
     }
 
     @Override
@@ -72,4 +72,11 @@ public class PhotoPagerAdapter extends PagerAdapter {
         mDatas = models;
         notifyDataSetChanged();
     }
+
+    ListDialogListener listDialogListener = new ListDialogListener() {
+        @Override
+        public void onItemClick(int which) {
+            saveImage.save(model);//因为只有一个保存图片，所以没有做判断，之后如果添加其他选项再改……好吧 就是懒
+        }
+    };
 }

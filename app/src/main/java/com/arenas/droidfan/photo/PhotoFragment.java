@@ -19,11 +19,16 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.PhotoPagerAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.TabFragmentAdapter;
+import com.arenas.droidfan.myinterface.ListDialogListener;
+import com.arenas.droidfan.myinterface.SaveImage;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Arenas on 2016/7/28.
@@ -34,10 +39,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     private PhotoContract.Presenter mPresenter;
 
-    private ViewPager mPager;
+    @BindView(R.id.view_pager) ViewPager mPager;
     private PhotoPagerAdapter mAdapter;
-
-    private LinearLayout mPhotoContainer;
 
     @Override
     public void setPresenter(Object presenter) {
@@ -50,10 +53,17 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         mPresenter.start();
     }
 
+    SaveImage saveImage = new SaveImage() {
+        @Override
+        public void save(StatusModel model) {
+            mPresenter.savePhoto(getActivity() , model);
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new PhotoPagerAdapter(getContext() , new ArrayList<StatusModel>() , getActivity());
+        mAdapter = new PhotoPagerAdapter(getContext() , new ArrayList<StatusModel>() , saveImage);
     }
 
     @Nullable
@@ -61,10 +71,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photo , container , false);
 
-        mPager = (ViewPager)view.findViewById(R.id.view_pager);
+        ButterKnife.bind(this , view);
         mPager.setAdapter(mAdapter);
-
-        mPhotoContainer = (LinearLayout)view.findViewById(R.id.photo_container);
 
         setHasOptionsMenu(true);
         return view;
@@ -94,4 +102,5 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     public void setCurrentPage(int position) {
         mPager.setCurrentItem(position , true);
     }
+
 }

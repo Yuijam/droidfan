@@ -2,6 +2,7 @@ package com.arenas.droidfan.photo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,8 @@ public class PhotoActivity extends AppCompatActivity {
     private static final String EXTRA_ID = "extra_id";
     private static final String EXTRA_TABLE = "extra_table";
     private static final String EXTRA_POSITION = "extra_position";
+
+    private PhotoContract.Presenter mPresenter;
 
     public static void start(Context context , int _id , String table , String userId , int position){
         Intent intent = new Intent(context , PhotoActivity.class);
@@ -41,6 +44,11 @@ public class PhotoActivity extends AppCompatActivity {
         }
         Utils.addFragmentToActivity(getSupportFragmentManager() , fragment , R.id.content_frame);
 
-        new PhotoPresenter(this , fragment , table , _id , userId , position);
+        mPresenter = new PhotoPresenter(this , fragment , table , _id , userId , position);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mPresenter.onRequestResult(requestCode , permissions , grantResults);
     }
 }

@@ -1,13 +1,25 @@
 package com.arenas.droidfan.photo;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import com.arenas.droidfan.Util.ImageUtils;
+import com.arenas.droidfan.Util.PermissionUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.update.UpdateFragment;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.util.Util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +30,8 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
 
     private static final String TAG = PhotoPresenter.class.getSimpleName();
 
+    private static final int REQUEST_STORAGE_PERMISSION = 1;
+
     private FanFouDB mFanFouDB;
     private PhotoContract.View mView;
     private String mTableName;
@@ -25,7 +39,9 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     private String mUserId;
     private Context mContext;
     private List<StatusModel> mDatas;
+    private Activity activity;
     int mPosition;
+    private StatusModel model;
 
     public PhotoPresenter(Context context , PhotoContract.View view ,
                           String table , int _id , String userId , int position){
@@ -74,5 +90,48 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     @Override
     public void onDataNotAvailable() {
         mView.showError("found nothing !");
+    }
+
+    @Override
+    public void savePhoto(final Activity activity , final StatusModel model) {
+        this.activity = activity;
+        this.model = model;
+        if (PermissionUtils.isStoragePermissionGranted(mContext)){
+            new AsyncTask<String, Void, File>(){
+                @Override
+                protected File doInBackground(String... strings) {
+                    try {
+                        return Glide.with(mContext)
+                                .load(model.getPhotoLargeUrl())
+                                .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                                .get(); // needs to be called on background thread
+                    }catch (Exception e){
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(File file) {
+                    if (file == null)
+                        return;
+                    File dest = new File(ImageUtils.getPhotoName(model.getPhotoLargeUrl()));
+                    if (dest.exists() || ImageUtils.copyFile(file, dest)) {
+
+                    }
+                }
+            }.execute();
+
+        }else {
+            PermissionUtils.requestStoragePermission(activity , REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_STORAGE_PERMISSION){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                savePhoto(activity , model);
+            }
+        }
     }
 }

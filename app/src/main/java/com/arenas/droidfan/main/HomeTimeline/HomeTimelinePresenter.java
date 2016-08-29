@@ -136,7 +136,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void getMore() {
-        Log.d(TAG , "getMore");
         initMaxId();
         startService();
     }
