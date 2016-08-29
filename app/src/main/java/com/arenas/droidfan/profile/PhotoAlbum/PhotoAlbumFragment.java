@@ -3,6 +3,7 @@ package com.arenas.droidfan.profile.photoalbum;
 
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class PhotoAlbumFragment extends ProfileStatusFragment {
         @Override
         public void onItemClick(View view, int position , int i) {
             // TODO: 2016/8/10 诶？居然没有问题？
+            Log.d(TAG , "position = " + position);
             PhotoActivity.start(getContext() , 0 , null , mAdapter.getStatus(position).getUserId() , position);
         }
 

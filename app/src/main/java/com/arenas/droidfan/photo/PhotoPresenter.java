@@ -13,6 +13,7 @@ import com.arenas.droidfan.Util.PermissionUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.data.model.Photo;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.update.UpdateFragment;
 import com.bumptech.glide.Glide;
@@ -42,6 +43,7 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     private Activity activity;
     int mPosition;
     private StatusModel model;
+    private String photoUrl;
 
     public PhotoPresenter(Context context , PhotoContract.View view ,
                           String table , int _id , String userId , int position){
@@ -93,16 +95,16 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     }
 
     @Override
-    public void savePhoto(final Activity activity , final StatusModel model) {
+    public void savePhoto(final Activity activity , final String photoUrl) {
         this.activity = activity;
-        this.model = model;
+        this.photoUrl = photoUrl;
         if (PermissionUtils.isStoragePermissionGranted(mContext)){
             new AsyncTask<String, Void, File>(){
                 @Override
                 protected File doInBackground(String... strings) {
                     try {
                         return Glide.with(mContext)
-                                .load(model.getPhotoLargeUrl())
+                                .load(photoUrl)
                                 .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .get(); // needs to be called on background thread
                     }catch (Exception e){
@@ -114,9 +116,9 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
                 protected void onPostExecute(File file) {
                     if (file == null)
                         return;
-                    File dest = new File(ImageUtils.getPhotoName(model.getPhotoLargeUrl()));
+                    File dest = new File(ImageUtils.getPhotoName(photoUrl));
                     if (dest.exists() || ImageUtils.copyFile(file, dest)) {
-
+                        Utils.showToast(mContext , "保存成功~");
                     }
                 }
             }.execute();
@@ -130,7 +132,7 @@ public class PhotoPresenter implements PhotoContract.Presenter , DataSource.Load
     public void onRequestResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_STORAGE_PERMISSION){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                savePhoto(activity , model);
+                savePhoto(activity , photoUrl);
             }
         }
     }

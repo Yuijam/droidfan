@@ -20,7 +20,7 @@ public interface PhotoContract {
     }
 
     interface Presenter extends BasePresenter{
-        void savePhoto(Activity activity , StatusModel model);
+        void savePhoto(Activity activity , String url);
         void onRequestResult(int requestCode,String[] permissions, int[] grantResults);
     }
 }

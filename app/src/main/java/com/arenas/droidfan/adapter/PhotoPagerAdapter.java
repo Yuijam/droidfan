@@ -45,6 +45,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+
         model = mDatas.get(position);
         PhotoView photoView = new PhotoView(mContext);
         String photoUrl = model.getPhotoLargeUrl();
@@ -73,10 +74,17 @@ public class PhotoPagerAdapter extends PagerAdapter {
         notifyDataSetChanged();
     }
 
+    public String getPhotoUrl(int position){
+        if (position < 0 || position > mDatas.size())
+            return null;
+
+        return mDatas.get(position).getPhotoLargeUrl();
+    }
+
     ListDialogListener listDialogListener = new ListDialogListener() {
         @Override
         public void onItemClick(int which) {
-            saveImage.save(model);//因为只有一个保存图片，所以没有做判断，之后如果添加其他选项再改……好吧 就是懒
+            saveImage.save();//因为只有一个保存图片，所以没有做判断，之后如果添加其他选项再改……好吧 就是懒
         }
     };
 }

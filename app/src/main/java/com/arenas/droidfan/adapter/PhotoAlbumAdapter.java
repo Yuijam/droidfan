@@ -43,9 +43,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
         StatusModel model = mDatas.get(position);
 
         if (model.getPhotoThumbUrl() != null)
-//        Picasso.with(mContext).load(model.getPhotoLargeUrl()).resize(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
-            Glide.with(mContext).load(model.getPhotoLargeUrl()).override(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
-
+        Picasso.with(mContext).load(model.getPhotoLargeUrl()).resize(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
+//            Glide.with(mContext).load(model.getPhotoLargeUrl()).override(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
+        //这里只能用Picasso ， 如果用Glide的话gif会加载不出 我也不知道为什么
         if (mListener != null){
             holder.photo.setOnClickListener(new View.OnClickListener() {
                 @Override

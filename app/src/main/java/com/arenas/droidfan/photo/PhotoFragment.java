@@ -55,8 +55,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     SaveImage saveImage = new SaveImage() {
         @Override
-        public void save(StatusModel model) {
-            mPresenter.savePhoto(getActivity() , model);
+        public void save() {
+            mPresenter.savePhoto(getActivity() , mAdapter.getPhotoUrl(mPager.getCurrentItem()));
         }
     };
 
