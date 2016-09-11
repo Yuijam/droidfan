@@ -4,7 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
+import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
@@ -39,11 +43,17 @@ public class PublicPresenter extends HomeTimelinePresenter {
 
     @Override
     protected void initSinceId() {
-
+        p = new Paging();
     }
 
     @Override
     protected void startService() {
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            mView.hideProgressBar();
+            return;
+        }
+
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
@@ -65,7 +75,8 @@ public class PublicPresenter extends HomeTimelinePresenter {
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgressBar();
             }
 
             @Override
@@ -84,5 +95,10 @@ public class PublicPresenter extends HomeTimelinePresenter {
     @Override
     public void getMore() {
         // TODO: 2016/8/10
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
     }
 }

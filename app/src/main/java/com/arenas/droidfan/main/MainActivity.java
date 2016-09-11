@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -27,7 +26,9 @@ import android.widget.TextView;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
 import com.arenas.droidfan.Util.PermissionUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
@@ -43,6 +44,8 @@ import com.arenas.droidfan.setting.SettingsActivity;
 import com.arenas.droidfan.update.UpdateActivity;
 import com.arenas.droidfan.update.UpdateFragment;
 import com.arenas.droidfan.update.UpdatePresenter;
+import com.flask.floatingactionmenu.FloatingActionButton;
+import com.flask.floatingactionmenu.FloatingActionToggleButton;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.pgyersdk.Pgy;
 import com.pgyersdk.crash.PgyCrashManager;
@@ -61,7 +64,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = "11111";
 
     public static final int REQUEST_STORAGE_PERMISSION = 1;
 
@@ -71,19 +74,70 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.view_pager) ViewPager viewPager;
     @BindView(R.id.tab_layout) TabLayout tabLayout;
 
-    @OnClick(R.id.fab) void onFabClick(){
-        UpdateActivity.start(this);
-    }
-
     TabFragmentAdapter fragmentAdapter;
     private HomeTimelineContract.View homeTimelineView;
     private UpdateListener updateListener;
+
+    @BindView(R.id.fab_toggle)
+    FloatingActionToggleButton fabToggle;
+    @BindView(R.id.fab_to_top)
+    FloatingActionButton fabGoToTop;
+
+    @OnClick(R.id.fab) void onFabClick(){
+        UpdateActivity.start(this);
+        fabToggle.toggleOff();
+    }
+
+    private HomeTimelinePresenter homeTimelinePresenter;
+    private NoticePresenter noticePresenter;
+    private MessagePresenter messagePresenter;
+
+    @OnClick(R.id.fab_to_top) void onGoToTopClick(){
+        int curPage = viewPager.getCurrentItem();
+        switch (curPage){
+            case 0:
+                homeTimelinePresenter.refresh();
+                fabToggle.toggleOff();
+                break;
+            case 1:
+//                ((BaseFragment)fragmentAdapter.getItem(curPage)).goToTop();
+                noticePresenter.refresh();
+                fabToggle.toggleOff();
+                break;
+            case 2:
+//                ((MessageFragment)fragmentAdapter.getItem(curPage)).goToTop();
+                messagePresenter.refresh();
+                fabToggle.toggleOff();
+                break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG , "A onResume```");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG , "A onStart```");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG , "A onStop```");
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        Log.d(TAG , "A onCreate````");
 
         setSupportActionBar(toolbar);
 
@@ -116,9 +170,9 @@ public class MainActivity extends AppCompatActivity
 
         homeTimelineView = (HomeTimelineFragment)fragmentAdapter.getItem(0);
 
-        new HomeTimelinePresenter(this , (HomeTimelineFragment)fragmentAdapter.getItem(0));
-        new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
-        new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
+        homeTimelinePresenter = new HomeTimelinePresenter(this , (HomeTimelineFragment)fragmentAdapter.getItem(0));
+        noticePresenter = new NoticePresenter(this , (NoticeFragment)fragmentAdapter.getItem(1));
+        messagePresenter = new MessagePresenter(this , (MessageFragment)fragmentAdapter.getItem(2));
 
         if (PushService.shouldStartAlarm(this)){
             PushService.setServiceAlarm(this);
@@ -134,7 +188,11 @@ public class MainActivity extends AppCompatActivity
 
         updateListener = new UpdateListener();
 
-        PgyUpdateManager.register(this, updateListener);
+        if (NetworkUtils.isNetworkConnected(this)){
+            PgyUpdateManager.register(this, updateListener);
+        }
+
+        ActivityCollector.addActivity(this);
     }
 
     private void initNavHeader(View view){
@@ -262,5 +320,18 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         PgyCrashManager.unregister();
+        Log.d(TAG , "A onDestroy```");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG , "A onRestart```");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG , "A onPause```");
     }
 }

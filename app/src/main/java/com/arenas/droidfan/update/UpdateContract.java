@@ -24,6 +24,7 @@ public interface UpdateContract {
         void setStatusText(String statusText);
         void setSelection(String text);
         void setAutoTextAdapter(String[] users);
+        void refreshInputStatus();
         void finish();
     }
 

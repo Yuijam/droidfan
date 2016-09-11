@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
+import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
+import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
 import com.arenas.droidfan.data.db.DataSource;
@@ -54,7 +57,6 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
     }
 
     private void loadConversationList(){
-        mView.showProgressbar();
         mFanFouDB.getConversationList(this);
     }
 
@@ -74,15 +76,17 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
     }
 
     private void fetchData(){
-        mView.showProgressbar();
-
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            mView.hideProgressbar();
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<List<DirectMessageModel>>() {
             @Override
             public void call(Subscriber<? super List<DirectMessageModel>> subscriber) {
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<DirectMessageModel> model = AppContext.getApi().getConversationList(paging);
-                    Log.d(TAG , "p.sinceId = " + paging.sinceId + " , p.maxId = " + paging.maxId);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 }catch (ApiException e){
@@ -97,7 +101,8 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgressbar();
             }
 
             @Override
@@ -112,7 +117,9 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
     @Override
     public void refresh() {
+        mView.showProgressbar();
         fetchData();
+        mView.goToTop();
     }
 
     @Override

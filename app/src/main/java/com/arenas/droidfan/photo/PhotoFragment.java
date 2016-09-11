@@ -63,7 +63,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new PhotoPagerAdapter(getContext() , new ArrayList<StatusModel>() , saveImage);
+        mAdapter = new PhotoPagerAdapter(getActivity() , getContext() , new ArrayList<StatusModel>() , saveImage);
     }
 
     @Nullable

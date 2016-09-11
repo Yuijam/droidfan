@@ -14,10 +14,11 @@ import java.util.List;
  */
 public interface MessageContract {
     interface View extends BaseView{
-        void showProgressbar();
         void hideProgressbar();
         void showError(String text);
         void showList(List<DirectMessageModel> models);
+        void goToTop();
+        void showProgressbar();
     }
 
     interface Presenter extends BasePresenter{

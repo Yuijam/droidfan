@@ -54,6 +54,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         holder.mUsername.setText(model.getUserScreenName());
         StatusUtils.setItemStatus(holder.mStatusText , model.getSimpleText());
         String avatarUrl = model.getUserProfileImageUrl();
+
         Picasso.with(mContext).load(avatarUrl).into(holder.mAvatar);
         holder.mAvatar.setOnClickListener(new View.OnClickListener() {
             @Override

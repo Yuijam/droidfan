@@ -23,6 +23,8 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.login.LoginActivity;
+import com.arenas.droidfan.main.ActivityCollector;
+import com.arenas.droidfan.main.MainActivity;
 import com.arenas.droidfan.notify.PushService;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
@@ -85,6 +87,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+
+        ActivityCollector.addActivity(this);
     }
 
     private void setupActionBar() {
@@ -133,6 +137,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (preference == loginout){
                 mFanFouDB.deleteAll();
                 AppContext.clearAccountInfo(mContext);
+
+                ActivityCollector.finishAll();
+
                 Intent intent = new Intent(mContext , LoginActivity.class);
                 startActivity(intent);
             }

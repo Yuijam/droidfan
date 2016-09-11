@@ -124,6 +124,7 @@ final class FanFouParser implements ApiParser {
                 pull.next();
             }
         } catch (Exception e) {
+
         }
 
         return result;

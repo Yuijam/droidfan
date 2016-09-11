@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -53,9 +54,16 @@ public class UpdateActivity extends AppCompatActivity {
     private UpdateContract.Presenter presenter;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("44444" , "onResume```");
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("44444" , "onCreate```");
         setContentView(R.layout.activity_update);
 
         ButterKnife.bind(this);
@@ -90,5 +98,17 @@ public class UpdateActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         presenter.onPermissionRequestResult(requestCode , permissions , grantResults);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("44444" , "onStop```");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("44444" , "onDestroy```");
     }
 }

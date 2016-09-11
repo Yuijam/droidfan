@@ -110,7 +110,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         mView.showStatusText(statusModel.getText());
         mView.showDate(DateTimeUtils.formatDate(statusModel.getTime()));
         mView.showSource(" 通过"+statusModel.getSource());
-        mView.showPhoto(statusModel.getPhotoImageUrl());
+        mView.showPhoto(statusModel.getPhotoLargeUrl());
         if (mIsFavorite){
             mView.showFavorite(R.drawable.ic_favorite_red);
         }
@@ -131,13 +131,13 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void delete() {
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<StatusModel>() {
             @Override
             public void call(Subscriber<? super StatusModel> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
 
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
@@ -158,7 +158,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , "操作失败！");
             }
 
             @Override
@@ -184,13 +184,13 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
             mFanFouDB.updateFavorite(tableName , m_id , 1);
         }
 
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            return;
+        }
         Observable.create(new Observable.OnSubscribe<StatusModel>() {
             @Override
             public void call(Subscriber<? super StatusModel> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
 
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
@@ -216,7 +216,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , "操作失败！");
             }
 
             @Override

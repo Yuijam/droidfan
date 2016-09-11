@@ -24,7 +24,9 @@
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,7 +46,9 @@
             android:name=".update.UpdateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustResize">
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            >
             <intent-filter>
                 <action android:name="com.arenas.droidfan.main.update.UpdateActivity" />
 
@@ -120,6 +124,8 @@
             android:name="PGYER_APPID"
             android:value="5db5fb1327460661e2fb54d8ffb217f5" >
         </meta-data>
+
+        <service android:name=".service.PostService"/>
     </application>
 
 </manifest>

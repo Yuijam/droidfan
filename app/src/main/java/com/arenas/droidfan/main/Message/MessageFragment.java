@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
@@ -38,6 +39,9 @@ public class MessageFragment extends Fragment implements MessageContract.View
     @BindView(R.id.recycler_view)
     XRecyclerView xRecyclerView;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
+
     @Override
     public void setPresenter(Object presenter) {
         mPresenter = (MessageContract.Presenter)presenter;
@@ -52,6 +56,7 @@ public class MessageFragment extends Fragment implements MessageContract.View
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAdapter = new ConversationListAdapter(getContext() , new ArrayList<DirectMessageModel>());
+        setRetainInstance(true);
     }
 
     @Nullable
@@ -82,14 +87,10 @@ public class MessageFragment extends Fragment implements MessageContract.View
     }
 
     @Override
-    public void showProgressbar() {
-
-    }
-
-    @Override
     public void hideProgressbar() {
         xRecyclerView.refreshComplete();
         xRecyclerView.loadMoreComplete();
+        progressBar.setVisibility(View.GONE);
     }
 
     class LocalReceiver extends BroadcastReceiver {
@@ -107,5 +108,15 @@ public class MessageFragment extends Fragment implements MessageContract.View
     @Override
     public void showList(List<DirectMessageModel> models) {
         mAdapter.replaceData(models);
+    }
+
+    @Override
+    public void goToTop() {
+        xRecyclerView.smoothScrollToPosition(0);
+    }
+
+    @Override
+    public void showProgressbar() {
+        progressBar.setVisibility(View.VISIBLE);
     }
 }

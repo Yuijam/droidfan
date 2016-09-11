@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
@@ -18,6 +19,8 @@ import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.photo.PhotoActivity;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
 
 /**
  * Created by Arenas on 2016/6/23.

@@ -2,8 +2,11 @@ package com.arenas.droidfan.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.List;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -50,12 +54,15 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("11111" , "F onResume```");
         mPresenter.start();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("11111" , "F onCreate```");
+        setRetainInstance(true);
         initAdapter();
     }
 
@@ -70,6 +77,7 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     public void init(View view){
+        Log.d("11111" , "F onCreateView```");
         ButterKnife.bind(this , view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -108,6 +116,11 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
         recyclerView.refreshComplete();
         recyclerView.loadMoreComplete();
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void goToTop() {
+        recyclerView.smoothScrollToPosition(0);
     }
 
     @Override

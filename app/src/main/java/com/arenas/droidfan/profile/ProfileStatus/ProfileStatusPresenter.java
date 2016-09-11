@@ -97,16 +97,15 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     protected void startService() {
-        Log.d(TAG , "startService~");
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            mView.hideProgressBar();
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getUserTimeline(mUserId , p);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -122,7 +121,8 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgressBar();
             }
 
             @Override

@@ -112,13 +112,14 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
     private void fetchUser() {
         Log.d(TAG , "fetchUser!!!");
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            mView.hideProgress();
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<UserModel>() {
             @Override
             public void call(Subscriber<? super UserModel> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     UserModel model = AppContext.getApi().showUser(mUserId);
@@ -137,7 +138,8 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgress();
             }
 
             @Override

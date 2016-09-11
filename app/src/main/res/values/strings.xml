@@ -15,9 +15,8 @@
     <string name="title_activity_login">登录</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">账号</string>
+    <string name="account">账号</string>
     <string name="prompt_password">密码</string>
-    <string name="action_sign_in">登录</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">邮箱地址无效</string>
     <string name="error_invalid_password">密码太短</string>
@@ -41,6 +40,7 @@
     <string name="delete_dialog_message">确定删除该消息？</string>
     <string name="no_new_status">没有新消息</string>
     <string name="network_is_disconnected">没有网络！</string>
+    <string name="network_is_disconnected_and_saved_to_draft">没有网络！发送失败，已保存至草稿箱</string>
     <string name="view_photo">查看图片</string>
     <string name="follow">正在关注</string>
     <string name="follower">关注者</string>
@@ -55,6 +55,8 @@
     <string name="save_draft_message">保存到草稿？</string>
     <string name="do_not_save">不必</string>
     <string name="draft_box">草稿箱</string>
+    <string name="failed_refresh">获取数据失败ORZ~</string>
+    <string name="failed_post">发送失败，已保存到草稿箱</string>
 
 
     <string name="title_activity_profile">ProfileActivity</string>
@@ -88,28 +90,10 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
 
-    <string name="pref_title_sync_frequency">提醒频率</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>每 5 分钟</item>
-        <item>每 15 分钟</item>
-        <item>每 30 分钟</item>
-        <item>每 1 小时</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>5</item>
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
     <string name="feedback">反馈</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_title_new_message_notifications">新消息时铃声提醒</string>
 
     <string name="pref_title_ringtone">铃声</string>

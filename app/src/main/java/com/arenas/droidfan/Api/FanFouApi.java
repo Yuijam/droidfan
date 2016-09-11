@@ -1000,30 +1000,34 @@ final class FanFouApi implements Api {
     private String fetch(final RequestBuilder builder) throws ApiException {
         OAuthRequest request = builder.build();
         request.setConnectTimeout(5, TimeUnit.SECONDS);
-        request.setReadTimeout(10, TimeUnit.SECONDS);
+        request.setReadTimeout(100, TimeUnit.SECONDS);//先设置成100 有问题再改
+        int statusCode = -1;
         try {
             if (mOAuthService != null && mAccessToken != null) {
                 mOAuthService.signRequest(mAccessToken, request);
             }
 
             Response response = request.send();
-            int statusCode = response.getCode();
+            statusCode = response.getCode();
             String body = response.getBody();
+
+            Log.d(TAG , "statusCode = " + statusCode);
             if (DEBUG) {
                 debug("fetch() statusCode=" + statusCode + " builder=" + builder);
             }
             if (statusCode >= 200 && statusCode < 300) {
-                Log.d(TAG , "body = " + body);
+//                Log.d(TAG , "body = " + body);
                 return body;
             }
-            Log.d(TAG , "body = " + body);
+//            Log.d(TAG , "body = " + body);
+            Log.d(TAG , "throw new Api e");
             throw new ApiException(statusCode, FanFouParser.error(body));
         } catch (IOException e) {
+            Log.d(TAG , "catch ioexception e status code = " + statusCode);
             if (DEBUG) {
                 Log.e(TAG, e.toString());
             }
-            throw new ApiException(ApiException.IO_ERROR, e.toString(),
-                    e);
+            throw new ApiException(statusCode , e.toString(), e);
         }
     }
 

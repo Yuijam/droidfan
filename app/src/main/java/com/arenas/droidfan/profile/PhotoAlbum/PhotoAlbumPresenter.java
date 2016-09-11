@@ -47,13 +47,13 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
     @Override
     protected void startService() {
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getPhotosTimeline(mUserId , p);
@@ -72,7 +72,8 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgressBar();
             }
 
             @Override

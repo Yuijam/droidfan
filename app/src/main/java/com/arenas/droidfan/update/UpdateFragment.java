@@ -101,7 +101,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_update , container , false);
         init(view);
-        Log.d(TAG , "onCreateView```");
         if (savedInstanceState != null){
             Log.d(TAG , savedInstanceState.getString(KEY_STATUS));
             mStatusText.setText(savedInstanceState.getString(KEY_STATUS));
@@ -155,6 +154,17 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     }
 
     @Override
+    public void afterTextChanged(Editable editable) {
+        int rest = MAX_TEXT_LENGTH - temp.length();
+        mTextCount.setText(""+rest);
+        if (rest < 0 || rest == MAX_TEXT_LENGTH){
+            invalidSend();
+        }else {
+            activateSend();
+        }
+    }
+
+    @Override
     public void finish() {
         getActivity().finish();
     }
@@ -184,17 +194,6 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                     }
                 }).create();
         alertDialog.show();
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-        int rest = MAX_TEXT_LENGTH - temp.length();
-        mTextCount.setText(""+rest);
-        if (rest < 0 || rest == MAX_TEXT_LENGTH){
-            invalidSend();
-        }else {
-            activateSend();
-        }
     }
 
     private void activateSend(){
@@ -268,5 +267,15 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
     @Override
     public void setSelection(String text) {
         Selection.setSelection(mStatusText.getText() , text.length());
+    }
+
+    @Override
+    public void refreshInputStatus() {
+        int textLength = mStatusText.getText().toString().length();
+        mTextCount.setText((MAX_TEXT_LENGTH - textLength) + "");
+        if (textLength > 0 && textLength <= MAX_TEXT_LENGTH){
+            activateSend();
+        }
+
     }
 }

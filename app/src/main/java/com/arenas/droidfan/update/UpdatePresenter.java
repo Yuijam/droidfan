@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -11,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
@@ -25,10 +28,12 @@ import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.Draft;
+import com.arenas.droidfan.data.model.Photo;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.draft.DraftActivity;
+import com.arenas.droidfan.service.PostService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -122,14 +127,15 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     private void getFollowing(){
+
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            return;
+        }
+
         rx.Observable.create(new rx.Observable.OnSubscribe<List<UserModel>>() {
             @Override
             public void call(Subscriber<? super List<UserModel>> subscriber) {
-
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
 
                 try{
                     Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
@@ -151,7 +157,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(TAG , e.getMessage());
             }
 
             @Override
@@ -167,58 +173,12 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     private void updateStatus() {
-        Observable.create(new Observable.OnSubscribe<StatusModel>() {
-            @Override
-            public void call(Subscriber<? super StatusModel> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
-                StatusModel model;
-                try{
-                    if (mPhoto == null){
-                        switch (mActionType){
-                            case UpdateActivity.TYPE_REPLY:
-                                model = api.updateStatus(text , id , "" , "");
-                                break;
-                            case UpdateActivity.TYPE_RETWEET:
-                                model = api.updateStatus(text , "" , id , "");
-                                break;
-                            default:
-                                model = api.updateStatus(text, "" , "" , "");
-                                break;
-                        }
-                    }else {
-                        model = api.uploadPhoto(mPhoto , text , "");
-                    }
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
-                    subscriber.onNext(model);
-                    subscriber.onCompleted();
-                }catch (ApiException e){
-                    subscriber.onError(e);
-                }
-
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<StatusModel>() {
-            @Override
-            public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(StatusModel models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                if(models == null){
-                    saveDraft(text);
-                    Utils.showToast(mContext , "发送失败，已保存到草稿箱");
-                }
-            }
-        });
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            saveDraft(text);
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected_and_saved_to_draft));
+            return;
+        }
+        PostService.start(mContext , mActionType , id , text , mPhotoPath);
     }
 
     private void populateStatusText(){
@@ -259,11 +219,13 @@ public class UpdatePresenter implements UpdateContract.Presenter
                 }
                 mView.setStatusText(sb.toString());
                 mView.setSelection(sb.toString());
+                mView.refreshInputStatus();
                 break;
             case UpdateActivity.TYPE_RETWEET:
                 sb.append(" 转@").append(mStatusModel.getUserScreenName()).append(" ")
                         .append(mStatusModel.getSimpleText());
                 mView.setStatusText(sb.toString());
+                mView.refreshInputStatus();
                 break;
         }
     }
@@ -288,13 +250,23 @@ public class UpdatePresenter implements UpdateContract.Presenter
                     mView.showPhoto(ImageUtils.scalePic(context , mPhotoPath , 90));
                     break;
                 case UpdateFragment.REQUEST_TAKE_PHOTO:
-                    mPhoto = new File(mPhotoPath);
-                    mView.showPhoto(ImageUtils.scalePic(context , mPhotoPath , 90 ));
+                    if (mPhoto != null){
+                        Log.d(TAG , "mPhoto != null");
+                        mView.showPhoto(ImageUtils.scalePic(context , mPhotoPath , 90 ));
+                    }else {
+                        Log.d(TAG , "mPhoto == null");
+                    }
                     break;
                 case UpdateFragment.REQUEST_DRAFT:
                     Draft draft = data.getParcelableExtra(DraftActivity.EXTRA_DRAFT);
                     mView.setStatusText(draft.text);
                     mPhotoPath = draft.fileName;
+                    if (mPhotoPath != null){
+                        Bitmap bitmap = BitmapFactory.decodeFile(mPhotoPath);
+                        mView.showPhoto(bitmap);
+                    }
+                    mView.refreshInputStatus();//更新字数和发送按钮的状态
+
                     switch (draft.type){
                         case Draft.TYPE_REPLY:
                             mActionType = UpdateActivity.TYPE_REPLY;
@@ -324,9 +296,10 @@ public class UpdatePresenter implements UpdateContract.Presenter
     public void takePhoto(Activity activity , int requestCode){
         this.activity = activity;
         if (PermissionUtils.isStoragePermissionGranted(mContext)){//有权限
-            mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + Utils.getCurTimeStr() + ".png";
+            mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + System.currentTimeMillis() + ".png";
+            mPhoto = new File(mPhotoPath);
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mPhotoPath)));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhoto));
             activity.startActivityForResult(intent, requestCode);
         }else {
             requestFlag = requestCode;
@@ -337,6 +310,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
     @Override
     public void selectPhoto(Activity activity, int requestCode) {
         this.activity = activity;
+        Log.d(TAG , "selectPhoto");
         if (PermissionUtils.isStoragePermissionGranted(mContext)){
             Utils.selectImage(activity , requestCode);
         }else {
@@ -347,14 +321,12 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     @Override
     public void onPermissionRequestResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_STORAGE_PERMISSION){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 if (requestFlag == UpdateFragment.REQUEST_TAKE_PHOTO)
                     takePhoto(activity , UpdateFragment.REQUEST_TAKE_PHOTO);
                 else
                     selectPhoto(activity , UpdateFragment.REQUEST_SELECT_PHOTO);
             }
-        }
     }
 
     @Override

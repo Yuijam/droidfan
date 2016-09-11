@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     tools:context=".main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -29,6 +30,7 @@
             app:tabIndicatorColor="@color/colorPrimary"
             app:tabTextColor="@color/update_gray"
             app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabIndicatorHeight="4dp"
             app:tabGravity="fill"
             app:tabMode="scrollable"
             />
@@ -42,22 +44,45 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <com.flask.floatingactionmenu.FloatingActionMenu
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_edit"
-        />
+        >
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_up"
-        android:visibility="gone"
-        />
+        <com.flask.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab_to_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            fab:fab_normal_icon="@drawable/return_top"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_type="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            />
+
+        <com.flask.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            fab:fab_normal_icon="@drawable/ic_edit"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_type="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            />
+
+        <com.flask.floatingactionmenu.FloatingActionToggleButton
+            android:id="@+id/fab_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            fab:fab_normal_icon="@drawable/ic_add_white_48dp"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_toggle_icon="@drawable/ic_close"
+            />
+
+    </com.flask.floatingactionmenu.FloatingActionMenu>
+
 </android.support.design.widget.CoordinatorLayout>

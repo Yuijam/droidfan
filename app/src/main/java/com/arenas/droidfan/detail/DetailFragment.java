@@ -11,6 +11,7 @@ import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,9 @@ import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +46,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     @BindView(R.id.status_detail) TextView mStatusDetail;
     @BindView(R.id.source) TextView mSource;
     @BindView(R.id.date) TextView mDate;
-    @BindView(R.id.photo) RoundedImageView mPhoto;
+    @BindView(R.id.photo) ImageView mPhoto;
     @BindView(R.id.iv_avatar) ImageView mAvatar;
     @BindView(R.id.reply) ImageView mReply;
     @BindView(R.id.delete) ImageView mDelete;
@@ -201,8 +205,15 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     @Override
     public void showPhoto(String url) {
-        Picasso.with(getContext()).load(url).into(mPhoto);
-//        Glide.with(getContext()).load(url).into(mPhoto);
+//        Picasso.with(getContext()).load(url).into(mPhoto);
+        Glide.with(getContext()).load(url).into(new GlideDrawableImageViewTarget(mPhoto){
+            //应该是要由个gif的placeholder的 显示正在努力加载
+            @Override
+            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                super.onResourceReady(resource, animation);
+                mPhoto.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

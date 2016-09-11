@@ -17,6 +17,7 @@ public interface HomeTimelineContract {
         void hideProgressBar();
         void showProgressBar();
         void removeStatusItem(int position);
+        void goToTop();
     }
 
     interface Presenter extends BasePresenter{

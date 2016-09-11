@@ -46,13 +46,8 @@
         >
         <Preference
             android:title="版本"
-            android:summary="1.0.0"
             android:key="version_code"
             />
-
-        <Preference
-            android:title="作者：放學後茶會"
-            android:summary="设计：Uranus.."/>
 
     </PreferenceCategory>
 
@@ -68,7 +63,7 @@
     </Preference>
 
     <Preference
-        android:title="清除数据"
+        android:title="清除缓存"
         android:key="clear_data"
         />
 

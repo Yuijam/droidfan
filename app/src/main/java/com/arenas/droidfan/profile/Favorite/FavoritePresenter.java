@@ -52,16 +52,15 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
     @Override
     protected void startService() {
+        if (!NetworkUtils.isNetworkConnected(mContext)){
+            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
+            mView.hideProgressBar();
+            return;
+        }
         rx.Observable.create(new rx.Observable.OnSubscribe<List<StatusModel>>() {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
-                if (!NetworkUtils.isNetworkConnected(mContext)){
-                    Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-                    return;
-                }
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
-                    Log.d(TAG , "p.maxid = " + p.maxId);
                     List<StatusModel> model = AppContext.getApi().getFavorites(mUserId , p);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -78,13 +77,12 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
             @Override
             public void onError(Throwable e) {
-
+                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                mView.hideProgressBar();
             }
 
             @Override
             public void onNext(List<StatusModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                Log.d(TAG , "favorite model.size = " + models.size());
                 if(models.size() > 0){
                     if (isRefresh){
                         mFanFouDB.deleteFavorites(mUserId);
