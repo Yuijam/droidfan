@@ -27,70 +27,32 @@ import java.util.List;
 /**
  * Created by Arenas on 2016/7/28.
  */
-public class PhotoPresenter implements PhotoContract.Presenter , DataSource.LoadStatusCallback {
+public class PhotoPresenter implements PhotoContract.Presenter {
 
     private static final String TAG = PhotoPresenter.class.getSimpleName();
 
     private static final int REQUEST_STORAGE_PERMISSION = 1;
 
-    private FanFouDB mFanFouDB;
     private PhotoContract.View mView;
-    private String mTableName;
-    private int m_id;
-    private String mUserId;
     private Context mContext;
-    private List<StatusModel> mDatas;
+    private List<StatusModel> statusModelList;
     private Activity activity;
     int mPosition;
     private String photoUrl;
 
-    public PhotoPresenter(Context context , PhotoContract.View view ,
-                          String table , int _id , String userId , int position){
+    public PhotoPresenter(Context context , PhotoContract.View view , List<StatusModel> statusModels , int position){
         mView = view;
-        mFanFouDB = FanFouDB.getInstance(context);
-        mTableName = table;
         mContext = context;
-        m_id = _id;
-        mUserId = userId;
         mPosition = position;
-        Log.d(TAG , "mUserId = " + userId);
-        mDatas = new ArrayList<>();
+        statusModelList = statusModels;
 
         mView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        if (isTimelinePhoto()){
-            loadTimelineData();
-            mView.showPhoto(mDatas);
-        }else {
-            loadProfileData();
-        }
-    }
-
-    private boolean isTimelinePhoto(){
-        return mUserId == null;
-    }
-
-    private void loadTimelineData(){
-        mDatas.add(mFanFouDB.getStatus(m_id , mTableName));
-    }
-
-    private void loadProfileData(){
-        mFanFouDB.loadPhotoTimeline(mUserId , this);
-    }
-
-    @Override
-    public void onStatusLoaded(List<StatusModel> status) {
-        mDatas = status;
-        mView.showPhoto(status);
+        mView.showPhoto(statusModelList);
         mView.setCurrentPage(mPosition);
-    }
-
-    @Override
-    public void onDataNotAvailable() {
-        mView.showError("found nothing !");
     }
 
     @Override

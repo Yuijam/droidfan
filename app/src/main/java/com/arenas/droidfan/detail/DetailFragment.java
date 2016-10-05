@@ -8,8 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,19 +21,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.StatusUtils;
 import com.arenas.droidfan.Util.Utils;
+import com.arenas.droidfan.adapter.StatusAdapter;
+import com.arenas.droidfan.adapter.StatusContextAdapter;
+import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +68,11 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
 
     @BindView(R.id.share) ImageView share;
 
+    private XRecyclerView statusContext;
+    private ProgressBar progressBar;
+
+    private StatusContextAdapter adapter;
+
     public DetailFragment() {
         // Required empty public constructor
     }
@@ -77,15 +93,23 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new StatusContextAdapter(this , new ArrayList<StatusModel>());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
         init(view);
         return view;
     }
 
     private void init(View view){
-        ButterKnife.bind(this , view);
+        View header = LayoutInflater.from(getContext()).inflate(R.layout.detail_header_view, (ViewGroup)view.findViewById(android.R.id.content),false);
+        ButterKnife.bind(this , header);
 
         mStatusDetail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -103,6 +127,14 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
         mDelete.setOnClickListener(this);
         mUserlayout.setOnClickListener(this);
         mPhoto.setOnClickListener(this);
+        statusContext = (XRecyclerView)view.findViewById(R.id.status_context);
+        statusContext.setLayoutManager(new LinearLayoutManager(getContext()));
+        statusContext.addHeaderView(header);
+        statusContext.setPullRefreshEnabled(false);
+        statusContext.setLoadingMoreEnabled(false);
+        statusContext.setAdapter(adapter);
+
+        progressBar = (ProgressBar)view.findViewById(R.id.progressbar);
 
         setHasOptionsMenu(true);
     }
@@ -153,10 +185,9 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     }
 
     @Override
-    public void setResult(int resultCode , int position , int type) {
+    public void setResult(int resultCode , int position) {
         Intent intent = new Intent();
         intent.putExtra(DetailActivity.EXTRA_POSITION , position);
-        intent.putExtra(DetailActivity.EXTRA_STATUS_TYPE , type);
         getActivity().setResult(resultCode , intent);
     }
 
@@ -233,9 +264,25 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
                         mPresenter.delete();
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    @Override
+    public void showStatusContext(List<StatusModel> statusModelsList) {
+        adapter.replaceData(statusModelsList);
+    }
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 }

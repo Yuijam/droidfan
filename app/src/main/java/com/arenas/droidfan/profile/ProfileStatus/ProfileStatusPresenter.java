@@ -49,7 +49,6 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     @Override
     public void start() {
         if (!startComplete){
-            Log.d(TAG , "start ~");
             mView.showProgressBar();
             EventBus.getDefault().register(this);
             startComplete = true;
@@ -72,7 +71,6 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     public void refresh() {
-        Log.d(TAG , "refresh");
         initSinceId();
         startService();
     }
@@ -121,13 +119,11 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
             @Override
             public void onError(Throwable e) {
-                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
                 mView.hideProgressBar();
             }
 
             @Override
             public void onNext(List<StatusModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 if(models.size() > 0){
                     mFanFouDB.saveProfileStatusList(models);
                     loadStatus();
@@ -143,6 +139,5 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
         p = new Paging();
         p.count = 20;
         p.maxId = mFanFouDB.getProfileMaxId(mUserId);
-        Log.d(TAG , "maxId = " + p.maxId);
     }
 }

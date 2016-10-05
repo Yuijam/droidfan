@@ -48,7 +48,7 @@ import rx.schedulers.Schedulers;
  * Created by Arenas on 2016/7/11.
  */
 public class UpdatePresenter implements UpdateContract.Presenter
-        , DataSource.GetStatusCallback , DataSource.LoadUserCallback {
+         , DataSource.LoadUserCallback {
 
     private static final String TAG = UpdatePresenter.class.getSimpleName();
 
@@ -59,10 +59,8 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     private File mPhoto;
     private String mPhotoPath;
-    private int m_Id = -1;
     private StatusModel mStatusModel;
     private int mActionType;
-    private int mStatusType;
     private Context mContext;
     private String text;
     private Api api;
@@ -72,14 +70,15 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     private int requestFlag;
 
-    public UpdatePresenter(int _id ,int type , int statusType , Context context , UpdateContract.View mView) {
+    public UpdatePresenter(Context context , UpdateContract.View mView , int actionType , StatusModel statusModel) {
         this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
 
-        m_Id = _id;
-        mActionType = type;
-        mStatusType = statusType;
+        mActionType = actionType;
+        mStatusModel = statusModel;
         mContext = context;
+        if (!isNewStatus())
+            id = statusModel.getId();
 
         api = AppContext.getApi();
         mView.setPresenter(this);
@@ -87,7 +86,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
     @Override
     public void start() {
-        Log.d(TAG , "start()```");
         if (!startComplete){
             if (!isNewStatus()){
                 populateStatusText();
@@ -121,11 +119,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
         mView.setAutoTextAdapter(users);
     }
 
-    @Override
-    public void onDataNotAvailable() {
-        mView.showError();
-    }
-
     private void getFollowing(){
 
         if (!NetworkUtils.isNetworkConnected(mContext)){
@@ -138,7 +131,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
             public void call(Subscriber<? super List<UserModel>> subscriber) {
 
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<UserModel> models = api.getFriends(AppContext.getAccount() , null);
                     mFanFouDB.saveFollowing(models , AppContext.getAccount());
 
@@ -152,7 +144,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<UserModel>>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -162,7 +153,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
 
             @Override
             public void onNext(List<UserModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 if (models.isEmpty()){
                     Log.d(TAG , "failed to fetch following list ~~~!!!!!");
                 }else {
@@ -182,34 +172,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     private void populateStatusText(){
-        switch (mStatusType){
-            case DetailActivity.TYPE_HOME:
-                mFanFouDB.getHomeTLStatus(m_Id , this);
-                break;
-            case DetailActivity.TYPE_MENTIONS:
-                mFanFouDB.getNoticeStatus(m_Id , this);
-                break;
-            case DetailActivity.TYPE_PUBLIC:
-                mFanFouDB.getPublicStatus(m_Id , this);
-                break;
-            case DetailActivity.TYPE_PROFILE:
-                mFanFouDB.getProfileStatus(m_Id , this);
-                break;
-            case DetailActivity.TYPE_FAVORITES:
-                mFanFouDB.getFavorite(m_Id , this);
-                break;
-            default:
-                String text = "@放學後茶會 ";
-                mView.setStatusText(text);
-                mView.setSelection(text);
-                break;
-        }
-    }
-
-    @Override
-    public void onStatusLoaded(StatusModel statusModel) {
-        mStatusModel = statusModel;
-        id = statusModel.getId();
         StringBuilder sb = new StringBuilder();
         switch (mActionType){
             case UpdateActivity.TYPE_REPLY:
@@ -227,6 +189,12 @@ public class UpdatePresenter implements UpdateContract.Presenter
                 mView.setStatusText(sb.toString());
                 mView.refreshInputStatus();
                 break;
+            case UpdateActivity.TYPE_FEEDBACK:
+                String feedBackHeader = "@放學後茶會 ";
+                mView.setStatusText(feedBackHeader);
+                mView.setSelection(feedBackHeader);
+                mView.refreshInputStatus();
+                break;
         }
     }
 
@@ -236,7 +204,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
     }
 
     private boolean isNewStatus(){
-        return m_Id == -1;
+        return mActionType == -1;
     }
 
     @Override

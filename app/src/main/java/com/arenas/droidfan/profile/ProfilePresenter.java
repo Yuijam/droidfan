@@ -3,7 +3,6 @@ package com.arenas.droidfan.profile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
@@ -15,7 +14,6 @@ import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
-import com.arenas.droidfan.service.FanFouService;
 import com.arenas.droidfan.users.UserListActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -138,7 +136,7 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
             @Override
             public void onError(Throwable e) {
-                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
+                Log.d(TAG , e.toString());
                 mView.hideProgress();
             }
 
@@ -216,10 +214,9 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
             if (mIsAFollower){
                 mView.showDMView();
             }
-            if (!isStatusAvailable()){
-//                mView.showLock();
-                //show toast 的工作交给 ProfileStatus
-            }
+//            if (!isStatusAvailable()){
+//                //show toast 的工作交给 ProfileStatus
+//            }
         }
     }
 

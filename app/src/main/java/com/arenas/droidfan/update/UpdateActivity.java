@@ -19,6 +19,7 @@ import android.view.Window;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.data.db.FanFouDB;
+import com.arenas.droidfan.data.model.StatusModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,9 +28,8 @@ public class UpdateActivity extends AppCompatActivity {
 
     private static final String TAG = UpdateActivity.class.getSimpleName();
 
-    public static final String EXTRA_ID = "extra_id";
     public static final String EXTRA_ACTION_TYPE = "extra_action_type";
-    public static final String EXTRA_STATUS_TYPE = "extra_status_type";
+    public static final String EXTRA_STATUS_MODEL = "extra_status_model";
 
     public static final int TYPE_REPLY = 1;
     public static final int TYPE_RETWEET = 2;
@@ -40,11 +40,10 @@ public class UpdateActivity extends AppCompatActivity {
         activity.startActivity(intent);
     }
 
-    public static void start(Context context , int _id , int actionType , int statusType){
+    public static void start(Context context , StatusModel statusModel , int actionType){
         Intent intent = new Intent(context , UpdateActivity.class);
-        intent.putExtra(EXTRA_ID , _id);
+        intent.putExtra(EXTRA_STATUS_MODEL , statusModel);
         intent.putExtra(EXTRA_ACTION_TYPE, actionType);
-        intent.putExtra(EXTRA_STATUS_TYPE , statusType);
         context.startActivity(intent);
     }
 
@@ -54,16 +53,9 @@ public class UpdateActivity extends AppCompatActivity {
     private UpdateContract.Presenter presenter;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("44444" , "onResume```");
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("44444" , "onCreate```");
         setContentView(R.layout.activity_update);
 
         ButterKnife.bind(this);
@@ -79,10 +71,9 @@ public class UpdateActivity extends AppCompatActivity {
             Utils.addFragmentToActivity(getSupportFragmentManager() , updateFragment , R.id.content_frame);
         }
 
-        int _id = getIntent().getIntExtra(EXTRA_ID , -1);
         int actionType = getIntent().getIntExtra(EXTRA_ACTION_TYPE, -1);
-        int statusType = getIntent().getIntExtra(EXTRA_STATUS_TYPE, -1);
-        presenter = new UpdatePresenter( _id , actionType , statusType , this , updateFragment);
+        StatusModel statusModel = getIntent().getParcelableExtra(EXTRA_STATUS_MODEL);
+        presenter = new UpdatePresenter( this , updateFragment , actionType , statusModel);
     }
 
     @Override
@@ -98,17 +89,5 @@ public class UpdateActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         presenter.onPermissionRequestResult(requestCode , permissions , grantResults);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("44444" , "onStop```");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("44444" , "onDestroy```");
     }
 }

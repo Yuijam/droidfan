@@ -89,10 +89,10 @@ public class PostService extends IntentService {
             if (photoPath == null){
                 switch (actionType){
                     case UpdateActivity.TYPE_REPLY:
-                        model = api.updateStatus(text , msgId , "" , "");
+                        model = api.updateStatus(text , msgId , null , null);
                         break;
                     case UpdateActivity.TYPE_RETWEET:
-                        model = api.updateStatus(text , "" , msgId , "");
+                        model = api.updateStatus(text , null , msgId , null);
                         break;
                     default:
                         model = api.updateStatus(text, "" , "" , "");

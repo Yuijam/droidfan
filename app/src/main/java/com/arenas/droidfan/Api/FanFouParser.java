@@ -466,6 +466,7 @@ final class FanFouParser implements ApiParser {
         // model.setNote();
 
         model.setRawId(o.getLong("rawid"));
+
         model.setTime(FanFouParser.date(o.getString("created_at")).getTime());
 
         model.setText(o.getString("text"));

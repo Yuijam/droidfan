@@ -6,6 +6,9 @@ import android.net.Uri;
 
 import com.arenas.droidfan.BasePresenter;
 import com.arenas.droidfan.BaseView;
+import com.arenas.droidfan.data.model.StatusModel;
+
+import java.util.List;
 
 /**
  * Created by Arenas on 2016/7/15.
@@ -24,7 +27,10 @@ public interface DetailContract {
         void showFavorite(int resId);
         void showDelete();
         void finish();
-        void setResult(int resultCode , int postion , int type);
+        void setResult(int resultCode , int position);
+        void showStatusContext(List<StatusModel> statusModelsList);
+        void showProgressBar();
+        void hideProgressBar();
     }
 
     interface Presenter extends BasePresenter{

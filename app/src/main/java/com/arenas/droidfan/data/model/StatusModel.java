@@ -1,9 +1,12 @@
 package com.arenas.droidfan.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 
-public class StatusModel {
+public class StatusModel implements Parcelable {
     public static final int TYPE_HOME = 101;
     public static final int TYPE_MENTIONS = 102;
     public static final int TYPE_PUBLIC = 103;
@@ -45,9 +48,9 @@ public class StatusModel {
     private int read;
     private int thread;
     private int special;
-    private List<String> urls;
-    private List<String> hashtags;
-    private List<String> mentions;
+//    private List<String> urls;
+//    private List<String> hashtags;
+//    private List<String> mentions;
     private UserModel user;
 
     public StatusModel() {
@@ -293,29 +296,29 @@ public class StatusModel {
         this.special = special;
     }
 
-    public List<String> getUrls() {
-        return urls;
-    }
-
-    public void setUrls(List<String> urls) {
-        this.urls = urls;
-    }
-
-    public List<String> getHashtags() {
-        return hashtags;
-    }
-
-    public void setHashtags(List<String> hashtags) {
-        this.hashtags = hashtags;
-    }
-
-    public List<String> getMentions() {
-        return mentions;
-    }
-
-    public void setMentions(List<String> mentions) {
-        this.mentions = mentions;
-    }
+//    public List<String> getUrls() {
+//        return urls;
+//    }
+//
+//    public void setUrls(List<String> urls) {
+//        this.urls = urls;
+//    }
+//
+//    public List<String> getHashtags() {
+//        return hashtags;
+//    }
+//
+//    public void setHashtags(List<String> hashtags) {
+//        this.hashtags = hashtags;
+//    }
+//
+//    public List<String> getMentions() {
+//        return mentions;
+//    }
+//
+//    public void setMentions(List<String> mentions) {
+//        this.mentions = mentions;
+//    }
 
     public UserModel getUser() {
         return user;
@@ -357,11 +360,96 @@ public class StatusModel {
                 ", read=" + read +
                 ", thread=" + thread +
                 ", special=" + special +
-                ", urls=" + urls +
-                ", hashtags=" + hashtags +
-                ", mentions=" + mentions +
+//                ", urls=" + urls +
+//                ", hashtags=" + hashtags +
+//                ", mentions=" + mentions +
                 ", user=" + user +
                 '}';
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this._id);
+        dest.writeString(this.id);
+        dest.writeString(this.account);
+        dest.writeString(this.owner);
+        dest.writeLong(this.rawId);
+        dest.writeLong(this.time);
+        dest.writeString(this.text);
+        dest.writeString(this.simpleText);
+        dest.writeString(this.source);
+        dest.writeString(this.geo);
+        dest.writeString(this.photo);
+        dest.writeString(this.userId);
+        dest.writeString(this.userScreenName);
+        dest.writeString(this.userProfileImageUrl);
+        dest.writeString(this.inReplyToStatusId);
+        dest.writeString(this.inReplyToUserId);
+        dest.writeString(this.inReplyToScreenName);
+        dest.writeString(this.rtStatusId);
+        dest.writeString(this.rtUserId);
+        dest.writeString(this.rtScreenName);
+        dest.writeString(this.photoImageUrl);
+        dest.writeString(this.photoThumbUrl);
+        dest.writeString(this.photoLargeUrl);
+        dest.writeInt(this.truncated);
+        dest.writeInt(this.favorited);
+        dest.writeInt(this.retweeted);
+        dest.writeInt(this.self);
+        dest.writeInt(this.read);
+        dest.writeInt(this.thread);
+        dest.writeInt(this.special);
+        dest.writeParcelable(this.user, flags);
+    }
+
+    protected StatusModel(Parcel in) {
+        this._id = in.readInt();
+        this.id = in.readString();
+        this.account = in.readString();
+        this.owner = in.readString();
+        this.rawId = in.readLong();
+        this.time = in.readLong();
+        this.text = in.readString();
+        this.simpleText = in.readString();
+        this.source = in.readString();
+        this.geo = in.readString();
+        this.photo = in.readString();
+        this.userId = in.readString();
+        this.userScreenName = in.readString();
+        this.userProfileImageUrl = in.readString();
+        this.inReplyToStatusId = in.readString();
+        this.inReplyToUserId = in.readString();
+        this.inReplyToScreenName = in.readString();
+        this.rtStatusId = in.readString();
+        this.rtUserId = in.readString();
+        this.rtScreenName = in.readString();
+        this.photoImageUrl = in.readString();
+        this.photoThumbUrl = in.readString();
+        this.photoLargeUrl = in.readString();
+        this.truncated = in.readInt();
+        this.favorited = in.readInt();
+        this.retweeted = in.readInt();
+        this.self = in.readInt();
+        this.read = in.readInt();
+        this.thread = in.readInt();
+        this.special = in.readInt();
+        this.user = in.readParcelable(UserModel.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<StatusModel> CREATOR = new Parcelable.Creator<StatusModel>() {
+        @Override
+        public StatusModel createFromParcel(Parcel source) {
+            return new StatusModel(source);
+        }
+
+        @Override
+        public StatusModel[] newArray(int size) {
+            return new StatusModel[size];
+        }
+    };
 }

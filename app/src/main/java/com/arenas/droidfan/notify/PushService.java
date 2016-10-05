@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
+import com.arenas.droidfan.Util.NetworkUtils;
 import com.arenas.droidfan.api.Api;
 import com.arenas.droidfan.api.ApiException;
 import com.arenas.droidfan.api.Paging;
@@ -53,6 +54,9 @@ public class PushService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!NetworkUtils.isNetworkConnected(this))
+            return;
+
         if (sharedPref.getBoolean("do_not_notify_at_night" , true)){
             mCalendar = Calendar.getInstance();
             int curHour = mCalendar.get(Calendar.HOUR_OF_DAY);

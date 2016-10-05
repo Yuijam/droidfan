@@ -19,10 +19,13 @@ import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.main.TabFragmentAdapter;
+import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.update.UpdateActivity;
+
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -32,7 +35,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Arenas on 2016/7/15.
  */
-public class DetailPresenter implements DetailContract.Presenter , DataSource.GetStatusCallback{
+public class DetailPresenter implements DetailContract.Presenter {
 
     private static final String TAG = DetailPresenter.class.getSimpleName();
 
@@ -40,22 +43,18 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
     private final DetailContract.View mView;
 
     private StatusModel mStatusModel;
-    private int m_id;
     private boolean mIsFavorite;
-    private int mActionType;
     private Context mContext;
-    private String tableName;
     private int position;
 
     private Api api;
 
-    public DetailPresenter(int _id , int type , Context context , DetailContract.View mView , int position) {
+    public DetailPresenter(Context context , DetailContract.View mView , StatusModel statusModel , int position ) {
         this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
-        m_id = _id;
-        mActionType = type;
         this.position = position;
 
+        mStatusModel = statusModel;
         mContext = context;
         api = AppContext.getApi();
         mView.setPresenter(this);
@@ -63,44 +62,15 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void start() {
-        switch (mActionType){
-            case DetailActivity.TYPE_HOME:
-                mFanFouDB.getHomeTLStatus(m_id , this);
-                tableName = HomeStatusColumns.TABLE_NAME;
-                break;
-            case DetailActivity.TYPE_MENTIONS:
-                mFanFouDB.getNoticeStatus(m_id , this);
-                tableName = NoticeColumns.TABLE_NAME;
-                break;
-            case DetailActivity.TYPE_PUBLIC:
-                mFanFouDB.getPublicStatus(m_id , this);
-                tableName = PublicStatusColumns.TABLE_NAME;
-                break;
-            case DetailActivity.TYPE_PROFILE:
-                mFanFouDB.getProfileStatus(m_id , this);
-                tableName = ProfileColumns.TABLE_NAME;
-                break;
-            case DetailActivity.TYPE_FAVORITES:
-                Log.d(TAG , "m_id = " + m_id);
-                mFanFouDB.getFavorite(m_id , this);
-                tableName = FavoritesColumns.TABLE_NAME;
-                break;
+        showUi(mStatusModel);
+        if (mStatusModel.getInReplyToStatusId() != null){
+            mView.showProgressBar();
+            fetchStatusContext();
         }
-
     }
 
-    @Override
-    public void onStatusLoaded(StatusModel statusModel) {
-        mStatusModel = statusModel;
-        if (mStatusModel.getFavorited() == 1){
-            mIsFavorite = true;
-        }
-        showUi(statusModel);
-    }
-
-    @Override
-    public void onDataNotAvailable() {
-        mView.showError();
+    private boolean isFavorite(){
+        return mStatusModel.getFavorited() == 1;
     }
 
     private void showUi(StatusModel statusModel){
@@ -111,7 +81,7 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         mView.showDate(DateTimeUtils.formatDate(statusModel.getTime()));
         mView.showSource(" 通过"+statusModel.getSource());
         mView.showPhoto(statusModel.getPhotoLargeUrl());
-        if (mIsFavorite){
+        if (isFavorite()){
             mView.showFavorite(R.drawable.ic_favorite_red);
         }
         if (mStatusModel.getUserId().equals(AppContext.getAccount())){
@@ -121,12 +91,12 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void reply() {
-        UpdateActivity.start(mContext , m_id , UpdateActivity.TYPE_REPLY , mActionType);
+        UpdateActivity.start(mContext , mStatusModel , UpdateActivity.TYPE_REPLY);
     }
 
     @Override
     public void retweet() {
-        UpdateActivity.start(mContext , m_id , UpdateActivity.TYPE_RETWEET , mActionType);
+        UpdateActivity.start(mContext , mStatusModel , UpdateActivity.TYPE_RETWEET);
     }
 
     @Override
@@ -138,13 +108,16 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         rx.Observable.create(new rx.Observable.OnSubscribe<StatusModel>() {
             @Override
             public void call(Subscriber<? super StatusModel> subscriber) {
-
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
-                    StatusModel model = api.deleteStatus(mStatusModel.getId());
+                    //先这么蛮横的干着再说 以后再改
+                    //等整体框架确定好之后再改mFanFouDB.deleteItem(NoticeColumns.TABLE_NAME , mStatusModel.getId());
                     mFanFouDB.deleteItem(HomeStatusColumns.TABLE_NAME , mStatusModel.getId());
+                    mFanFouDB.deleteItem(NoticeColumns.TABLE_NAME , mStatusModel.getId());
                     mFanFouDB.deleteItem(ProfileColumns.TABLE_NAME , mStatusModel.getId());
-                    subscriber.onNext(model);
+                    mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
+                    mFanFouDB.deleteItem(PublicStatusColumns.TABLE_NAME , mStatusModel.getId());
+                    api.deleteStatus(mStatusModel.getId());
+                    subscriber.onNext(null);
                     subscriber.onCompleted();
                 }catch (ApiException e){
                     subscriber.onError(e);
@@ -154,36 +127,25 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<StatusModel>() {
             @Override
             public void onCompleted() {
+
             }
 
             @Override
             public void onError(Throwable e) {
-                Utils.showToast(mContext , "操作失败！");
+                mView.setResult(DetailActivity.RESULT_DELETE , position );
+                mView.finish();
             }
 
             @Override
             public void onNext(StatusModel model) {
-//                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                // TODO: 2016/8/15  要操作一下麽?删除失败什么的 啊 还是先这样吧 有问题再说
+                mView.setResult(DetailActivity.RESULT_DELETE , position );
+                mView.finish();
             }
         });
-        mView.setResult(DetailActivity.RESULT_DELETE , position , mActionType);
-        mView.finish();
     }
-
-
 
     @Override
     public void favorite() {
-        if (mIsFavorite){//数据库更新N个地方 oh no !
-            mView.showFavorite(R.drawable.ic_favorite_grey);
-            mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
-            mFanFouDB.updateFavorite(tableName , m_id , 0);
-        }else {
-            mView.showFavorite(R.drawable.ic_favorite_red);
-            mFanFouDB.updateFavorite(tableName , m_id , 1);
-        }
-
         if (!NetworkUtils.isNetworkConnected(mContext)){
             Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
             return;
@@ -193,14 +155,11 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
             public void call(Subscriber<? super StatusModel> subscriber) {
 
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     StatusModel model;
-                    if (mIsFavorite){
+                    if (isFavorite()){
                         model = api.unfavorite(mStatusModel.getId());
-                        mIsFavorite = false;
                     }else {
                         model = api.favorite(mStatusModel.getId());
-                        mIsFavorite = true;
                     }
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -221,8 +180,26 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
             @Override
             public void onNext(StatusModel model) {
-//                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
-                // TODO: 2016/8/15  要操作一下麽?删除失败什么的 啊 还是先这样吧 有问题再说
+                if (isFavorite()){
+                    // TODO: 2016/10/5 这里有bug，不过先这样吧
+                    mView.showFavorite(R.drawable.ic_favorite_grey);
+                    mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , mStatusModel.getId());
+                    mStatusModel.setFavorited(0);
+                    //数据库更新N个地方 oh no !先这么将就着
+                    mFanFouDB.updateFavorite(HomeStatusColumns.TABLE_NAME , mStatusModel.get_id() , 0);
+                    mFanFouDB.updateFavorite(PublicStatusColumns.TABLE_NAME , mStatusModel.get_id() , 0);
+                    mFanFouDB.updateFavorite(NoticeColumns.TABLE_NAME , mStatusModel.get_id() , 0);
+                    mFanFouDB.updateFavorite(FavoritesColumns.TABLE_NAME , mStatusModel.get_id() , 0);
+                    mFanFouDB.updateFavorite(ProfileColumns.TABLE_NAME , mStatusModel.get_id() , 0);
+                }else {
+                    mView.showFavorite(R.drawable.ic_favorite_red);
+                    mStatusModel.setFavorited(1);
+                    mFanFouDB.updateFavorite(HomeStatusColumns.TABLE_NAME , mStatusModel.get_id() , 1);
+                    mFanFouDB.updateFavorite(PublicStatusColumns.TABLE_NAME , mStatusModel.get_id() , 1);
+                    mFanFouDB.updateFavorite(NoticeColumns.TABLE_NAME , mStatusModel.get_id() , 1);
+                    mFanFouDB.updateFavorite(FavoritesColumns.TABLE_NAME , mStatusModel.get_id() , 1);
+                    mFanFouDB.updateFavorite(ProfileColumns.TABLE_NAME , mStatusModel.get_id() , 1);
+                }
             }
         });
     }
@@ -239,6 +216,39 @@ public class DetailPresenter implements DetailContract.Presenter , DataSource.Ge
 
     @Override
     public void showLargePhoto() {
-        PhotoActivity.start(mContext , m_id , tableName , null , -1);
+        PhotoActivity.start(mContext , mStatusModel);
     }
+
+    private void fetchStatusContext(){
+        Observable.create(new Observable.OnSubscribe<List<StatusModel>>() {
+            @Override
+            public void call(Subscriber<? super List<StatusModel>> subscriber) {
+
+                try{
+                    List<StatusModel> statusModelList = api.getContextTimeline(mStatusModel.getId());
+                    subscriber.onNext(statusModelList);
+                    subscriber.onCompleted();
+                }catch (ApiException e){
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mView.hideProgressBar();
+            }
+
+            @Override
+            public void onNext(List<StatusModel> statusModelList) {
+                mView.hideProgressBar();
+                mView.showStatusContext(statusModelList);
+            }
+        });
+    }
+
 }

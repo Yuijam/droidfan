@@ -1,6 +1,9 @@
 package com.arenas.droidfan.data.model;
 
-public final class UserModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public final class UserModel implements Parcelable {
     public static final int TYPE_FRIENDS = 201;
     public static final int TYPE_FOLLOWERS = 202;
     public static final int TYPE_SEARCH = 203;
@@ -241,4 +244,78 @@ public final class UserModel {
                 + verified + ", followMe=" + followMe + "]";
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this._id);
+        dest.writeString(this.id);
+        dest.writeString(this.account);
+        dest.writeString(this.owner);
+        dest.writeLong(this.time);
+        dest.writeInt(this.type);
+        dest.writeString(this.screenName);
+        dest.writeString(this.location);
+        dest.writeString(this.gender);
+        dest.writeString(this.birthday);
+        dest.writeString(this.description);
+        dest.writeString(this.profileImageUrl);
+        dest.writeString(this.profileImageUrlLarge);
+        dest.writeString(this.url);
+        dest.writeString(this.status);
+        dest.writeInt(this.followersCount);
+        dest.writeInt(this.friendsCount);
+        dest.writeInt(this.favouritesCount);
+        dest.writeInt(this.statusesCount);
+        dest.writeInt(this.following);
+        dest.writeInt(this.protect);
+        dest.writeInt(this.notifications);
+        dest.writeInt(this.verified);
+        dest.writeInt(this.followMe);
+    }
+
+    public UserModel() {
+    }
+
+    protected UserModel(Parcel in) {
+        this._id = in.readInt();
+        this.id = in.readString();
+        this.account = in.readString();
+        this.owner = in.readString();
+        this.time = in.readLong();
+        this.type = in.readInt();
+        this.screenName = in.readString();
+        this.location = in.readString();
+        this.gender = in.readString();
+        this.birthday = in.readString();
+        this.description = in.readString();
+        this.profileImageUrl = in.readString();
+        this.profileImageUrlLarge = in.readString();
+        this.url = in.readString();
+        this.status = in.readString();
+        this.followersCount = in.readInt();
+        this.friendsCount = in.readInt();
+        this.favouritesCount = in.readInt();
+        this.statusesCount = in.readInt();
+        this.following = in.readInt();
+        this.protect = in.readInt();
+        this.notifications = in.readInt();
+        this.verified = in.readInt();
+        this.followMe = in.readInt();
+    }
+
+    public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
+        @Override
+        public UserModel createFromParcel(Parcel source) {
+            return new UserModel(source);
+        }
+
+        @Override
+        public UserModel[] newArray(int size) {
+            return new UserModel[size];
+        }
+    };
 }

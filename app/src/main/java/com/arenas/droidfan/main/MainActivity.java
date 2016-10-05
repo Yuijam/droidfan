@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,7 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -28,7 +26,6 @@ import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.NetworkUtils;
 import com.arenas.droidfan.Util.PermissionUtils;
-import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
@@ -42,12 +39,9 @@ import com.arenas.droidfan.notify.PushService;
 import com.arenas.droidfan.profile.ProfileActivity;
 import com.arenas.droidfan.setting.SettingsActivity;
 import com.arenas.droidfan.update.UpdateActivity;
-import com.arenas.droidfan.update.UpdateFragment;
-import com.arenas.droidfan.update.UpdatePresenter;
 import com.flask.floatingactionmenu.FloatingActionButton;
 import com.flask.floatingactionmenu.FloatingActionToggleButton;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.pgyersdk.Pgy;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.pgyersdk.javabean.AppBean;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -64,7 +58,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String TAG = "11111";
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     public static final int REQUEST_STORAGE_PERMISSION = 1;
 
@@ -100,12 +94,10 @@ public class MainActivity extends AppCompatActivity
                 fabToggle.toggleOff();
                 break;
             case 1:
-//                ((BaseFragment)fragmentAdapter.getItem(curPage)).goToTop();
                 noticePresenter.refresh();
                 fabToggle.toggleOff();
                 break;
             case 2:
-//                ((MessageFragment)fragmentAdapter.getItem(curPage)).goToTop();
                 messagePresenter.refresh();
                 fabToggle.toggleOff();
                 break;
@@ -113,31 +105,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG , "A onResume```");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG , "A onStart```");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG , "A onStop```");
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        Log.d(TAG , "A onCreate````");
 
         setSupportActionBar(toolbar);
 
@@ -222,7 +193,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -247,19 +217,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG , "onActivityResult --- > resultCode = " + resultCode + " , requestCode = " + requestCode);
-        if (requestCode == DetailActivity.REQUEST_DETAIL){
-            if (resultCode == DetailActivity.RESULT_DELETE){
-                int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
-                int type = data.getIntExtra(DetailActivity.EXTRA_STATUS_TYPE , -1);
-                if (type == DetailActivity.TYPE_HOME){
-                    homeTimelineView.removeStatusItem(position);
-                }
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.d(TAG , "onActivityResult --- > resultCode = " + resultCode + " , requestCode = " + requestCode);
+//        if (requestCode == DetailActivity.REQUEST_DETAIL){
+//            if (resultCode == DetailActivity.RESULT_DELETE){
+//                int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
+//                homeTimelineView.removeStatusItem(position);
+//            }
+//        }
+//    }
 
     class UpdateListener extends UpdateManagerListener {
 
@@ -314,24 +281,5 @@ public class MainActivity extends AppCompatActivity
                 updateListener.downloadUpdate();
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PgyCrashManager.unregister();
-        Log.d(TAG , "A onDestroy```");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG , "A onRestart```");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG , "A onPause```");
     }
 }

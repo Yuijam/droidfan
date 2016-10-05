@@ -37,8 +37,8 @@ public class HomeTimelineFragment extends BaseFragment{
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id , int position) {
-            DetailActivity.start(getActivity() , DetailActivity.TYPE_HOME , _id , position);
+        public void onItemClick(View view , StatusModel statusModel , int position) {
+            DetailActivity.start(HomeTimelineFragment.this , statusModel , position);
         }
 
         @Override
@@ -49,8 +49,8 @@ public class HomeTimelineFragment extends BaseFragment{
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override
-        public void onImageClick(int _id) {
-            PhotoActivity.start(getContext() , _id , HomeStatusColumns.TABLE_NAME , null , 0);
+        public void onImageClick(StatusModel statusModel) {
+            PhotoActivity.start(getContext() , statusModel);
         }
     };
 

@@ -42,7 +42,6 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
         p = new Paging();
         p.sinceId = mFanFouDB.getPhotoSinceId(mUserId);
         p.count = 20;
-        Log.d(TAG , "photo sinceId = " + p.sinceId);
     }
 
     @Override
@@ -55,7 +54,6 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getPhotosTimeline(mUserId , p);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -72,13 +70,11 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
             @Override
             public void onError(Throwable e) {
-                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
                 mView.hideProgressBar();
             }
 
             @Override
             public void onNext(List<StatusModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 if(models.size() > 0){
                     mFanFouDB.savePhotoTimeline(models);
                     loadStatus();

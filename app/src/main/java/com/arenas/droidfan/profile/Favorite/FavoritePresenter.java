@@ -72,12 +72,10 @@ public class FavoritePresenter extends ProfileStatusPresenter {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
             public void onError(Throwable e) {
-                Utils.showToast(mContext , mContext.getString(R.string.failed_refresh));
                 mView.hideProgressBar();
             }
 

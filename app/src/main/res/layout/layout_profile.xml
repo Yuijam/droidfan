@@ -29,7 +29,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/iv_avatar"
-        android:src="@drawable/ic_following"
         android:visibility="gone"
         />
 

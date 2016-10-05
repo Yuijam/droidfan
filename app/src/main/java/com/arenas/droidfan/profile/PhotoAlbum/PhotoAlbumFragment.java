@@ -28,6 +28,7 @@ public class PhotoAlbumFragment extends ProfileStatusFragment {
     private PhotoAlbumAdapter mAdapter;
 
     public PhotoAlbumFragment() {
+
     }
 
     @Override
@@ -59,8 +60,8 @@ public class PhotoAlbumFragment extends ProfileStatusFragment {
 
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view, int position , int i) {
-            PhotoActivity.start(getContext() , 0 , null , mAdapter.getStatus(position).getUserId() , position);
+        public void onItemClick(View view, StatusModel statusModel , int position) {
+            PhotoActivity.start(getContext() , mAdapter.getPhotoData() , position);
         }
 
         @Override

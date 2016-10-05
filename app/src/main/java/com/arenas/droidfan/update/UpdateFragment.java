@@ -183,6 +183,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                 .setNegativeButton(getContext().getString(R.string.do_not_save), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
                         finish();
                     }
                 })
@@ -190,6 +191,7 @@ public class UpdateFragment extends Fragment implements UpdateContract.View
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPresenter.saveDraft(mStatusText.getText().toString());
+                        dialogInterface.dismiss();
                         finish();
                     }
                 }).create();

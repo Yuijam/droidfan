@@ -53,12 +53,11 @@
 
     <Preference
         android:title="@string/feedback"
-        android:summary="联系作者"
         >
         <intent
             android:action="com.arenas.droidfan.main.update.UpdateActivity">
-            <extra android:name="extra_id"
-                android:value="0"/>
+            <extra android:name="extra_action_type"
+                android:value="3"/>
         </intent>
     </Preference>
 

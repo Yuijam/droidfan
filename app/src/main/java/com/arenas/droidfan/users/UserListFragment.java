@@ -3,9 +3,7 @@ package com.arenas.droidfan.users;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,10 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.arenas.droidfan.R;
-import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.UsersAdapter;
 import com.arenas.droidfan.data.model.UserModel;
-import com.arenas.droidfan.profile.ProfileActivity;
+import com.arenas.droidfan.main.BaseFragment;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
@@ -73,6 +70,7 @@ public class UserListFragment extends Fragment implements UserContract.View
         ButterKnife.bind(this , view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setDragRate(BaseFragment.DRAG_RATE);
         recyclerView.setLoadingListener(this);
     }
 

@@ -5,156 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.arenas.droidfan.detail.DetailFragment"
     >
-
-    <android.support.v4.widget.NestedScrollView
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/status_context"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-
-            <LinearLayout
-                android:id="@+id/layout_user"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                >
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/iv_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    app:riv_corner_radius="3dp"
-                    />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_weight="1"
-                    >
-                    <TextView
-                        android:id="@+id/tv_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        />
-
-                    <TextView
-                        android:id="@+id/user_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/update_gray"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/status_detail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:lineSpacingExtra="1dp"
-                android:textColor="@color/text_primary"
-                android:lineSpacingMultiplier="1.2"
-                android:text="333"
-                />
-
-            <ImageView
-                android:id="@+id/photo"
-                android:layout_marginTop="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:visibility="gone"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                >
-
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/update_gray"
-                    />
-                <TextView
-                    android:id="@+id/source"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/update_gray"
-                    />
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                >
-
-                <ImageView
-                    android:id="@+id/delete"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    android:src="@drawable/ic_delete"
-                    />
-
-                <ImageView
-                    android:id="@+id/reply"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_replygrey"
-                    />
-
-                <ImageView
-                    android:id="@+id/retweet"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_retweet"
-                    />
-
-                <ImageView
-                    android:id="@+id/favorite"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_favorite_grey"
-
-                    />
-
-                <ImageView
-                    android:id="@+id/message"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_message_gray"
-                    />
-
-                <ImageView
-                    android:id="@+id/share"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_share"
-                    />
-            </LinearLayout>
-
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+        android:layout_height="wrap_content"
+        />
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleSmall"
+        />
 </FrameLayout>

@@ -225,29 +225,4 @@ public class AppContext extends Application {
         }
 
     }
-
-
-
-//    private DisplayImageOptions getDefaultDisplayImageOptions() {
-//        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-//        builder.cacheInMemory(true).cacheOnDisc(true);
-//        builder.bitmapConfig(Bitmap.Config.RGB_565);
-//        builder.showImageForEmptyUri(R.drawable.ic_head);
-//        builder.showImageOnFail(R.drawable.ic_head);
-//        builder.showImageOnLoading(R.drawable.ic_head);
-//        builder.imageScaleType(ImageScaleType.IN_SAMPLE_INT);
-//        return builder.build();
-//    }
-//
-//    private ImageLoaderConfiguration getDefaultImageLoaderConfiguration() {
-//        ImageLoaderConfiguration.Builder builder = new ImageLoaderConfiguration.Builder(
-//                this);
-//        builder.defaultDisplayImageOptions(getDefaultDisplayImageOptions());
-//        builder.denyCacheImageMultipleSizesInMemory();
-//        builder.discCacheSize(100 * 1024 * 1024);
-//        builder.memoryCacheSizePercentage(25);
-//        builder.tasksProcessingOrder(QueueProcessingType.FIFO);
-//        return builder.build();
-//    }
-
 }

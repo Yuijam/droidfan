@@ -1,5 +1,6 @@
 package com.arenas.droidfan.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.Util.Utils;
 import com.arenas.droidfan.adapter.StatusAdapter;
 import com.arenas.droidfan.data.model.StatusModel;
+import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineContract;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -54,14 +56,12 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("11111" , "F onResume```");
         mPresenter.start();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("11111" , "F onCreate```");
         setRetainInstance(true);
         initAdapter();
     }
@@ -77,7 +77,6 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     }
 
     public void init(View view){
-        Log.d("11111" , "F onCreateView```");
         ButterKnife.bind(this , view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -126,5 +125,14 @@ public abstract class BaseFragment extends Fragment implements HomeTimelineContr
     @Override
     public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == DetailActivity.REQUEST_DETAIL && resultCode == DetailActivity.RESULT_DELETE){
+            int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
+            if (position != -1)
+                mAdapter.removeData(position);
+        }
     }
 }

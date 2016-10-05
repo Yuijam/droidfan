@@ -21,6 +21,7 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.ChatAdapter;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.data.model.DirectMessageModel;
+import com.arenas.droidfan.data.model.StatusModel;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
@@ -63,14 +64,13 @@ public class ChatFragment extends Fragment implements ChatContract.View
 
     MyOnItemClickListener listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view, int position , int i) {
+        public void onItemClick(View view, StatusModel statusModel, int position) {
 
         }
 
         @Override
         public void onItemLongClick(int id, int position) {
-            // TODO: 2016/7/26
-//            Utils.showToast(getContext() , "long click !! ");
+
         }
     };
 

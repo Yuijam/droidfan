@@ -16,4 +16,10 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="statusContextItemOptions">
+        <item name = "android:layout_width">0dp</item>
+        <item name = "android:layout_weight">1</item>
+        <item name = "android:layout_height">@dimen/context_item_options_size</item>
+    </style>
 </resources>

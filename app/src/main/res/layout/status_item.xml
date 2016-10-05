@@ -29,13 +29,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
                 android:layout_alignParentStart="true"
-                android:textStyle="bold"
+                android:textSize="17sp"
                 />
             <TextView
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:textColor="@color/update_gray"
                 android:layout_alignParentEnd="true"
                 />
 

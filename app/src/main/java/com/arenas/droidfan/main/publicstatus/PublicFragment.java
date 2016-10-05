@@ -38,8 +38,8 @@ public class PublicFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id , int position) {
-            DetailActivity.start(getActivity() , DetailActivity.TYPE_PUBLIC , _id , position);
+        public void onItemClick(View view , StatusModel statusModel , int position) {
+            DetailActivity.start(PublicFragment.this , statusModel , position);
         }
 
         @Override
@@ -56,8 +56,8 @@ public class PublicFragment extends HomeTimelineFragment {
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override
-        public void onImageClick(int _id) {
-            PhotoActivity.start(getContext() , _id , PublicStatusColumns.TABLE_NAME , null , 0);
+        public void onImageClick(StatusModel statusModel) {
+            PhotoActivity.start(getContext() ,statusModel);
         }
     };
 

@@ -10,7 +10,6 @@ import com.arenas.droidfan.R;
 import com.arenas.droidfan.adapter.MyOnItemClickListener;
 import com.arenas.droidfan.adapter.OnStatusImageClickListener;
 import com.arenas.droidfan.adapter.StatusAdapter;
-import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.model.StatusModel;
 import com.arenas.droidfan.detail.DetailActivity;
 import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
@@ -36,8 +35,8 @@ public class NoticeFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id , int position) {
-            DetailActivity.start(getActivity() , DetailActivity.TYPE_MENTIONS , _id , position);
+        public void onItemClick(View view , StatusModel statusModel , int position) {
+            DetailActivity.start(NoticeFragment.this , statusModel , position);
         }
 
         @Override
@@ -48,8 +47,8 @@ public class NoticeFragment extends HomeTimelineFragment {
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override
-        public void onImageClick(int _id) {
-            PhotoActivity.start(getContext() , _id , NoticeColumns.TABLE_NAME , null , 0);
+        public void onImageClick(StatusModel statusModel) {
+            PhotoActivity.start(getContext() ,statusModel);
         }
     };
 

@@ -24,6 +24,7 @@ import com.arenas.droidfan.profile.profilestatus.ProfileStatusFragment;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FavoriteFragment extends ProfileStatusFragment {
 
@@ -41,8 +42,8 @@ public class FavoriteFragment extends ProfileStatusFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id , int position) {
-            DetailActivity.start(getActivity() , DetailActivity.TYPE_FAVORITES , _id , position);
+        public void onItemClick(View view , StatusModel statusModel , int position) {
+            DetailActivity.start(FavoriteFragment.this , statusModel , position);
         }
 
         @Override
@@ -53,8 +54,8 @@ public class FavoriteFragment extends ProfileStatusFragment {
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override
-        public void onImageClick(int _id) {
-            PhotoActivity.start(getContext() , _id , FavoritesColumns.TABLE_NAME , null , 0);
+        public void onImageClick(StatusModel statusModel) {
+            PhotoActivity.start(getContext() , statusModel );
         }
     };
 

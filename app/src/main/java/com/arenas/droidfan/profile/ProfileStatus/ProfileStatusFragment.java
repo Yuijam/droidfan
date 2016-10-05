@@ -52,8 +52,8 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     MyOnItemClickListener Listener = new MyOnItemClickListener() {
         @Override
-        public void onItemClick(View view , int _id , int position) {
-            DetailActivity.start(getActivity() , DetailActivity.TYPE_PROFILE , _id , position);
+        public void onItemClick(View view , StatusModel statusModel , int position) {
+            DetailActivity.start(ProfileStatusFragment.this , statusModel , position);
         }
 
         @Override
@@ -64,8 +64,8 @@ public class ProfileStatusFragment extends HomeTimelineFragment {
 
     OnStatusImageClickListener imageClickListener = new OnStatusImageClickListener() {
         @Override
-        public void onImageClick(int _id) {
-            PhotoActivity.start(getContext() , _id , ProfileColumns.TABLE_NAME , null , 0);
+        public void onImageClick(StatusModel statusModel) {
+            PhotoActivity.start(getContext() ,statusModel);
         }
     };
 

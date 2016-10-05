@@ -116,6 +116,7 @@
 
         <activity
             android:name=".draft.DraftActivity"
+            android:screenOrientation="portrait"
             android:label="@string/draft_box"
             android:theme="@style/AppTheme.NoActionBar"
             />

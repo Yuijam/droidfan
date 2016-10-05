@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
 
     @Override
     public void onBindViewHolder(PhotoViewHolder holder, final int position) {
-        StatusModel model = mDatas.get(position);
+        final StatusModel model = mDatas.get(position);
 
         if (model.getPhotoThumbUrl() != null)
         Picasso.with(mContext).load(model.getPhotoLargeUrl()).resize(screenWidth/3 , screenWidth/3).centerCrop().into(holder.photo);
@@ -50,7 +51,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
             holder.photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onItemClick(view , position , 0);
+                    mListener.onItemClick(view , model , position);
                 }
             });
         }
@@ -70,8 +71,8 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Ph
         notifyDataSetChanged();
     }
 
-    public StatusModel getStatus(int position){
-        return mDatas.get(position);
+    public List<StatusModel> getPhotoData(){
+        return mDatas;
     }
 
     class PhotoViewHolder extends RecyclerView.ViewHolder{

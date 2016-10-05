@@ -1,5 +1,8 @@
 package com.arenas.droidfan.Util;
 
+import android.nfc.Tag;
+import android.util.Log;
+
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

@@ -20,9 +20,11 @@ import com.bm.library.Info;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,8 +72,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             holder.mPhotoThumb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    PhotoActivity.start(mContext , model.get_id() , null );
-                    imageClickListener.onImageClick(model.get_id());
+                    imageClickListener.onImageClick(model);
                 }
             });
         } else {
@@ -82,7 +83,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onItemClick(view , model.get_id() , position);
+                    mListener.onItemClick(view , model , position);
                 }
             });
 
@@ -100,7 +101,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         return mStatusList.size();
     }
 
-    public void setData(List<StatusModel> data){
+    private void setData(List<StatusModel> data){
         mStatusList = data;
     }
 

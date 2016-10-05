@@ -16,6 +16,7 @@ import com.arenas.droidfan.data.model.UserModel;
 import org.apache.http.protocol.HTTP;
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.FanfouApi;
+import org.oauthsimple.exceptions.OAuthException;
 import org.oauthsimple.http.OAuthRequest;
 import org.oauthsimple.http.Response;
 import org.oauthsimple.http.Verb;
@@ -1016,14 +1017,10 @@ final class FanFouApi implements Api {
                 debug("fetch() statusCode=" + statusCode + " builder=" + builder);
             }
             if (statusCode >= 200 && statusCode < 300) {
-//                Log.d(TAG , "body = " + body);
                 return body;
             }
-//            Log.d(TAG , "body = " + body);
-            Log.d(TAG , "throw new Api e");
             throw new ApiException(statusCode, FanFouParser.error(body));
         } catch (IOException e) {
-            Log.d(TAG , "catch ioexception e status code = " + statusCode);
             if (DEBUG) {
                 Log.e(TAG, e.toString());
             }
