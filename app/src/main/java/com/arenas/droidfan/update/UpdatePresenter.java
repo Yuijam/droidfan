@@ -77,7 +77,7 @@ public class UpdatePresenter implements UpdateContract.Presenter
         mActionType = actionType;
         mStatusModel = statusModel;
         mContext = context;
-        if (!isNewStatus())
+        if (statusModel != null)
             id = statusModel.getId();
 
         api = AppContext.getApi();

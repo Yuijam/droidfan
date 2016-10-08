@@ -46,6 +46,7 @@ public class DetailPresenter implements DetailContract.Presenter {
     private boolean mIsFavorite;
     private Context mContext;
     private int position;
+    private boolean completeStart;
 
     private Api api;
 
@@ -62,10 +63,13 @@ public class DetailPresenter implements DetailContract.Presenter {
 
     @Override
     public void start() {
-        showUi(mStatusModel);
-        if (mStatusModel.getInReplyToStatusId() != null){
-            mView.showProgressBar();
-            fetchStatusContext();
+        if (!completeStart){
+            showUi(mStatusModel);
+            if (mStatusModel.getInReplyToStatusId() != null){
+                mView.showProgressBar();
+                fetchStatusContext();
+            }
+            completeStart = true;
         }
     }
 
@@ -132,7 +136,7 @@ public class DetailPresenter implements DetailContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                mView.setResult(DetailActivity.RESULT_DELETE , position );
+
                 mView.finish();
             }
 

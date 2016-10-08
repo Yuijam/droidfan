@@ -7,7 +7,7 @@
     android:layout_height="260dp"
     android:paddingTop="20dp"
     app:layout_collapseParallaxMultiplier="0.7"
-    android:background="@color/white"
+    android:background="@color/android_white"
     app:layout_collapseMode="parallax"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >

@@ -217,17 +217,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.d(TAG , "onActivityResult --- > resultCode = " + resultCode + " , requestCode = " + requestCode);
-//        if (requestCode == DetailActivity.REQUEST_DETAIL){
-//            if (resultCode == DetailActivity.RESULT_DELETE){
-//                int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
-//                homeTimelineView.removeStatusItem(position);
-//            }
-//        }
-//    }
-
     class UpdateListener extends UpdateManagerListener {
 
         AppBean appBean;

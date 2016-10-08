@@ -70,6 +70,7 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
     @Override
     public void onDataNotAvailable() {
         if (mIsFirstFetch){
+            mView.showProgressbar();
             fetchData();
         }
         mView.hideProgressbar();
@@ -85,7 +86,6 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
             @Override
             public void call(Subscriber<? super List<DirectMessageModel>> subscriber) {
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<DirectMessageModel> model = AppContext.getApi().getConversationList(paging);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -107,7 +107,6 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
             @Override
             public void onNext(List<DirectMessageModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 mView.hideProgressbar();
                 mFanFouDB.saveConversationList(models);
                 loadConversationList();
@@ -117,7 +116,6 @@ public class MessagePresenter implements MessageContract.Presenter , DataSource.
 
     @Override
     public void refresh() {
-        mView.showProgressbar();
         fetchData();
         mView.goToTop();
     }

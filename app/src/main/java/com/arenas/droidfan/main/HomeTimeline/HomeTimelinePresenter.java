@@ -65,18 +65,17 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
     @Override
     public void onStatusLoaded(List<StatusModel> status) {
-        Log.d(TAG , "status size = " + status.size());
         mView.hideProgressBar();
         mView.showStatus(status);
     }
 
     public void onDataNotAvailable() {
+        mView.showProgressBar();//在没有任何数据的时候显示大的progressbar
         refresh();
     }
 
     @Override
     public void refresh() {
-        mView.showProgressBar();
         initSinceId();
         startService();
         mView.goToTop();
@@ -89,7 +88,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
     }
 
     protected void startService(){
-        Log.d(TAG , "startService~~");
         if (!NetworkUtils.isNetworkConnected(mContext)){
             Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
             mView.hideProgressBar();
@@ -99,7 +97,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
             @Override
             public void call(Subscriber<? super List<StatusModel>> subscriber) {
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<StatusModel> model = AppContext.getApi().getHomeTimeline(p);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -111,7 +108,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -122,7 +118,6 @@ public class HomeTimelinePresenter implements HomeTimelineContract.Presenter , D
 
             @Override
             public void onNext(List<StatusModel> models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 if(models.size() == RefreshCount){
                     mFanFouDB.deleteHomeTimeline();
                     mFanFouDB.saveHomeTLStatusList(models);

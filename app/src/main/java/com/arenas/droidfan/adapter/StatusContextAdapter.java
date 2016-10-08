@@ -51,16 +51,12 @@ public class StatusContextAdapter extends RecyclerView.Adapter<StatusContextAdap
 
     private List<StatusModel> mStatusList;
     private Context mContext;
-    private Api api;
-    private FanFouDB mFanFouDB;
     private Fragment fragment;
 
     public StatusContextAdapter(Fragment fragment , List<StatusModel> mStatusList ) {
         this.mStatusList = mStatusList;
         this.fragment = fragment;
         mContext = fragment.getContext();
-        api = AppContext.getApi();
-        mFanFouDB = FanFouDB.getInstance(mContext);
     }
 
     @Override
@@ -126,21 +122,6 @@ public class StatusContextAdapter extends RecyclerView.Adapter<StatusContextAdap
 //        });
     }
 
-    private void showDeleteDialog(final String msgId , final int position){
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        final AlertDialog alertDialog = builder.setMessage(mContext.getString(R.string.delete_dialog_message))
-                .setNegativeButton(mContext.getString(R.string.cancel), null)
-                .setPositiveButton(mContext.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteItem(msgId , position);
-                        dialogInterface.dismiss();
-                    }
-                }).create();
-        alertDialog.show();
-    }
-
-
     @Override
     public int getItemCount() {
         return mStatusList.size();
@@ -153,46 +134,6 @@ public class StatusContextAdapter extends RecyclerView.Adapter<StatusContextAdap
     public void replaceData(List<StatusModel> data){
         setData(data);
         notifyDataSetChanged();
-    }
-
-    private void deleteItem(final String id , final int position){
-        if (!NetworkUtils.isNetworkConnected(mContext)){
-            Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
-            return;
-        }
-        rx.Observable.create(new rx.Observable.OnSubscribe<StatusModel>() {
-            @Override
-            public void call(Subscriber<? super StatusModel> subscriber) {
-
-                try{
-                    mFanFouDB.deleteItem(HomeStatusColumns.TABLE_NAME , id);
-                    mFanFouDB.deleteItem(NoticeColumns.TABLE_NAME , id);
-                    mFanFouDB.deleteItem(ProfileColumns.TABLE_NAME , id);
-                    mFanFouDB.deleteItem(FavoritesColumns.TABLE_NAME , id);
-                    mFanFouDB.deleteItem(PublicStatusColumns.TABLE_NAME , id);
-                    StatusModel model = api.deleteStatus(id);
-                    subscriber.onNext(model);
-                    subscriber.onCompleted();
-                }catch (ApiException e){
-                    subscriber.onError(e);
-                }
-
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<StatusModel>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Utils.showToast(mContext , "操作失败！");
-            }
-
-            @Override
-            public void onNext(StatusModel model) {
-                removeData(position);
-            }
-        });
     }
 
     public void removeData(int position){

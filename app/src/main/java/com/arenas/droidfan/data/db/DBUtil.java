@@ -2,6 +2,8 @@ package com.arenas.droidfan.data.db;
 
 import android.database.Cursor;
 
+import com.arenas.droidfan.detail.DetailActivity;
+
 /**
  * Created by Arenas on 2016/7/9.
  */

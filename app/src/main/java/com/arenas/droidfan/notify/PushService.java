@@ -126,7 +126,7 @@ public class PushService extends IntentService {
                     mFanFouDB.saveNoticeStatus(s);
                 }
             }
-        }catch (ApiException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -143,7 +143,7 @@ public class PushService extends IntentService {
                 showNotification("有"+models.size() + "条新私信" , 2);
                 mFanFouDB.saveDirectMessages(models);
             }
-        }catch (ApiException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
     }

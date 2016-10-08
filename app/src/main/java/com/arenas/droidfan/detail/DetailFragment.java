@@ -285,4 +285,14 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == DetailActivity.REQUEST_DETAIL){
+            if (resultCode == DetailActivity.RESULT_DELETE){
+                int position = data.getIntExtra(DetailActivity.EXTRA_POSITION , -1);
+                adapter.removeData(position);
+            }
+        }
+    }
 }
