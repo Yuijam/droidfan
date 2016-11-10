@@ -25,11 +25,10 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Arenas on 2016/7/22.
  */
-public class ProfilePresenter implements ProfileContract.Presenter , DataSource.GetUserCallback{
+public class ProfilePresenter implements ProfileContract.Presenter {
 
     private static final String TAG = ProfilePresenter.class.getSimpleName();
 
-    private FanFouDB mFanFouDB;
     private ProfileContract.View mView;
     private String mUserId;
     private Context mContext;
@@ -46,7 +45,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     private static final int TYPE_UNFOLLOW= 1;
 
     public ProfilePresenter(ProfileContract.View mView , String userId ,Context context) {
-        this.mFanFouDB = FanFouDB.getInstance(context);
         this.mView = mView;
         mUserId = userId;
         mContext = context;
@@ -61,8 +59,9 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
                 testFollower();
                 fetchUser();
             }else {
+                fetchUser();
                 postLoadData();
-                loadUser();
+//                loadUser();
             }
             startComplete = true;
         }
@@ -85,31 +84,29 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         return mUserId.equals(AppContext.getAccount());
     }
 
-    private void loadUser(){
-        mFanFouDB.getUserById(mUserId , this);
-    }
+//    private void loadUser(){
+//        mFanFouDB.getUserById(mUserId , this);
+//    }
 
-    @Override
-    public void onUserLoaded(UserModel userModel) {
-        mUser = userModel;
-        if (isStatusAvailable()){
-            postLoadData();
-        }else {
-            postDoNotLoadData();
-            Utils.showToast(mContext , mContext.getString(R.string.error_protected));
-        }
-        mView.hideProgress();
-        initView(userModel);
-        Log.d(TAG , "onUserLoaded------->");
-    }
+//    @Override
+//    public void onUserLoaded(UserModel userModel) {
+//        mUser = userModel;
+//        if (isStatusAvailable()){
+//            postLoadData();
+//        }else {
+//            postDoNotLoadData();
+//            Utils.showToast(mContext , mContext.getString(R.string.error_protected));
+//        }
+//        mView.hideProgress();
+//        initView(userModel);
+//    }
 
-    @Override
-    public void onDataNotAvailable() {
-        fetchUser();
-    }
+//    @Override
+//    public void onDataNotAvailable() {
+//        fetchUser();
+//    }
 
     private void fetchUser() {
-        Log.d(TAG , "fetchUser!!!");
         if (!NetworkUtils.isNetworkConnected(mContext)){
             Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
             mView.hideProgress();
@@ -119,7 +116,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
             @Override
             public void call(Subscriber<? super UserModel> subscriber) {
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     UserModel model = AppContext.getApi().showUser(mUserId);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -131,7 +127,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<UserModel>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -142,15 +137,16 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
             @Override
             public void onNext(UserModel models) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                mView.hideProgress();
+                mUser = models;
                 if(models != null){
-                    mFanFouDB.saveUser(models , 0);
+//                    mFanFouDB.saveUser(models , 0);
                     fetchUserComplete = true;
                     if (isMe() || testFollowerComplete){
-                        loadUser();
+//                        loadUser();
+                        initView(models);
                     }
                 }else {
-                    mView.hideProgress();
                     Utils.showToast(mContext , "未找到该用户！");
                 }
             }
@@ -158,12 +154,10 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
     }
 
     private void testFollower(){
-        Log.d(TAG , "testFollower~");
         rx.Observable.create(new rx.Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     if (!NetworkUtils.isNetworkConnected(mContext)){
                         Utils.showToast(mContext , mContext.getString(R.string.network_is_disconnected));
                         return;
@@ -179,7 +173,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<Boolean>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -189,12 +182,14 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
             @Override
             public void onNext(Boolean isAFollower) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 testFollowerComplete = true;
                 mIsAFollower = isAFollower;
-                if (fetchUserComplete){
-                    loadUser();
+                mView.hideProgress();
+                if (fetchUserComplete){//这里要两个都完成的时候才显示数据，因为主要是有个私信按钮
+//                    loadUser();
+                    initView(mUser);
                 }
+
             }
         });
     }
@@ -319,7 +314,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
                 }
 
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     UserModel model;
                     if (type == TYPE_FOLLOW){
                         model = AppContext.getApi().follow(mUserId);
@@ -336,7 +330,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<UserModel>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -346,7 +339,6 @@ public class ProfilePresenter implements ProfileContract.Presenter , DataSource.
 
             @Override
             public void onNext(UserModel model) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
                 if (model == null){
                     Utils.showToast(mContext , "请求失败！");
                 }

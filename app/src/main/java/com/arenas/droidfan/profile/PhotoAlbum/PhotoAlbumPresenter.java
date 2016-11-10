@@ -40,7 +40,7 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
     @Override
     protected void initSinceId() {
         p = new Paging();
-        p.sinceId = mFanFouDB.getPhotoSinceId(mUserId);
+//        p.sinceId = mFanFouDB.getPhotoSinceId(mUserId);
         p.count = 20;
     }
 
@@ -65,7 +65,6 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new rx.Observer<List<StatusModel>>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG , "onCompleted~~");
             }
 
             @Override
@@ -75,11 +74,16 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
             @Override
             public void onNext(List<StatusModel> models) {
+                mView.hideProgressBar();
                 if(models.size() > 0){
-                    mFanFouDB.savePhotoTimeline(models);
-                    loadStatus();
+//                    mFanFouDB.savePhotoTimeline(models);
+//                    loadStatus();
+                    mView.showStatus(models);
+                    mMaxId = models.get(models.size()-1).getId();
                 }else {
-                    mView.hideProgressBar();
+//                    mView.hideProgressBar();
+                    //empty view
+                    // TODO: 2016/11/9
                 }
             }
         });
@@ -87,13 +91,14 @@ public class PhotoAlbumPresenter extends ProfileStatusPresenter {
 
     @Override
     public void loadStatus() {
-        mFanFouDB.loadPhotoTimeline(mUserId , this);
+//        mFanFouDB.loadPhotoTimeline(mUserId , this);
     }
 
     @Override
     protected void initMaxId() {
         p = new Paging();
-        p.maxId = mFanFouDB.getPhotoMaxId(mUserId);
+//        p.maxId = mFanFouDB.getPhotoMaxId(mUserId);
+        p.maxId = mMaxId;
         p.count = 20;
     }
 }

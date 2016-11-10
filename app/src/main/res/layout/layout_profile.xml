@@ -63,7 +63,7 @@
                 android:textSize="15sp"
                 android:textColor="@color/text_primary"
                 android:gravity="center"
-                android:text="111"
+                android:text="***"
                 />
 
             <TextView
@@ -73,7 +73,7 @@
                 android:textSize="15sp"
                 android:textColor="@color/text_primary"
                 android:gravity="center"
-                android:text="222"
+                android:text="***"
                 />
             <TextView
                 android:id="@+id/follower_count"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/text_primary"
-                android:text="333"
+                android:text="***"
                 android:gravity="center"
                 />
 
@@ -92,7 +92,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="15sp"
                 android:gravity="center"
-                android:text="444"
+                android:text="***"
                 />
         </TableRow>
 

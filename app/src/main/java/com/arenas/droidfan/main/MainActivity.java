@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity
     private NoticePresenter noticePresenter;
     private MessagePresenter messagePresenter;
 
+    private int drawerItemId;
+
     @OnClick(R.id.fab_to_top) void onGoToTopClick(){
         int curPage = viewPager.getCurrentItem();
         switch (curPage){
@@ -113,8 +116,29 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                switch (drawerItemId){
+                    case R.id.profile:
+                        ProfileActivity.start(MainActivity.this , AppContext.getAccount());
+                        break;
+                    case R.id.nav_public_timeline:
+                        PublicActivity.start(MainActivity.this);
+                        break;
+                    case R.id.nav_setting:
+                        SettingsActivity.start(MainActivity.this);
+                        break;
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -199,20 +223,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.profile) {
-            ProfileActivity.start(this , AppContext.getAccount());
-        } else if (id == R.id.nav_public_timeline) {
-            PublicActivity.start(this);
-        } else if (id == R.id.nav_setting) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
-            Intent intent = new Intent(this , SettingsActivity.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerItemId = item.getItemId();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -1,7 +1,7 @@
 package com.arenas.droidfan.detail;
 
 import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
 
 import com.arenas.droidfan.AppContext;
 import com.arenas.droidfan.R;
@@ -15,11 +15,8 @@ import com.arenas.droidfan.data.HomeStatusColumns;
 import com.arenas.droidfan.data.NoticeColumns;
 import com.arenas.droidfan.data.ProfileColumns;
 import com.arenas.droidfan.data.PublicStatusColumns;
-import com.arenas.droidfan.data.db.DataSource;
 import com.arenas.droidfan.data.db.FanFouDB;
 import com.arenas.droidfan.data.model.StatusModel;
-import com.arenas.droidfan.main.TabFragmentAdapter;
-import com.arenas.droidfan.main.hometimeline.HomeTimelineFragment;
 import com.arenas.droidfan.main.message.chat.ChatActivity;
 import com.arenas.droidfan.photo.PhotoActivity;
 import com.arenas.droidfan.profile.ProfileActivity;
@@ -255,4 +252,12 @@ public class DetailPresenter implements DetailContract.Presenter {
         });
     }
 
+    @Override
+    public void showShareList() {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_TEXT , mStatusModel.getSimpleText());
+        i = Intent.createChooser(i , "分享到");
+        mContext.startActivity(i);
+    }
 }

@@ -29,6 +29,11 @@ import com.arenas.droidfan.notify.PushService;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    public static void start(Context context){
+        Intent intent = new Intent(context , SettingsActivity.class);
+        context.startActivity(intent);
+    }
+
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {

@@ -2,6 +2,7 @@ package com.arenas.droidfan.data.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SyncContext;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -41,11 +42,11 @@ public class FanFouDB implements DataSource{
     private SQLiteDatabase db;
 
     private FanFouDB(Context context){
-        mDbHelper = new FanFouDBHelper(context);
+        mDbHelper = new FanFouDBHelper(context.getApplicationContext());
         db = mDbHelper.getWritableDatabase();
     }
 
-    public static FanFouDB getInstance(Context context){
+    public static synchronized FanFouDB getInstance(Context context){
         if (INSTANCE == null){
             INSTANCE = new FanFouDB(context);
         }

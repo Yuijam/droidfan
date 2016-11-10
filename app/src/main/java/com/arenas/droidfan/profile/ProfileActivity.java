@@ -55,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     @BindView(R.id.iv_avatar) RoundedImageView mAvatar;
     @BindView(R.id.view_pager) ViewPager viewPager;
     @BindView(R.id.tab_layout) TabLayout tabLayout;
-    @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.progressbar) ProgressBar progressBar;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.collapse_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
@@ -144,10 +144,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         sendDM.setOnClickListener(this);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        swipeRefreshLayout.setProgressViewOffset(true , 0 , 100);
-
         collapsingToolbarLayout.setTitleEnabled(false);
         appBarLayout.addOnOffsetChangedListener(this);
         int toolbar_height = Utils.getToolbarHeight(this) * 2;
@@ -161,7 +157,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 //        Log.d(TAG , "verticalOffset = " + verticalOffset);
 //        Log.d(TAG , "appbarLayout.getTotalScrollRange = " + appBarLayout.getTotalScrollRange());
-        swipeRefreshLayout.setEnabled(verticalOffset == 0);
         float alpha = (float) Math.abs(verticalOffset) / (float) appBarLayout.getTotalScrollRange() * 1.0f;
         profileContent.setAlpha(1.0f-alpha);
     }
@@ -261,7 +256,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+//        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

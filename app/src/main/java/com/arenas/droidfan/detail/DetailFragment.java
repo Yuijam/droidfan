@@ -171,7 +171,7 @@ public class DetailFragment extends Fragment implements DetailContract.View , Vi
                 mPresenter.openUser();
                 break;
             case R.id.share:
-                Utils.showToast(getContext() , "不要戳我，我还没完成");
+                mPresenter.showShareList();
                 break;
             case R.id.photo:
                 mPresenter.showLargePhoto();

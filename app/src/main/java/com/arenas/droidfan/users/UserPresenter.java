@@ -17,6 +17,7 @@ import com.arenas.droidfan.data.model.UserModel;
 import com.arenas.droidfan.service.FanFouService;
 
 import java.util.List;
+import java.util.concurrent.Exchanger;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -57,6 +58,7 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
         if (!startComplete){
             mView.showProgressbar();
             loadUsers();
+            fetchUsers();
             startComplete = true;
         }
     }
@@ -70,7 +72,6 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
                     return;
                 }
                 try{
-                    Log.d(TAG , "observable thread = " + Thread.currentThread().getId());
                     List<UserModel> users;
                     if (mType == UserListActivity.TYPE_FOLLOWERS){
                         users = api.getFollowers(mUserId , paging);
@@ -79,7 +80,7 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
                     }
                     subscriber.onNext(users);
                     subscriber.onCompleted();
-                }catch (ApiException e){
+                }catch (Exception e){
                     subscriber.onError(e);
                 }
 
@@ -96,9 +97,8 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
 
             @Override
             public void onNext(List<UserModel> users) {
-                Log.d(TAG , "observer thread = " + Thread.currentThread().getId());
+                mView.hideProgressbar();
                 if (users.size() > 0){
-                    Log.d(TAG , "user.size = " + users.size());
                     if (mType == UserListActivity.TYPE_FOLLOWERS){
                         if (isRefreshing){
                             mFanFouDB.deleteFollowers(mUserId);
@@ -113,7 +113,7 @@ public class UserPresenter implements UserContract.Presenter , DataSource.LoadUs
                     isRefreshing = false;
                     loadUsers();
                 }else {
-                    mView.hideProgressbar();
+                    // TODO: 2016/11/9 emptyView
                 }
             }
         });

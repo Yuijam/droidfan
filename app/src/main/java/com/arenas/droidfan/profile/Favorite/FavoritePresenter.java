@@ -47,7 +47,7 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
     @Override
     protected void initSinceId() {//这个api不能用sinceId
-        isRefresh = true;
+//        isRefresh = true;
     }
 
     @Override
@@ -81,14 +81,16 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
             @Override
             public void onNext(List<StatusModel> models) {
+                mView.hideProgressBar();
                 if(models.size() > 0){
-                    if (isRefresh){
-                        mFanFouDB.deleteFavorites(mUserId);
-                    }
-                    mFanFouDB.saveFavoritesList(models);
-                    loadStatus();
+//                    if (isRefresh){
+//                        mFanFouDB.deleteFavorites(mUserId);
+//                    }
+//                    mFanFouDB.saveFavoritesList(models);
+//                    loadStatus();
+                    mView.showStatus(models);
                 }else {
-                    mView.hideProgressBar();
+                    //emptyview
                 }
             }
         });
@@ -96,7 +98,7 @@ public class FavoritePresenter extends ProfileStatusPresenter {
 
     @Override
     public void loadStatus() {
-        mFanFouDB.getFavoritesList(mUserId , this);
+//        mFanFouDB.getFavoritesList(mUserId , this);
     }
 
     @Override

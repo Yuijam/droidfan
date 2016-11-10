@@ -41,5 +41,6 @@ public interface DetailContract {
         void sendMessage();
         void openUser();
         void showLargePhoto();
+        void showShareList();
     }
 }

@@ -32,6 +32,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     private static final String TAG = ProfileStatusPresenter.class.getSimpleName();
 
     protected String mUserId;
+    protected String mMaxId;
 
     public ProfileStatusPresenter() {
     }
@@ -59,7 +60,8 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     public void onLoadDataEvent(ProfileEvent event){
         Log.d(TAG , "even.isLoad = " + event.isLoad() + "event.isRefresh" + event.isRefresh());
         if (event.isLoad()){
-            loadStatus();
+//            loadStatus();
+            startService();
         }else if (!event.isRefresh()){
             mView.hideProgressBar();
         }
@@ -71,13 +73,13 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     public void refresh() {
-        initSinceId();
-        startService();
+//        initSinceId();
+//        startService();
     }
 
     @Override
     public void loadStatus() {
-        mFanFouDB.getProfileStatusList(mUserId , this);
+//        mFanFouDB.getProfileStatusList(mUserId , this);
     }
 
     @Override
@@ -88,9 +90,10 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
     @Override
     protected void initSinceId() {
-        p = new Paging();
-        p.count = 20;
-        p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
+        //没有刷新基本不用sinceid了
+//        p = new Paging();
+//        p.count = 20;
+//        p.sinceId = mFanFouDB.getProfileSinceId(mUserId);
     }
 
     @Override
@@ -124,11 +127,12 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
 
             @Override
             public void onNext(List<StatusModel> models) {
+                mView.hideProgressBar();
                 if(models.size() > 0){
-                    mFanFouDB.saveProfileStatusList(models);
-                    loadStatus();
-                }else {
-                    mView.hideProgressBar();
+//                    mFanFouDB.saveProfileStatusList(models);
+//                    loadStatus();
+                    mView.showStatus(models);
+                    mMaxId = models.get(models.size()-1).getId();//保存maxid以备加载更多
                 }
             }
         });
@@ -138,6 +142,7 @@ public class ProfileStatusPresenter extends HomeTimelinePresenter {
     protected void initMaxId() {
         p = new Paging();
         p.count = 20;
-        p.maxId = mFanFouDB.getProfileMaxId(mUserId);
+//        p.maxId = mFanFouDB.getProfileMaxId(mUserId);
+        p.maxId = mMaxId;
     }
 }

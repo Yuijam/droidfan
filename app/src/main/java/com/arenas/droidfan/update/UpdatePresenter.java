@@ -7,10 +7,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.BuildConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,6 +41,7 @@ import com.arenas.droidfan.service.PostService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -51,8 +55,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
          , DataSource.LoadUserCallback {
 
     private static final String TAG = UpdatePresenter.class.getSimpleName();
-
-    public static final int REQUEST_STORAGE_PERMISSION = 4;
 
     private FanFouDB mFanFouDB;
     private final UpdateContract.View mView;
@@ -80,6 +82,17 @@ public class UpdatePresenter implements UpdateContract.Presenter
         if (statusModel != null)
             id = statusModel.getId();
 
+        api = AppContext.getApi();
+        mView.setPresenter(this);
+    }
+
+    public UpdatePresenter(Context context , UpdateContract.View mView , int mActionType , String text , String mPhotoPath){
+        this.mFanFouDB = FanFouDB.getInstance(context);
+        mContext = context;
+        this.mView = mView;
+        this.text = text;
+        this.mPhotoPath = mPhotoPath;
+        this.mActionType = mActionType;
         api = AppContext.getApi();
         mView.setPresenter(this);
     }
@@ -190,9 +203,14 @@ public class UpdatePresenter implements UpdateContract.Presenter
                 mView.refreshInputStatus();
                 break;
             case UpdateActivity.TYPE_FEEDBACK:
-                String feedBackHeader = "@放學後茶會 ";
+                String feedBackHeader = "@卓小饭 "+ "["+Build.MODEL + " | " + Build.VERSION.RELEASE + "]";
                 mView.setStatusText(feedBackHeader);
                 mView.setSelection(feedBackHeader);
+                mView.refreshInputStatus();
+                break;
+            case UpdateActivity.TYPE_SHARE:
+                mView.setStatusText(text);
+                mView.showPhoto(ImageUtils.scalePic(mContext , mPhotoPath , 90 ));
                 mView.refreshInputStatus();
                 break;
         }
@@ -267,7 +285,13 @@ public class UpdatePresenter implements UpdateContract.Presenter
             mPhotoPath = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + System.currentTimeMillis() + ".png";
             mPhoto = new File(mPhotoPath);
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhoto));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                //android 7 权限问题
+                Uri contentUri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName()+".provider", mPhoto);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT , contentUri);
+            }else {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhoto));
+            }
             activity.startActivityForResult(intent, requestCode);
         }else {
             requestFlag = requestCode;
@@ -278,7 +302,6 @@ public class UpdatePresenter implements UpdateContract.Presenter
     @Override
     public void selectPhoto(Activity activity, int requestCode) {
         this.activity = activity;
-        Log.d(TAG , "selectPhoto");
         if (PermissionUtils.isStoragePermissionGranted(mContext)){
             Utils.selectImage(activity , requestCode);
         }else {
